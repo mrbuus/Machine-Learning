@@ -1,0 +1,24 @@
+# Local settings and credentials
+.DS_Store
+.remember/
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Reference PDFs and duplicate submission archives stay local
+Book/
+*.pdf
+*.zip
+
+# Downloaded datasets and training artifacts
+Data/mnist.npz
+*.pt
+*.pth
+*.ckpt
+runs/
+wandb/
