@@ -1,0 +1,1213 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Мэдрэлийн сүлжээний гарын авлага</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Sans:ital,wght@0,400;0,700&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+/* Layout: нэг баганатай уншлагын хуудас, бүтэн өргөнтэй ойлголтын картууд + SVG схемүүд */
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --surface-2:#eeece5;
+  --fg:#1c1d21; --fg-dim:#5b5d66; --line:#d8d5cb; --ink:#1f4e79;
+
+  --data:#1f6feb;  --data-bg:#e7f0fe;  --data-br:#9dc1f7;
+  --math:#7a3fb5;  --math-bg:#f1e9fa;  --math-br:#cbaeea;
+  --good:#1a7a46;  --good-bg:#e4f4ea;  --good-br:#9ed4b5;
+  --code:#9a5b06;  --code-bg:#fcf0dc;  --code-br:#edc584;
+  --warn:#b3261e;  --warn-bg:#fcebe9;  --warn-br:#f0afa9;
+
+  --f-display:"PT Serif",Georgia,"Times New Roman",serif;
+  --f-body:"PT Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#15161a; --surface:#1d1f25; --surface-2:#24262e;
+    --fg:#e9e8e3; --fg-dim:#a3a5ae; --line:#333640; --ink:#8fc0f0;
+    --data:#71aaf7; --data-bg:#152339; --data-br:#2d4e7d;
+    --math:#c096ea; --math-bg:#231a33; --math-br:#4d3a6b;
+    --good:#67c994; --good-bg:#132a1e; --good-br:#2d5a41;
+    --code:#e3ab5c; --code-bg:#2b2113; --code-br:#5e4723;
+    --warn:#f08a81; --warn-bg:#301816; --warn-br:#6b3430;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15161a; --surface:#1d1f25; --surface-2:#24262e;
+  --fg:#e9e8e3; --fg-dim:#a3a5ae; --line:#333640; --ink:#8fc0f0;
+  --data:#71aaf7; --data-bg:#152339; --data-br:#2d4e7d;
+  --math:#c096ea; --math-bg:#231a33; --math-br:#4d3a6b;
+  --good:#67c994; --good-bg:#132a1e; --good-br:#2d5a41;
+  --code:#e3ab5c; --code-bg:#2b2113; --code-br:#5e4723;
+  --warn:#f08a81; --warn-bg:#301816; --warn-br:#6b3430;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--fg); font-family:var(--f-body);
+     font-size:17px; line-height:1.65; margin:0}
+.wrap{max-width:860px; margin:0 auto; padding-inline:18px; padding-block:0 72px}
+
+nav{position:sticky; top:env(safe-area-inset-top,0px); z-index:30;
+    background:color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+.navin{max-width:860px;margin:0 auto;padding:9px 18px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin}
+nav a{flex:0 0 auto; font-size:13px; text-decoration:none; color:var(--fg-dim);
+      padding:5px 11px; border-radius:999px; border:1px solid transparent; white-space:nowrap}
+nav a:hover{color:var(--fg); background:var(--surface-2); border-color:var(--line)}
+nav a:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+h1{font-family:var(--f-display); font-size:clamp(30px,6.5vw,46px); line-height:1.15;
+   margin:0 0 14px; text-wrap:balance; letter-spacing:-.01em}
+h2{font-family:var(--f-display); font-size:clamp(24px,4.6vw,33px); line-height:1.2; margin:0 0 6px; text-wrap:balance}
+h3{font-family:var(--f-display); font-size:21px; margin:34px 0 8px; text-wrap:balance}
+h4{font-size:16px; margin:22px 0 6px; letter-spacing:.02em}
+p{margin:0 0 15px}
+a{color:var(--ink)}
+.lead{font-size:19px; color:var(--fg-dim)}
+.eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+         color:var(--fg-dim); font-weight:700; margin:0 0 10px}
+
+header.hero{padding-block:46px 30px; border-bottom:3px double var(--line); margin-bottom:8px}
+
+.legend{background:var(--surface); border:1px solid var(--line); border-radius:4px;
+        padding:16px 18px; margin:26px 0}
+.legend ul{list-style:none; margin:0; padding:0; display:grid; gap:9px}
+.legend li{display:flex; gap:11px; align-items:flex-start; font-size:15px; min-width:0}
+.sw{flex:0 0 auto; width:15px; height:15px; border-radius:3px; margin-top:4px; border:1px solid rgba(0,0,0,.18)}
+
+section{padding-block:40px; border-top:1px solid var(--line)}
+section:first-of-type{border-top:none}
+
+.card{border-left:4px solid var(--line); background:var(--surface);
+      border-radius:0 4px 4px 0; padding:16px 18px; margin:20px 0}
+.card>:last-child{margin-bottom:0}
+.card .tag{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.11em;
+           text-transform:uppercase; margin-bottom:7px}
+.c-data{border-left-color:var(--data); background:var(--data-bg)} .c-data .tag{color:var(--data)}
+.c-math{border-left-color:var(--math); background:var(--math-bg)} .c-math .tag{color:var(--math)}
+.c-good{border-left-color:var(--good); background:var(--good-bg)} .c-good .tag{color:var(--good)}
+.c-code{border-left-color:var(--code); background:var(--code-bg)} .c-code .tag{color:var(--code)}
+.c-warn{border-left-color:var(--warn); background:var(--warn-bg)} .c-warn .tag{color:var(--warn)}
+
+.formula{background:var(--surface); border:1px solid var(--math-br); border-radius:4px;
+         padding:18px 16px; margin:18px 0; text-align:center;
+         font-family:var(--f-mono); font-size:clamp(14px,3.2vw,18px); line-height:1.9; overflow-x:auto}
+.formula .big{font-size:1.15em}
+.t-w{color:var(--math); font-weight:700}
+.t-x{color:var(--data); font-weight:700}
+.t-y{color:var(--good); font-weight:700}
+.t-c{color:var(--code); font-weight:700}
+.t-e{color:var(--warn); font-weight:700}
+.fkey{display:grid; gap:5px; margin:12px 0 0; padding:0; list-style:none; font-size:14.5px; text-align:left}
+.fkey li{display:flex; gap:9px; align-items:baseline}
+.fkey code{flex:0 0 auto; font-family:var(--f-mono); font-weight:700}
+
+pre{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--code);
+    border-radius:0 4px 4px 0; padding:14px 16px; margin:18px 0; overflow-x:auto;
+    font-family:var(--f-mono); font-size:13.5px; line-height:1.7}
+code{font-family:var(--f-mono); font-size:.92em; background:var(--surface-2); padding:1px 5px; border-radius:3px}
+pre code{background:none; padding:0; font-size:1em}
+.cm{color:var(--fg-dim)}
+
+.tablewrap{overflow-x:auto; margin:20px 0; border:1px solid var(--line); border-radius:4px}
+table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:420px}
+th,td{padding:9px 13px; text-align:left; border-bottom:1px solid var(--line)}
+th{background:var(--surface-2); font-size:12.5px; letter-spacing:.05em; text-transform:uppercase; font-weight:700}
+tbody tr:last-child td{border-bottom:none}
+td.num{text-align:right; font-variant-numeric:tabular-nums; font-family:var(--f-mono)}
+tr.hl td{background:var(--good-bg); font-weight:700}
+
+figure{margin:24px 0; padding:0}
+figure svg{display:block; width:100%; height:auto; max-width:100%}
+figcaption{font-size:14px; color:var(--fg-dim); margin-top:9px; text-align:center; font-style:italic}
+.svgbox{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:14px}
+
+.actgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:22px 0}
+.actcell{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:10px; min-width:0}
+.actcell h4{margin:0 0 2px; font-size:14px; font-family:var(--f-mono)}
+.actcell p{margin:4px 0 0; font-size:12.5px; color:var(--fg-dim); line-height:1.45}
+
+ol.steps{counter-reset:s; list-style:none; padding:0; margin:20px 0; display:grid; gap:14px}
+ol.steps>li{counter-increment:s; position:relative; padding-left:46px; min-width:0}
+ol.steps>li::before{content:counter(s); position:absolute; left:0; top:0;
+  width:31px; height:31px; border-radius:50%; background:var(--ink); color:var(--bg);
+  display:grid; place-items:center; font-weight:700; font-size:15px; font-family:var(--f-mono)}
+ul.plain{padding-left:22px; margin:0 0 15px}
+ul.plain li{margin-bottom:7px}
+
+.chip{display:inline-block; font-size:12.5px; font-weight:700; padding:2px 9px;
+      border-radius:999px; border:1px solid; white-space:nowrap}
+.ch-good{color:var(--good); background:var(--good-bg); border-color:var(--good-br)}
+.ch-warn{color:var(--warn); background:var(--warn-bg); border-color:var(--warn-br)}
+
+.qa{margin:20px 0}
+.qa .q{font-family:var(--f-display); font-size:19px; font-weight:700; margin-bottom:6px}
+.qa .q::before{content:"? "; color:var(--ink)}
+
+footer{border-top:3px double var(--line); padding-block:28px; font-size:14px; color:var(--fg-dim)}
+@media (max-width:420px){ body{font-size:16px} .card{padding:14px 15px} }
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<nav>
+  <div class="navin">
+    <a href="#туух">Түүх</a>
+    <a href="#нейрон">Нейрон</a>
+    <a href="#xor">XOR</a>
+    <a href="#идэвх">Идэвхжүүлэгч</a>
+    <a href="#давхарга">Давхарга</a>
+    <a href="#softmax">Softmax</a>
+    <a href="#регул">Тогтмолжуулалт</a>
+    <a href="#backprop">Backprop</a>
+    <a href="#жишээ">Тоон жишээ</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">F.CS308 Машин сургалт · Лекц 5 · 147 слайд</p>
+  <h1>Мэдрэлийн сүлжээ, эхнээс нь тайлбарласан</h1>
+  <p class="lead">Перцептроноос backpropagation хүртэл. Томъёо бүрийн доор тэмдэг бүр
+  юу гэсэн үг болохыг бичсэн, өнгө бүр нэг утгатай. Төгсгөлд нь лекцийн тоон жишээг
+  алхам алхмаар бүрэн бодсон.</p>
+</header>
+
+<div class="legend">
+  <p class="eyebrow" style="margin-bottom:12px">Өнгөний түлхүүр</p>
+  <ul>
+    <li><span class="sw" style="background:var(--data)"></span>
+      <span><strong style="color:var(--data)">ХӨХ — ӨГӨГДӨЛ.</strong> Оролт, идэвхжилт, бодит тоо.</span></li>
+    <li><span class="sw" style="background:var(--math)"></span>
+      <span><strong style="color:var(--math)">НИЛ ЯГААН — МАТЕМАТИК.</strong> Жин, параметр, томъёо.</span></li>
+    <li><span class="sw" style="background:var(--code)"></span>
+      <span><strong style="color:var(--code)">ШАР — КОД / ТООЦОО.</strong> Бодит тооцоолол.</span></li>
+    <li><span class="sw" style="background:var(--good)"></span>
+      <span><strong style="color:var(--good)">НОГООН — ҮР ДҮН.</strong> Forward pass, зөв хариу.</span></li>
+    <li><span class="sw" style="background:var(--warn)"></span>
+      <span><strong style="color:var(--warn)">УЛААН — АЛДАА / BACKWARD.</strong> Градиент, анхаарах зүйл.</span></li>
+  </ul>
+</div>
+
+<!-- ================= ТҮҮХ ================= -->
+<section id="туух">
+  <p class="eyebrow">Хэсэг 1</p>
+  <h2>Яагаад гурван удаа «үхээд» дахин амилсан бэ</h2>
+
+  <p>Мэдрэлийн сүлжээний түүх бол шулуун өсөлт биш — <strong>давалгаа</strong>.
+  Лекцийн эхний 20 слайд энэ давалгааг харуулахад зориулагдсан.</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 700 300" role="img" aria-label="Мэдрэлийн сүлжээний түүхэн давалгаа 1958-2012">
+      <line x1="40" y1="250" x2="660" y2="250" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
+      <line x1="40" y1="250" x2="40" y2="40" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
+      <text x="22" y="48" font-size="12" fill="currentColor" opacity=".7" transform="rotate(-90 22 48)">урам зориг</text>
+      <text x="640" y="270" font-size="12" fill="currentColor" opacity=".7">он</text>
+
+      <path d="M55,150 C85,60 125,60 155,150 C185,240 225,240 255,150
+               C285,60 325,60 355,150 C385,240 425,240 455,150
+               C485,60 525,60 555,150"
+            fill="none" stroke="currentColor" stroke-width="5" opacity=".45" stroke-linecap="round"/>
+      <path d="M555,150 C575,110 600,75 650,45" fill="none" stroke="var(--good)" stroke-width="5" stroke-linecap="round"/>
+
+      <circle cx="155" cy="62" r="6" fill="var(--data)"/>
+      <text x="138" y="48" font-size="13" fill="var(--data)" font-weight="700" text-anchor="middle">1958</text>
+      <text x="155" y="30" font-size="12" fill="currentColor" text-anchor="middle">Перцептрон</text>
+
+      <circle cx="255" cy="150" r="6" fill="var(--warn)"/>
+      <text x="255" y="182" font-size="13" fill="var(--warn)" font-weight="700" text-anchor="middle">1972</text>
+      <text x="255" y="200" font-size="12" fill="currentColor" text-anchor="middle">Minsky &amp; Papert</text>
+
+      <circle cx="355" cy="62" r="6" fill="var(--data)"/>
+      <text x="355" y="48" font-size="13" fill="var(--data)" font-weight="700" text-anchor="middle">1986</text>
+      <text x="355" y="30" font-size="12" fill="currentColor" text-anchor="middle">PDP ном</text>
+
+      <circle cx="455" cy="150" r="6" fill="var(--warn)"/>
+      <text x="455" y="182" font-size="13" fill="var(--warn)" font-weight="700" text-anchor="middle">2000</text>
+      <text x="455" y="200" font-size="12" fill="currentColor" text-anchor="middle">AI өвөл</text>
+
+      <circle cx="560" cy="145" r="6" fill="var(--good)"/>
+      <text x="600" y="120" font-size="13" fill="var(--good)" font-weight="700" text-anchor="middle">2012</text>
+      <text x="600" y="138" font-size="12" fill="currentColor" text-anchor="middle">AlexNet</text>
+
+      <g stroke="currentColor" stroke-width="1.5" opacity=".8">
+        <line x1="160" y1="282" x2="250" y2="282"/>
+        <line x1="360" y1="282" x2="450" y2="282"/>
+      </g>
+      <text x="205" y="277" font-size="12" fill="currentColor" text-anchor="middle" font-weight="700">28 жил</text>
+      <text x="405" y="277" font-size="12" fill="currentColor" text-anchor="middle" font-weight="700">28 жил</text>
+      <text x="610" y="277" font-size="13" fill="var(--warn)" text-anchor="middle" font-weight="700">2028 ?</text>
+    </svg>
+    </div>
+    <figcaption>Хоёр өвлийн хооронд яг 28 жил. Лекц «дараа нь юу болох вэ?» гэж асууж байна.</figcaption>
+  </figure>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Он</th><th>Юу болсон</th><th>Үр дагавар</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1958</strong></td><td>Rosenblatt — Перцептрон</td><td>Их урам зориг</td></tr>
+        <tr><td><strong>1972</strong></td><td>Minsky &amp; Papert — «XOR бодож чадахгүй»</td><td>1-р AI өвөл</td></tr>
+        <tr><td><strong>1986</strong></td><td>PDP ном — backprop дэлгэрэв</td><td>Сэргэлт</td></tr>
+        <tr><td><strong>1998</strong></td><td>LeCun — LeNet-5 конволюци сүлжээ</td><td>Цифр танина, бусад нь үгүй</td></tr>
+        <tr><td><strong>2000</strong></td><td>NeurIPS-д «Neural», «Network» гэсэн үгтэй өгүүлэл <em>татгалздаг</em> болов</td><td>2-р AI өвөл</td></tr>
+        <tr class="hl"><td><strong>2012</strong></td><td>Krizhevsky, Sutskever, Hinton — AlexNet</td><td>ImageNet алдаа 26.2% → 16.4%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card c-warn">
+    <span class="tag">Анхаарал татахуйц баримт</span>
+    <p style="margin-bottom:0">2000 оны NeurIPS чуулган дээр судалгаа хийхэд өгүүллийн
+    <strong>гарчигт байвал татгалзах магадлалыг нэмэгдүүлдэг хоёр үг</strong> нь яг
+    «<strong>Neural</strong>» ба «<strong>Network</strong>» байсан. Өнөөдөр бүх салбарыг
+    тодорхойлж буй технологи ердөө 12 жилийн өмнө ичгүүртэй үг байсан гэсэн үг.</p>
+  </div>
+</section>
+
+<!-- ================= НЕЙРОН ================= -->
+<section id="нейрон">
+  <p class="eyebrow">Хэсэг 2</p>
+  <h2>Биологи → хиймэл нейрон</h2>
+
+  <p>Хүний тархинд ойролцоогоор <strong>80–100 тэрбум</strong> нейрон байдаг.
+  Нейрон бүр <strong>дендрит</strong>-ээр дохио хүлээн авч, <strong>сома</strong>-д
+  нийлүүлж, босго давбал <strong>аксон</strong>-оор дамжуулна. Холболтыг
+  <strong>синапс</strong> гэнэ.</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 700 250" role="img" aria-label="Биологийн нейроныг хиймэл нейрон болгон хувиргах схем">
+      <text x="140" y="24" font-size="14" fill="currentColor" font-weight="700" text-anchor="middle">Биологийн нейрон</text>
+      <g stroke="var(--data)" stroke-width="2.5" fill="none">
+        <path d="M60,90 L105,120"/><path d="M58,130 L105,130"/><path d="M62,170 L105,142"/>
+      </g>
+      <circle cx="128" cy="130" r="26" fill="var(--data)" opacity=".25" stroke="var(--data)" stroke-width="2.5"/>
+      <line x1="154" y1="130" x2="235" y2="130" stroke="var(--data)" stroke-width="4"/>
+      <circle cx="240" cy="130" r="6" fill="var(--data)"/>
+      <text x="75" y="200" font-size="12" fill="currentColor" opacity=".75" text-anchor="middle">дендрит</text>
+      <text x="128" y="172" font-size="12" fill="currentColor" opacity=".75" text-anchor="middle">сома</text>
+      <text x="196" y="118" font-size="12" fill="currentColor" opacity=".75" text-anchor="middle">аксон</text>
+
+      <line x1="275" y1="130" x2="325" y2="130" stroke="var(--math)" stroke-width="3"/>
+      <polygon points="333,130 319,123 319,137" fill="var(--math)"/>
+
+      <text x="520" y="24" font-size="14" fill="currentColor" font-weight="700" text-anchor="middle">Хиймэл нейрон (1943)</text>
+      <g font-family="monospace" font-size="14">
+        <circle cx="380" cy="80" r="15" fill="none" stroke="var(--data)" stroke-width="2"/>
+        <text x="380" y="85" fill="var(--data)" text-anchor="middle" font-weight="700">x₁</text>
+        <circle cx="380" cy="130" r="15" fill="none" stroke="var(--data)" stroke-width="2"/>
+        <text x="380" y="135" fill="var(--data)" text-anchor="middle" font-weight="700">x₂</text>
+        <circle cx="380" cy="180" r="15" fill="none" stroke="var(--data)" stroke-width="2"/>
+        <text x="380" y="185" fill="var(--data)" text-anchor="middle" font-weight="700">x₃</text>
+      </g>
+      <g stroke="var(--math)" stroke-width="2">
+        <line x1="396" y1="83" x2="470" y2="122"/>
+        <line x1="396" y1="130" x2="470" y2="130"/>
+        <line x1="396" y1="177" x2="470" y2="138"/>
+      </g>
+      <text x="428" y="92" font-size="13" fill="var(--math)" font-weight="700" font-family="monospace">w₁</text>
+      <text x="432" y="124" font-size="13" fill="var(--math)" font-weight="700" font-family="monospace">w₂</text>
+      <text x="428" y="178" font-size="13" fill="var(--math)" font-weight="700" font-family="monospace">w₃</text>
+
+      <circle cx="492" cy="130" r="23" fill="none" stroke="currentColor" stroke-width="2"/>
+      <text x="492" y="138" font-size="22" fill="currentColor" text-anchor="middle">Σ</text>
+      <line x1="515" y1="130" x2="552" y2="130" stroke="currentColor" stroke-width="2"/>
+      <rect x="552" y="110" width="44" height="40" rx="4" fill="none" stroke="var(--math)" stroke-width="2"/>
+      <text x="574" y="138" font-size="20" fill="var(--math)" text-anchor="middle">φ</text>
+      <line x1="596" y1="130" x2="640" y2="130" stroke="var(--good)" stroke-width="2.5"/>
+      <circle cx="652" cy="130" r="13" fill="none" stroke="var(--good)" stroke-width="2.5"/>
+      <text x="652" y="136" font-size="14" fill="var(--good)" text-anchor="middle" font-weight="700" font-family="monospace">a</text>
+      <text x="574" y="98" font-size="11.5" fill="var(--math)" text-anchor="middle">идэвхжүүлэгч</text>
+      <text x="492" y="168" font-size="11.5" fill="currentColor" opacity=".75" text-anchor="middle">нийлбэр</text>
+      <text x="652" y="162" font-size="11.5" fill="var(--good)" text-anchor="middle">гаралт</text>
+    </svg>
+    </div>
+    <figcaption>McCulloch–Pitts, 1943. Биологийн бүх эд эрхтэн нэг мөр томъёо болж хураагдсан.</figcaption>
+  </figure>
+
+  <div class="formula">
+    <div class="big"><span class="t-y">a</span> = <span class="t-w">φ</span>( Σ <span class="t-w">w<sub>i</sub></span> · <span class="t-x">x<sub>i</sub></span> )</div>
+    <ul class="fkey">
+      <li><code class="t-x">x<sub>i</sub></code><span>Оролтын дохио — биологид <strong>дендрит</strong>.</span></li>
+      <li><code class="t-w">w<sub>i</sub></code><span>Жин — биологид <strong>синапсын хүч</strong>. Загвар үүнийг сурна.</span></li>
+      <li><code>Σ</code><span>Нийлбэр — биологид <strong>сома</strong>.</span></li>
+      <li><code class="t-w">φ</code><span>Идэвхжүүлэх функц — биологид <strong>галлах босго</strong>.</span></li>
+      <li><code class="t-y">a</code><span>Гаралт — биологид <strong>аксон</strong>.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= XOR ================= -->
+<section id="xor">
+  <p class="eyebrow">Хэсэг 3</p>
+  <h2>Перцептрон ба XOR — салбарыг унагаасан 4 цэг</h2>
+
+  <div class="formula">
+    <div class="big"><span class="t-x">z</span> = <span class="t-x">x</span><sup>T</sup><span class="t-w">w</span> + <span class="t-w">b</span>,
+    &nbsp;&nbsp; <span class="t-y">y</span> = g(<span class="t-x">z</span>)</div>
+    <p style="margin:10px 0 0;font-size:14.5px;text-align:left">
+    Энэ бол <strong>Лаб 2-ын perceptron</strong> яг тэр хэвээрээ. Нэг давхар сүлжээ нь
+    зөвхөн <strong>шулуун зааг</strong> зурж чадна.</p>
+  </div>
+
+  <p>Minsky &amp; Papert 1972 онд ердөө <strong>дөрвөн цэгээр</strong> перцептроны
+  хязгаарыг нотолсон:</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 700 260" role="img" aria-label="XOR бодлого — дөрвөн цэгийг шулуунаар тусгаарлах боломжгүй">
+      <text x="150" y="24" font-size="14" fill="currentColor" font-weight="700" text-anchor="middle">XOR үнэний хүснэгт</text>
+      <g font-family="monospace" font-size="15">
+        <text x="60"  y="60" fill="currentColor" opacity=".7">x₁</text>
+        <text x="110" y="60" fill="currentColor" opacity=".7">x₂</text>
+        <text x="185" y="60" fill="currentColor" opacity=".7">гаралт</text>
+        <line x1="50" y1="70" x2="245" y2="70" stroke="currentColor" opacity=".35"/>
+        <text x="60" y="95"  fill="currentColor">0</text><text x="110" y="95"  fill="currentColor">0</text><text x="205" y="95"  fill="var(--warn)" font-weight="700">0</text>
+        <text x="60" y="125" fill="currentColor">1</text><text x="110" y="125" fill="currentColor">0</text><text x="205" y="125" fill="var(--data)" font-weight="700">1</text>
+        <text x="60" y="155" fill="currentColor">0</text><text x="110" y="155" fill="currentColor">1</text><text x="205" y="155" fill="var(--data)" font-weight="700">1</text>
+        <text x="60" y="185" fill="currentColor">1</text><text x="110" y="185" fill="currentColor">1</text><text x="205" y="185" fill="var(--warn)" font-weight="700">0</text>
+      </g>
+
+      <text x="480" y="24" font-size="14" fill="currentColor" font-weight="700" text-anchor="middle">Хавтгай дээр буулгавал</text>
+      <line x1="370" y1="210" x2="600" y2="210" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
+      <line x1="370" y1="210" x2="370" y2="50" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
+      <text x="366" y="232" font-size="12" fill="currentColor" opacity=".7" font-family="monospace">0</text>
+      <text x="548" y="232" font-size="12" fill="currentColor" opacity=".7" font-family="monospace">1</text>
+      <text x="350" y="78" font-size="12" fill="currentColor" opacity=".7" font-family="monospace">1</text>
+
+      <rect x="356" y="196" width="26" height="26" fill="var(--warn)"/>
+      <rect x="536" y="56"  width="26" height="26" fill="var(--warn)"/>
+      <circle cx="549" cy="209" r="13" fill="var(--data)"/>
+      <circle cx="369" cy="69"  r="13" fill="var(--data)"/>
+
+      <line x1="380" y1="230" x2="600" y2="40" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 5" opacity=".8"/>
+      <line x1="370" y1="120" x2="610" y2="120" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 5" opacity=".8"/>
+      <line x1="470" y1="40"  x2="470" y2="230" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 5" opacity=".8"/>
+
+      <text x="480" y="252" font-size="13" fill="var(--warn)" font-weight="700" text-anchor="middle">ямар ч шулуун тусгаарлаж чадахгүй</text>
+    </svg>
+    </div>
+    <figcaption>1-үүд (хөх) эсрэг талын буланд, 0-ууд (улаан) нөгөө эсрэг буланд.
+    Хичнээн оролдсон ч нэг шулуунаар хуваагдахгүй.</figcaption>
+  </figure>
+
+  <div class="card c-good">
+    <span class="tag">Шийдэл</span>
+    <p style="margin-bottom:0">Дунд нь <strong>нэг нуугдмал давхарга</strong> нэмэх.
+    Тэр давхарга өгөгдлийг эхлээд өөр орон зай руу хувиргана, тэнд шулуун хангалттай болно.
+    Санаа нь <strong>Лаб 4-ийн kernel trick</strong>-тэй яг адил — ялгаа нь kernel-ийг
+    гараар сонгодог бол энд сүлжээ <strong>өөрөө сурдаг</strong>.</p>
+  </div>
+</section>
+
+<!-- ================= ИДЭВХЖҮҮЛЭГЧ ================= -->
+<section id="идэвх">
+  <p class="eyebrow">Хэсэг 4</p>
+  <h2>Идэвхжүүлэх функц — яагаад заавал шугаман бус байх ёстой вэ</h2>
+
+  <div class="card c-math">
+    <span class="tag">Хамгийн чухал баримт</span>
+    <p>Хэрэв идэвхжүүлэгч байхгүй бол давхарга нэмэх нь <strong>утгагүй</strong>:</p>
+    <div class="formula" style="margin:12px 0 0;border-color:var(--math-br)">
+      <span class="t-w">W₂</span>(<span class="t-w">W₁</span><span class="t-x">x</span>)
+      = (<span class="t-w">W₂W₁</span>)<span class="t-x">x</span>
+      = <span class="t-w">W′</span><span class="t-x">x</span>
+    </div>
+    <p style="margin:12px 0 0">Матрицын үржвэр мөн л матриц. Иймээс <strong>100 давхарга
+    ч нийлээд нэг л матриц</strong> болно — нэг давхаргатай яг адилхан, зөвхөн 100 дахин удаан.
+    Шугаман бус функц л давхаргад <em>утга</em> өгдөг.</p>
+  </div>
+
+  <div class="actgrid">
+    <div class="actcell">
+      <h4>Step</h4>
+      <svg viewBox="0 0 200 120" role="img" aria-label="Step функцийн график">
+        <line x1="20" y1="90" x2="185" y2="90" stroke="currentColor" opacity=".4"/>
+        <line x1="100" y1="20" x2="100" y2="105" stroke="currentColor" opacity=".4"/>
+        <polyline points="20,90 100,90 100,25 180,25" fill="none" stroke="var(--math)" stroke-width="3"/>
+      </svg>
+      <p><strong>Уламжлал нь хаа сайгүй 0</strong> → градиент дамжихгүй → сургах боломжгүй.</p>
+    </div>
+    <div class="actcell">
+      <h4>Sigmoid</h4>
+      <svg viewBox="0 0 200 120" role="img" aria-label="Sigmoid функцийн график">
+        <line x1="20" y1="90" x2="185" y2="90" stroke="currentColor" opacity=".4"/>
+        <line x1="100" y1="20" x2="100" y2="105" stroke="currentColor" opacity=".4"/>
+        <polyline points="20,89.6 36,88.8 52,86.9 68,82.3 84,72.5 100,57.5 116,42.5 132,32.7 148,28.1 164,26.2 180,25.5"
+                  fill="none" stroke="var(--math)" stroke-width="3"/>
+      </svg>
+      <p>[0,1]. <strong>0.5-д төвлөрдөг</strong> нь муу. Лекц: «практикт хэрэглэгддэггүй».</p>
+    </div>
+    <div class="actcell">
+      <h4>tanh</h4>
+      <svg viewBox="0 0 200 120" role="img" aria-label="tanh функцийн график">
+        <line x1="20" y1="57.5" x2="185" y2="57.5" stroke="currentColor" opacity=".4"/>
+        <line x1="100" y1="20" x2="100" y2="100" stroke="currentColor" opacity=".4"/>
+        <polyline points="20,90 36,90 52,89.8 68,88.8 84,82.3 100,57.5 116,32.7 132,26.2 148,25.2 164,25 180,25"
+                  fill="none" stroke="var(--math)" stroke-width="3"/>
+      </svg>
+      <p>[−1,1], <strong>0-д төвлөрсөн</strong> тул sigmoid-оос дээр. Градиент захдаа 0 болно.</p>
+    </div>
+    <div class="actcell">
+      <h4>ReLU</h4>
+      <svg viewBox="0 0 200 120" role="img" aria-label="ReLU функцийн график">
+        <line x1="20" y1="90" x2="185" y2="90" stroke="currentColor" opacity=".4"/>
+        <line x1="100" y1="20" x2="100" y2="105" stroke="currentColor" opacity=".4"/>
+        <polyline points="20,90 100,90 180,25" fill="none" stroke="var(--good)" stroke-width="3.5"/>
+      </svg>
+      <p><strong>Анхдагч сонголт.</strong> tanh-аас <strong>6× хурдан</strong> нийлнэ. Сөрөг талдаа үхдэг.</p>
+    </div>
+    <div class="actcell">
+      <h4>Leaky ReLU</h4>
+      <svg viewBox="0 0 200 120" role="img" aria-label="Leaky ReLU функцийн график">
+        <line x1="20" y1="82" x2="185" y2="82" stroke="currentColor" opacity=".4"/>
+        <line x1="100" y1="18" x2="100" y2="105" stroke="currentColor" opacity=".4"/>
+        <polyline points="20,95 100,82 180,22" fill="none" stroke="var(--good)" stroke-width="3.5"/>
+      </svg>
+      <p>Сөрөг талдаа бага налуу (α≈0.02) → <strong>хаа сайгүй градиенттэй</strong>.</p>
+    </div>
+  </div>
+
+  <h3>«Үхсэн ReLU» гэж юу вэ — тоон жишээ</h3>
+  <pre><code><span class="cm"># ReLU: g(z) = max(0, z),  g'(z) = 1 хэрэв z ≥ 0, эс бөгөөс 0</span>
+
+z = -2.0  →  g(z) = 0.0    g'(z) = 0   <span class="cm">← градиент 0: энэ нейрон сурахаа болино</span>
+z =  0.5  →  g(z) = 0.5    g'(z) = 1   <span class="cm">← градиент бүтнээрээ дамжина</span>
+z =  3.0  →  g(z) = 3.0    g'(z) = 1   <span class="cm">← хэчнээн том ч налуу 1 хэвээр</span></code></pre>
+
+  <div class="card c-warn">
+    <span class="tag">Vanishing gradient</span>
+    <p style="margin-bottom:0">Sigmoid-ын хувьд <code>z = 5</code> үед налуу нь
+    <strong>0.0066</strong>. 10 давхаргаар дамжихад <code>0.0066¹⁰ ≈ 10⁻²²</code> —
+    градиент бүрмөсөн алга болно. ReLU эерэг талдаа налуу нь <strong>үргэлж яг 1</strong>
+    тул 100 давхаргаар дамжсан ч суларахгүй. 2012 оны амжилтын нэг гол шалтгаан яг энэ.</p>
+  </div>
+</section>
+
+<!-- ================= ДАВХАРГА ================= -->
+<section id="давхарга">
+  <p class="eyebrow">Хэсэг 5</p>
+  <h2>Давхарга холбох — MLP</h2>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Хоёр давхаргатай мэдрэлийн сүлжээний бүтэц">
+      <text x="110" y="24" font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">Оруулах</text>
+      <text x="350" y="24" font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">Нуугдмал (hidden)</text>
+      <text x="600" y="24" font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">Гаралт</text>
+
+      <g stroke="var(--math)" stroke-width="1" opacity=".45">
+        <line x1="128" y1="70"  x2="332" y2="60"/><line x1="128" y1="70"  x2="332" y2="110"/><line x1="128" y1="70"  x2="332" y2="160"/><line x1="128" y1="70"  x2="332" y2="210"/>
+        <line x1="128" y1="120" x2="332" y2="60"/><line x1="128" y1="120" x2="332" y2="110"/><line x1="128" y1="120" x2="332" y2="160"/><line x1="128" y1="120" x2="332" y2="210"/>
+        <line x1="128" y1="170" x2="332" y2="60"/><line x1="128" y1="170" x2="332" y2="110"/><line x1="128" y1="170" x2="332" y2="160"/><line x1="128" y1="170" x2="332" y2="210"/>
+        <line x1="128" y1="220" x2="332" y2="60"/><line x1="128" y1="220" x2="332" y2="110"/><line x1="128" y1="220" x2="332" y2="160"/><line x1="128" y1="220" x2="332" y2="210"/>
+      </g>
+      <g stroke="var(--math)" stroke-width="1" opacity=".45">
+        <line x1="368" y1="60"  x2="578" y2="110"/><line x1="368" y1="60"  x2="578" y2="170"/>
+        <line x1="368" y1="110" x2="578" y2="110"/><line x1="368" y1="110" x2="578" y2="170"/>
+        <line x1="368" y1="160" x2="578" y2="110"/><line x1="368" y1="160" x2="578" y2="170"/>
+        <line x1="368" y1="210" x2="578" y2="110"/><line x1="368" y1="210" x2="578" y2="170"/>
+      </g>
+
+      <g fill="var(--data-bg)" stroke="var(--data)" stroke-width="2.5">
+        <circle cx="110" cy="70" r="18"/><circle cx="110" cy="120" r="18"/>
+        <circle cx="110" cy="170" r="18"/><circle cx="110" cy="220" r="18"/>
+      </g>
+      <g fill="var(--math-bg)" stroke="var(--math)" stroke-width="2.5">
+        <circle cx="350" cy="60" r="18"/><circle cx="350" cy="110" r="18"/>
+        <circle cx="350" cy="160" r="18"/><circle cx="350" cy="210" r="18"/>
+      </g>
+      <g fill="var(--good-bg)" stroke="var(--good)" stroke-width="2.5">
+        <circle cx="596" cy="110" r="18"/><circle cx="596" cy="170" r="18"/>
+      </g>
+
+      <text x="110" y="76" font-size="14" fill="var(--data)" text-anchor="middle" font-family="monospace" font-weight="700">x</text>
+      <text x="350" y="66" font-size="14" fill="var(--math)" text-anchor="middle" font-family="monospace" font-weight="700">h</text>
+      <text x="596" y="116" font-size="14" fill="var(--good)" text-anchor="middle" font-family="monospace" font-weight="700">y</text>
+
+      <text x="230" y="252" font-size="14" fill="var(--math)" text-anchor="middle" font-family="monospace" font-weight="700">W₁, b₁</text>
+      <text x="473" y="252" font-size="14" fill="var(--math)" text-anchor="middle" font-family="monospace" font-weight="700">W₂, b₂</text>
+      <text x="230" y="272" font-size="12" fill="currentColor" opacity=".7" text-anchor="middle">h = g(W₁x + b₁)</text>
+      <text x="473" y="272" font-size="12" fill="currentColor" opacity=".7" text-anchor="middle">y = g(W₂h + b₂)</text>
+    </svg>
+    </div>
+    <figcaption>Бүх параметр: θ = {W₁, …, W_L, b₁, …, b_L}. Энэ бүгдийг backprop сургана.</figcaption>
+  </figure>
+
+  <h3>Хэдэн давхарга хэрэгтэй вэ</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Давхарга</th><th>Юу хийж чадах вэ</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1 давхарга</strong></td><td>Зөвхөн <strong>шугаман</strong> шийдвэрийн гадаргуу (= Лаб 2-ын perceptron)</td></tr>
+        <tr class="hl"><td><strong>2+ давхарга</strong></td><td>Онолын хувьд <strong>ямар ч функцийг</strong> төлөөлж чадна (<em>universal approximation</em>)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card c-data">
+    <span class="tag">Лекцийн анхааруулга</span>
+    <p style="margin-bottom:0">«2 давхарга хангалттай» гэдэг нь онол. Практикт асуудал нь
+    <strong>үр дүн</strong> юм: маш өргөн 2 давхарга vs нарийн гүн загвар?
+    <strong>Илүү олон давхарга</strong> нь ижил параметрийн тоогоор илүү сайн ажилладаг.
+    Тиймээс «deep» learning гэдэг.</p>
+  </div>
+
+  <h3>Давхарга бүр юу хийдэг вэ — төлөөлөл сурдаг</h3>
+  <div class="formula">
+    <div class="big">f(<span class="t-x">x</span>) = f<sub>L</sub>( f<sub>L−1</sub>( … f₂( f₁(<span class="t-x">x</span>) ) ) )</div>
+  </div>
+  <p>Лекцэд t-SNE-ээр харуулсан нотолгоо байна:</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Хаана хэмжсэн</th><th>Ангиудын байдал</th></tr></thead>
+      <tbody>
+        <tr><td>1-р давхаргын төлөөлөл</td><td>Бүх өнгө холилдсон — юу ч ялгарахгүй</td></tr>
+        <tr class="hl"><td>6-р давхаргын төлөөлөл</td><td>Анги бүр <strong>өөрийн тусдаа бөөгнөрөлтэй</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Энэ нь тархины харааны системтэй төстэй шатлал үүсгэдэг:
+  <strong>V1</strong> (ирмэг) → <strong>V2/V4</strong> (хэлбэр) → <strong>PIT/AIT</strong> (объект) → ангилал.</p>
+</section>
+
+<!-- ================= SOFTMAX ================= -->
+<section id="softmax">
+  <p class="eyebrow">Хэсэг 6</p>
+  <h2>Softmax ба Cross-Entropy</h2>
+
+  <p>Сүлжээний сүүлийн давхарга <code>K</code> ширхэг түүхий оноо гаргана — үүнийг
+  <strong>logits</strong> гэнэ. Эдгээр нь магадлал биш (сөрөг ч байж болно, нийлбэр нь 1 биш).
+  <strong>Softmax</strong> тэднийг магадлал болгоно:</p>
+
+  <div class="formula">
+    <div class="big">ŷ<sub>j</sub> = e<sup><span class="t-x">z<sub>j</sub></span></sup> ⁄ Σ<sub>k</sub> e<sup><span class="t-x">z<sub>k</sub></span></sup></div>
+    <ul class="fkey">
+      <li><code class="t-x">z</code><span>Logits — сүлжээний түүхий гаралт.</span></li>
+      <li><code>e<sup>z</sup></code><span>Экспонент нь бүх утгыг <strong>эерэг</strong> болгоно.</span></li>
+      <li><code>Σ-д хуваах</code><span>Нийлбэрийг яг <strong>1</strong> болгоно → магадлал.</span></li>
+    </ul>
+  </div>
+
+  <pre><code><span class="cm"># 3 ангитай жишээ</span>
+logits z = [2.0,   1.0,   0.1  ]
+e^z      = [7.389, 2.718, 1.105]     нийлбэр = 11.212
+softmax  = [0.659, 0.242, 0.099]     <span class="cm">← нийлбэр нь яг 1.000</span></code></pre>
+
+  <h3>Алдагдал: cross-entropy</h3>
+  <div class="formula">
+    <div class="big">H(<span class="t-y">y</span>, ŷ) = − Σ<sub>k</sub> <span class="t-y">y<sub>k</sub></span> · log ŷ<sub>k</sub></div>
+    <p style="margin:10px 0 0;font-size:14.5px;text-align:left">
+    <code class="t-y">y</code> нь <strong>one-hot</strong> вектор (зөв ангид 1, бусдад 0).
+    Тиймээс нийлбэрээс <strong>зөвхөн нэг гишүүн</strong> үлдэнэ — зөв ангийн логарифм.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Нөхцөл</th><th>Тооцоо</th><th class="num">Алдагдал</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td>Зөв анги = 1-рх, загвар 0.659 гэсэн</td><td><code>−log(0.659)</code></td><td class="num">0.417</td></tr>
+        <tr><td>Зөв анги = 2-рх, загвар 0.242 гэсэн</td><td><code>−log(0.242)</code></td><td class="num">1.419</td></tr>
+        <tr><td>Зөв анги = 3-рх, загвар 0.099 гэсэн</td><td><code>−log(0.099)</code></td><td class="num">2.313</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Лекцийн зурагт: «clown fish» зургийг зөв таавал loss <span class="chip ch-good">small</span>,
+  «grizzly bear» гэж андуурвал loss <span class="chip ch-warn">large</span>.
+  Логарифм нь <strong>итгэлтэй бөгөөд буруу</strong> таамгийг онцгой хүчтэй шийтгэдэг:
+  магадлалыг 0.01 гэж таавал алдагдал 4.6 болно.</p>
+
+  <div class="card c-good">
+    <span class="tag">Лаб 3-тай холбоо</span>
+    <p style="margin-bottom:0">Та Лаб 3-д яг <strong>энэ алдагдлыг</strong> NumPy дээр бичсэн —
+    хоёр ангийн тохиолдолд <code>−y log(h) − (1−y) log(1−h)</code>. Softmax бол түүний
+    K ангийн ерөнхий хэлбэр, sigmoid бол softmax-ын K=2 үеийн тусгай тохиолдол.</p>
+  </div>
+</section>
+
+<!-- ================= БАТЧ ================= -->
+<section>
+  <p class="eyebrow">Хэсэг 7</p>
+  <h2>Тензор ба batch</h2>
+
+  <p>Зураг нэг нэгээр нь оруулбал GPU сул зогсоно. Тиймээс олныг нь
+  <strong>нэг дор</strong> дамжуулна:</p>
+
+  <div class="formula">
+    <div class="big"><span class="t-x">h₁</span> ∈ ℝ<sup>N<sub>batch</sub> × C₁</sup></div>
+    <ul class="fkey">
+      <li><code>N<sub>batch</sub></code><span>Нэг дор боловсруулах жишээний тоо.</span></li>
+      <li><code>C₁</code><span>Тухайн давхаргын нейроны тоо. Өөр нэрс: features, units, channels — <strong>бүгд нэг зүйл</strong>.</span></li>
+    </ul>
+  </div>
+
+  <pre><code><span class="cm"># Жишээ: 32 зураг, MNIST</span>
+X  : [32 × 784]      <span class="cm"># 32 зураг, тус бүр 784 пиксел</span>
+W₁ : [784 × 128]
+Z₁ = X @ W₁ + b₁  →  [32 × 128]
+H₁ = relu(Z₁)     →  [32 × 128]
+W₂ : [128 × 10]
+Z₂ = H₁ @ W₂ + b₂ →  [32 × 10]      <span class="cm"># 32 зураг × 10 цифрийн оноо</span></code></pre>
+
+  <p>Хэмжээс хэрхэн таарч байгааг анзаар: дотоод хэмжээс (784, 128) үржихдээ арилж,
+  <strong>batch хэмжээс (32) бүхэлдээ хөндөгдөхгүй</strong> дамжина. Иймээс нэг зураг
+  боловсруулах код өөрчлөлтгүйгээр 32 зураг дээр ажиллана.</p>
+</section>
+
+<!-- ================= РЕГУЛЯРИЗАЦИ ================= -->
+<section id="регул">
+  <p class="eyebrow">Хэсэг 8</p>
+  <h2>Тогтмолжуулалт — цээжлэхээс сэргийлэх</h2>
+
+  <div class="card c-warn">
+    <span class="tag">Асуудал</span>
+    <p style="margin-bottom:0">Гүн сүлжээ <strong>сая сая параметртэй</strong>. Өгөгдлийн
+    цэгийн тоо түүнээс цөөн байх нь элбэг. Тэгвэл сүлжээ зүй тогтол сурахын оронд зүгээр
+    л <strong>бүх хариуг цээжилж</strong> мэднэ — сургалтын өгөгдөлд төгс, шинэ өгөгдөлд муу.</p>
+  </div>
+
+  <h3>а) Weight decay (L2 regularization)</h3>
+  <div class="formula">
+    <div class="big">θ* = argmin Σ ℒ(f<sub>θ</sub>(<span class="t-x">x</span>), <span class="t-y">y</span>) + <span class="t-c">λ</span>‖<span class="t-w">W</span>‖²</div>
+    <ul class="fkey">
+      <li><code class="t-c">λ</code><span>Хэр хатуу шийтгэх вэ. Их бол жин жижиг, загвар энгийн.</span></li>
+      <li><code>‖W‖²</code><span>Бүх жингийн квадратын нийлбэр.</span></li>
+    </ul>
+  </div>
+  <p>Лекцийн үг: <em>«Бид жингээ жижиг байлгахыг илүүд үздэг.»</em> Энэ нь
+  <strong>Лаб 2-ын Pegasos-ын λ</strong>-тай яг ижил санаа — тэнд та λ өсөхөд
+  ‖θ‖ буурахыг туршилтаар харсан.</p>
+
+  <h3>б) Dropout</h3>
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 700 200" role="img" aria-label="Dropout — санамсаргүй нейронуудыг унтраах">
+      <text x="175" y="22" font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">Бүрэн сүлжээ</text>
+      <text x="525" y="22" font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">Dropout идэвхтэй үед</text>
+
+      <g stroke="var(--math)" stroke-width="1" opacity=".4">
+        <line x1="95" y1="70" x2="165" y2="55"/><line x1="95" y1="70" x2="165" y2="100"/><line x1="95" y1="70" x2="165" y2="145"/>
+        <line x1="95" y1="130" x2="165" y2="55"/><line x1="95" y1="130" x2="165" y2="100"/><line x1="95" y1="130" x2="165" y2="145"/>
+        <line x1="185" y1="55" x2="255" y2="85"/><line x1="185" y1="100" x2="255" y2="85"/><line x1="185" y1="145" x2="255" y2="85"/>
+        <line x1="185" y1="55" x2="255" y2="125"/><line x1="185" y1="100" x2="255" y2="125"/><line x1="185" y1="145" x2="255" y2="125"/>
+      </g>
+      <g fill="var(--data-bg)" stroke="var(--data)" stroke-width="2"><circle cx="85" cy="70" r="12"/><circle cx="85" cy="130" r="12"/></g>
+      <g fill="var(--math-bg)" stroke="var(--math)" stroke-width="2"><circle cx="175" cy="55" r="12"/><circle cx="175" cy="100" r="12"/><circle cx="175" cy="145" r="12"/></g>
+      <g fill="var(--good-bg)" stroke="var(--good)" stroke-width="2"><circle cx="265" cy="85" r="12"/><circle cx="265" cy="125" r="12"/></g>
+
+      <line x1="310" y1="100" x2="360" y2="100" stroke="currentColor" stroke-width="2" opacity=".6"/>
+      <polygon points="368,100 354,93 354,107" fill="currentColor" opacity=".6"/>
+
+      <g stroke="var(--math)" stroke-width="1" opacity=".4">
+        <line x1="445" y1="70" x2="515" y2="100"/><line x1="445" y1="70" x2="515" y2="145"/>
+        <line x1="445" y1="130" x2="515" y2="100"/><line x1="445" y1="130" x2="515" y2="145"/>
+        <line x1="535" y1="100" x2="605" y2="85"/><line x1="535" y1="145" x2="605" y2="85"/>
+        <line x1="535" y1="100" x2="605" y2="125"/><line x1="535" y1="145" x2="605" y2="125"/>
+      </g>
+      <g fill="var(--data-bg)" stroke="var(--data)" stroke-width="2"><circle cx="435" cy="70" r="12"/><circle cx="435" cy="130" r="12"/></g>
+      <circle cx="525" cy="55" r="12" fill="var(--warn)" stroke="var(--warn)" stroke-width="2"/>
+      <line x1="517" y1="47" x2="533" y2="63" stroke="var(--bg)" stroke-width="2.5"/>
+      <line x1="533" y1="47" x2="517" y2="63" stroke="var(--bg)" stroke-width="2.5"/>
+      <g fill="var(--math-bg)" stroke="var(--math)" stroke-width="2"><circle cx="525" cy="100" r="12"/><circle cx="525" cy="145" r="12"/></g>
+      <g fill="var(--good-bg)" stroke="var(--good)" stroke-width="2"><circle cx="615" cy="85" r="12"/><circle cx="615" cy="125" r="12"/></g>
+
+      <text x="525" y="182" font-size="12" fill="var(--warn)" text-anchor="middle" font-weight="700">санамсаргүй унтраасан</text>
+    </svg>
+    </div>
+    <figcaption>Сургалтын алхам бүрт өөр нейронууд унтардаг. Таамаглах үед бүгд асна.</figcaption>
+  </figure>
+
+  <ul class="plain">
+    <li>Нейронууд хоорондоо <strong>хуурамч хамаарал</strong> үүсгэхээс сэргийлнэ —
+    нэг нейрон нөгөөдөө хэт найдаж болохгүй болно.</li>
+    <li>Математикийн тайлбар: энэ нь <strong>экспоненциал олон жижиг сүлжээний дундаж</strong>
+    гэж ойлгож болно. Дундажлал нь функцийг гөлгөр болгож, загварын хэт хүчин чадлыг бууруулна.</li>
+  </ul>
+
+  <h3>в) Normalization давхарга</h3>
+  <div class="formula">
+    <div class="big">ẑ<sub>k</sub> = ( <span class="t-x">z<sub>k</sub></span> − E[<span class="t-x">z<sub>k</sub></span>] ) ⁄ √Var[<span class="t-x">z<sub>k</sub></span>]</div>
+    <p style="margin:10px 0 0;font-size:14.5px;text-align:left">
+    Дундажийг хасаж, стандарт хазайлтад хуваана. Үр дүнд нь нейрон бүр ижил масштабтай
+    болж, сургалт тогтвортой болно. Лаб 2, 3-д та яг үүнийг <strong>оролтын өгөгдөлд</strong>
+    хийсэн; энд сүлжээний <strong>дотоод давхарга бүрт</strong> хийж байна.</p>
+  </div>
+
+  <h3>г) Double descent — орчин үеийн сонин ажиглалт</h3>
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 700 230" role="img" aria-label="Сонгодог bias-variance ба double descent муруйн харьцуулалт">
+      <text x="175" y="22" font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">Сонгодог онол</text>
+      <line x1="60" y1="180" x2="300" y2="180" stroke="currentColor" opacity=".45"/>
+      <line x1="60" y1="40" x2="60" y2="180" stroke="currentColor" opacity=".45"/>
+      <path d="M75,60 C120,160 150,165 180,150 C220,130 260,70 290,45" fill="none" stroke="var(--warn)" stroke-width="3"/>
+      <path d="M75,120 C130,170 200,178 290,179" fill="none" stroke="var(--data)" stroke-width="2.5" stroke-dasharray="5 4"/>
+      <line x1="178" y1="45" x2="178" y2="180" stroke="currentColor" stroke-dasharray="3 3" opacity=".5"/>
+      <text x="178" y="200" font-size="11.5" fill="currentColor" opacity=".8" text-anchor="middle">«sweet spot»</text>
+      <text x="300" y="200" font-size="11.5" fill="currentColor" opacity=".7" text-anchor="end">багтаамж →</text>
+
+      <text x="520" y="22" font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">Бодит байдал (2019)</text>
+      <line x1="400" y1="180" x2="665" y2="180" stroke="currentColor" opacity=".45"/>
+      <line x1="400" y1="40" x2="400" y2="180" stroke="currentColor" opacity=".45"/>
+      <path d="M412,65 C445,140 470,150 495,45 C520,120 570,150 655,160" fill="none" stroke="var(--warn)" stroke-width="3"/>
+      <path d="M412,120 C450,170 480,178 495,179 L655,179" fill="none" stroke="var(--data)" stroke-width="2.5" stroke-dasharray="5 4"/>
+      <line x1="495" y1="40" x2="495" y2="180" stroke="currentColor" stroke-dasharray="3 3" opacity=".5"/>
+      <text x="495" y="200" font-size="11.5" fill="currentColor" opacity=".8" text-anchor="middle">interpolation threshold</text>
+      <text x="630" y="146" font-size="11.5" fill="var(--good)" font-weight="700" text-anchor="middle">дахин буурна!</text>
+
+      <g font-size="11.5">
+        <line x1="60" y1="216" x2="80" y2="216" stroke="var(--warn)" stroke-width="3"/>
+        <text x="86" y="220" fill="currentColor">тестийн алдаа</text>
+        <line x1="190" y1="216" x2="210" y2="216" stroke="var(--data)" stroke-width="2.5" stroke-dasharray="5 4"/>
+        <text x="216" y="220" fill="currentColor">сургалтын алдаа</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>Параметрийн тоо «хангалттай олон» болсны дараа тестийн алдаа
+    эсрэгээрээ дахин буурдаг. [Belkin нар, PNAS 2019]</figcaption>
+  </figure>
+
+  <p><strong>Яагаад?</strong> Параметр хэт олон үед загварыг тааруулах арга
+  <em>олон</em> байдаг. Оновчлогч тэдгээрээс <strong>хамгийн энгийнийг</strong>
+  (min-norm шийдэл) сонгодог. Лекцийн гарчиг: <em>«Параметрүүд хэдий чинээ энгийн байна,
+  төдий чинээ сурсан функц [сайн байна]»</em>.</p>
+</section>
+
+<!-- ================= BACKPROP ================= -->
+<section id="backprop">
+  <p class="eyebrow">Хэсэг 9</p>
+  <h2>Backpropagation — лекцийн гол сэдэв</h2>
+
+  <p>Загварт сая сая параметр байна. Тэдгээр бүрийн хувьд «энэ параметрийг бага зэрэг
+  өөрчилбөл алдагдал хэр өөрчлөгдөх вэ?» гэдгийг мэдэх хэрэгтэй. Backprop нь үүнийг
+  <strong>нэг дамжилтаар бүгдийг нь</strong> тооцоолдог.</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 700 330" role="img" aria-label="Forward pass ба backward pass-ын урсгал">
+      <text x="200" y="22" font-size="14" fill="var(--good)" font-weight="700" text-anchor="middle">Forward pass ↑</text>
+      <text x="500" y="22" font-size="14" fill="var(--warn)" font-weight="700" text-anchor="middle">Backward pass ↓</text>
+
+      <g fill="var(--code-bg)" stroke="var(--code)" stroke-width="2">
+        <rect x="255" y="245" width="190" height="42" rx="4"/>
+        <rect x="255" y="175" width="190" height="42" rx="4"/>
+        <rect x="255" y="105" width="190" height="42" rx="4"/>
+      </g>
+      <rect x="255" y="38" width="190" height="42" rx="4" fill="var(--data-bg)" stroke="var(--data)" stroke-width="2"/>
+
+      <g font-family="monospace" font-size="14" fill="currentColor" text-anchor="middle">
+        <text x="350" y="272">f₁(x₀, W₁)</text>
+        <text x="350" y="202">f₂(x₁, W₂)</text>
+        <text x="350" y="132">f₃(x₂, W₃)</text>
+        <text x="350" y="65" fill="var(--data)" font-weight="700">ℒ(x₃, y)</text>
+      </g>
+
+      <g stroke="var(--good)" stroke-width="3" fill="none">
+        <line x1="300" y1="310" x2="300" y2="289"/>
+        <line x1="300" y1="243" x2="300" y2="219"/>
+        <line x1="300" y1="173" x2="300" y2="149"/>
+        <line x1="300" y1="103" x2="300" y2="82"/>
+      </g>
+      <g fill="var(--good)">
+        <polygon points="300,287 294,299 306,299"/><polygon points="300,217 294,229 306,229"/>
+        <polygon points="300,147 294,159 306,159"/><polygon points="300,80 294,92 306,92"/>
+      </g>
+      <g font-family="monospace" font-size="12.5" fill="var(--good)">
+        <text x="258" y="236">x₁</text><text x="258" y="166">x₂</text><text x="258" y="96">x₃</text>
+      </g>
+      <text x="300" y="325" font-size="12.5" fill="var(--good)" text-anchor="middle" font-family="monospace">x₀ (оролт)</text>
+
+      <g stroke="var(--warn)" stroke-width="3" fill="none">
+        <line x1="400" y1="82" x2="400" y2="103"/>
+        <line x1="400" y1="149" x2="400" y2="173"/>
+        <line x1="400" y1="219" x2="400" y2="243"/>
+      </g>
+      <g fill="var(--warn)">
+        <polygon points="400,105 394,93 406,93"/><polygon points="400,175 394,163 406,163"/>
+        <polygon points="400,245 394,233 406,233"/>
+      </g>
+      <g font-family="monospace" font-size="12.5" fill="var(--warn)">
+        <text x="412" y="98">∂ℒ/∂x₃</text><text x="412" y="168">∂ℒ/∂x₂</text><text x="412" y="238">∂ℒ/∂x₁</text>
+      </g>
+
+      <g font-family="monospace" font-size="12.5" fill="var(--math)">
+        <text x="180" y="272" text-anchor="end">∂ℒ/∂W₁ →</text>
+        <text x="180" y="202" text-anchor="end">∂ℒ/∂W₂ →</text>
+        <text x="180" y="132" text-anchor="end">∂ℒ/∂W₃ →</text>
+      </g>
+      <text x="100" y="305" font-size="12" fill="var(--math)" text-anchor="middle">жин шинэчлэх</text>
+    </svg>
+    </div>
+    <figcaption>Урагш дохио, буцаж градиент. Давхарга бүр зөвхөн <strong>нэг үржүүлэлт</strong> хийнэ.</figcaption>
+  </figure>
+
+  <h3>Гинжний дүрэм (chain rule)</h3>
+  <div class="formula">
+    <div class="big">∂ℒ/∂<span class="t-w">W<sub>l</sub></span> =
+      <span class="t-e">[ ∂ℒ/∂x<sub>L</sub> · ∂x<sub>L</sub>/∂x<sub>L−1</sub> ⋯ ∂x<sub>l+1</sub>/∂x<sub>l</sub> ]</span>
+      · <span class="t-c">∂x<sub>l</sub>/∂W<sub>l</sub></span></div>
+    <ul class="fkey">
+      <li><code class="t-e">[ … ]</code><span>Дээрээс доош <strong>давталтаар</strong> хуримтлагдана. Үүнийг л «буцаж тархах» гэж байгаа юм.</span></li>
+      <li><code class="t-c">∂x<sub>l</sub>/∂W<sub>l</sub></code><span>Тухайн давхаргын дотоод уламжлал — <strong>амархан</strong>, тэр давхаргын төрлөөс л хамаарна.</span></li>
+    </ul>
+  </div>
+
+  <div class="card c-good">
+    <span class="tag">Яагаад хямд вэ</span>
+    <p style="margin-bottom:0">Параметр бүрийн хувьд тусад нь уламжлал бодвол
+    <strong>сая сая удаа</strong> тооцоолол хийнэ. Backprop нь <code>∂ℒ/∂x<sub>l</sub></code>-ийг
+    <strong>нэг удаа</strong> тооцоод доошоо дамжуулдаг тул нийт зардал нь forward pass-тай
+    бараг тэнцүү. Энэ л 1986 онд салбарыг сэргээсэн санаа.</p>
+  </div>
+
+  <h3>⭐ Loss layer-ийн градиент — энэ слайдыг сайн ойлгоорой</h3>
+
+  <p>Лекцийн «<em>Computing gradients: loss layer</em>» слайд. Backprop-ын
+  <strong>хамгийн эхний алхам</strong>, бүх зүйл эндээс эхэлдэг.</p>
+
+  <div class="formula">
+    <div class="big">∂ℒ/∂<span class="t-w">W<sub>L</sub></span>
+      = <span class="t-e">∂ℒ/∂x<sub>L</sub></span>
+      · <span class="t-c">∂f<sub>L</sub>(x<sub>L−1</sub>, W<sub>L</sub>) / ∂W<sub>L</sub></span></div>
+    <ul class="fkey">
+      <li><code class="t-e">1-р үржигдэхүүн</code><span>Зөвхөн <strong>алдагдлын функцийн төрлөөс</strong> хамаарна (L2, cross-entropy…). Давхарга ямар ч байсан хамаагүй.</span></li>
+      <li><code class="t-c">2-р үржигдэхүүн</code><span>Зөвхөн <strong>давхаргын бүтэц ба шугаман бусаас</strong> хамаарна. Алдагдал ямар ч байсан хамаагүй.</span></li>
+    </ul>
+  </div>
+
+  <div class="card c-good">
+    <span class="tag">Яагаад энэ хуваалт чухал вэ</span>
+    <p style="margin-bottom:0">Энэ хоёр хэсэг <strong>бие биенээсээ хамаардаггүй</strong>.
+    Иймээс та алдагдлын функцээ сольж болно (L2 → cross-entropy) — давхаргын код огт
+    өөрчлөгдөхгүй. Эсрэгээр давхаргаа сольж болно (linear → convolution) — алдагдлын код
+    өөрчлөгдөхгүй. <strong>Энэ л PyTorch-ийн модуль системийн үндэс</strong>.</p>
+  </div>
+
+  <h4>Евклидийн алдагдлын градиентийг гаргах</h4>
+
+  <div class="formula">
+    <div class="big">ℒ(<span class="t-x">x<sub>L</sub></span>, <span class="t-y">y</span>)
+      = ½‖<span class="t-x">x<sub>L</sub></span> − <span class="t-y">y</span>‖²
+      &nbsp;&nbsp;⟹&nbsp;&nbsp;
+      ∂ℒ/∂<span class="t-x">x<sub>L</sub></span>
+      = (<span class="t-x">x<sub>L</sub></span> − <span class="t-y">y</span>)<sup>T</sup></div>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <h4 style="margin-top:0">Нийлбэр хэлбэрээр задлах</h4>
+      <pre style="margin:6px 0 0"><code>ℒ = ½‖x_L − y‖² = ½ · Σᵢ (x_Lᵢ − yᵢ)²</code></pre>
+    </li>
+    <li>
+      <h4 style="margin-top:0">Нэг гишүүний уламжлал авах</h4>
+      <pre style="margin:6px 0 0"><code>∂ℒ/∂x_Lᵢ = ½ · 2 · (x_Lᵢ − yᵢ) = x_Lᵢ − yᵢ
+
+<span class="cm"># ½ нь яг л энэ 2-ыг цуцлахын тулд тавигдсан — тиймээс томъёо цэвэрхэн гардаг</span></code></pre>
+    </li>
+    <li>
+      <h4 style="margin-top:0">Бүх гишүүнийг вектор болгон бичих</h4>
+      <pre style="margin:6px 0 0"><code>∂ℒ/∂x_L = (x_L − y)ᵀ</code></pre>
+    </li>
+  </ol>
+
+  <div class="card c-warn">
+    <span class="tag">Транспоз яагаад байна вэ — шалгалтанд асуудаг</span>
+    <p>Лекцийн «Matrix тооцоо» слайдын дүрэм:</p>
+    <div class="tablewrap" style="margin:10px 0">
+      <table>
+        <thead><tr><th>Юуны уламжлал</th><th>Үр дүнгийн хэлбэр</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td><strong>скаляр</strong> / вектор [n×1]</td><td><strong>мөр вектор</strong> [1×n]</td></tr>
+          <tr><td>вектор [m×1] / вектор [n×1]</td><td>матриц [m×n] (Jacobian)</td></tr>
+          <tr><td>скаляр / матриц [n×m]</td><td>матриц [m×n]</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-bottom:0">Алдагдал <code>ℒ</code> нь <strong>скаляр</strong> (ганц тоо),
+    <code>x<sub>L</sub></code> нь <strong>багана вектор</strong>. Эхний мөрийн дагуу үр дүн нь
+    <strong>мөр вектор</strong> байх ёстой — тиймээс <code>ᵀ</code>. Хэрэв транспозгүй
+    бичвэл дараагийн алхамд хэмжээс таарахгүй болж, <code>∂ℒ/∂x₂ = ∂ℒ/∂x₃ · W₁</code>
+    гэсэн үржвэр ажиллахгүй.</p>
+  </div>
+
+  <h4>Тоон жишээ — вектор тохиолдол</h4>
+  <pre><code>x_L = ( 0.8 )        y = ( 1.0 )
+      ( 0.1 )            ( 0.0 )
+      ( 0.3 )            ( 0.0 )
+
+ℒ = ½[(0.8−1.0)² + (0.1−0)² + (0.3−0)²]
+  = ½[0.04 + 0.01 + 0.09] = <strong>0.07</strong>
+
+∂ℒ/∂x_L = (x_L − y)ᵀ = ( −0.2   0.1   0.3 )    <span class="cm">← мөр вектор [1×3]</span></code></pre>
+
+  <p>Тэмдгийг анзаар: <strong>1-р гишүүн сөрөг</strong> (таамаг хэтэрхий бага байсан →
+  өсгө), <strong>2, 3-р гишүүн эерэг</strong> (таамаг хэтэрхий их байсан → бууруул).
+  Градиент нь зүгээр нэг тоо биш — <em>чиглэл заасан заавар</em>.</p>
+
+  <h4>Скаляр тохиолдол — лекцийн өөрийнх нь жишээ</h4>
+  <pre><code>x₃ = 0.313      y = 0.5
+
+ℒ = ½(0.313 − 0.5)² = 0.017
+∂ℒ/∂x₃ = 0.313 − 0.5 = <strong>−0.1869</strong>      <span class="cm">← сөрөг: x₃-ыг өсгөх хэрэгтэй</span></code></pre>
+
+  <div class="card c-math">
+    <span class="tag">Нэмэлт — бас мэдэх нь зүйтэй</span>
+    <p style="margin-bottom:0">Softmax + cross-entropy хосыг <strong>хамтад нь</strong>
+    уламжилбал үр дүн нь гайхалтай энгийн гардаг:</p>
+    <div class="formula" style="margin:12px 0 0;border-color:var(--math-br)">
+      ∂ℒ/∂<span class="t-x">z</span> = <span class="t-x">ŷ</span> − <span class="t-y">y</span>
+    </div>
+    <p style="margin:12px 0 0">Яг L2-ынхтай <strong>ижил хэлбэртэй</strong> — «таамаг хасах
+    бодит утга». Санамсаргүй давхцал биш: хоёулаа экспоненциал гэр бүлийн загвараас
+    гаралтай. Иймээс практикт softmax ба cross-entropy-г тусад нь биш, нэг модуль болгон
+    хэрэгжүүлдэг (PyTorch-ийн <code>CrossEntropyLoss</code> нь softmax-ыг дотроо агуулдаг).</p>
+  </div>
+
+  <h3>Модуль бүрийн гурван томъёо</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Модуль</th><th>Forward</th><th>Backward (оролт руу)</th><th>Жингийн градиент</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Linear</strong></td>
+          <td><code>x_out = W·x_in</code></td>
+          <td><code>∂ℒ/∂x_in = ∂ℒ/∂x_out · W</code></td>
+          <td><code>∂ℒ/∂W = x_in · ∂ℒ/∂x_out</code></td>
+        </tr>
+        <tr>
+          <td><strong>Pointwise</strong><br><span style="font-size:12.5px;color:var(--fg-dim)">(tanh, ReLU…)</span></td>
+          <td><code>x_out = h(x_in + b)</code></td>
+          <td><code>∂ℒ/∂x_out · h′(x_in + b)</code></td>
+          <td>bias-д мөн адил</td>
+        </tr>
+        <tr>
+          <td><strong>L2 loss</strong></td>
+          <td><code>ℒ = ½‖x_in − y‖²</code></td>
+          <td><code>(x_in − y)ᵀ</code></td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card c-math">
+    <span class="tag">Цээжлэх ёстой уламжлалууд</span>
+    <p style="margin-bottom:0">
+    <code>tanh′(x) = 1 − tanh²(x)</code> &nbsp;·&nbsp;
+    <code>ReLU′(x) = 1(x ≥ 0)</code> &nbsp;·&nbsp;
+    <code>σ′(x) = σ(x)(1 − σ(x))</code></p>
+  </div>
+
+  <h3>Салах ба нийлэх (branching / merging)</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Үйлдэл</th><th>Forward</th><th>Backward</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Merge</strong> (нийлэх)</td><td>Хоёр урсгалыг нэгтгэнэ</td><td>Градиентийг <strong>хуваана</strong></td></tr>
+        <tr><td><strong>Branch</strong> (салах)</td><td>Нэг утгыг хуулбарлана</td><td>Градиентүүдийг <strong>нэмнэ</strong>: ∂ℒ/∂xᵃ + ∂ℒ/∂xᵇ</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card c-data">
+    <span class="tag">Хамгийн чухал ерөнхий дүгнэлт</span>
+    <p style="margin-bottom:0">Модуль бүр <strong>дифференциалагдах</strong> бөгөөд тэдгээр
+    нь <strong>DAG</strong> (мөчлөггүй чиглэлт граф) үүсгэж холбогдсон бол — та тэр бүх
+    системийг backprop-оор сургаж чадна. Иймээс PyTorch бол «мэдрэлийн сүлжээний сан» биш,
+    <strong>автомат дифференциалын систем</strong>. Мэдрэлийн сүлжээ бол түүний нэг хэрэглээ төдий.</p>
+  </div>
+</section>
+
+<!-- ================= ТООН ЖИШЭЭ ================= -->
+<section id="жишээ">
+  <p class="eyebrow">Хэсэг 10 · Хамгийн чухал</p>
+  <h2>Бүрэн тоон жишээ — алхам алхмаар</h2>
+
+  <p>Лекцийн сүүлийн 7 слайд энэ нэг жишээнд зориулагдсан. Шалгалтанд гарах магадлал
+  хамгийн өндөр. Доорх бүх тоог <strong>дахин шалгасан</strong>.</p>
+
+  <div class="card c-data">
+    <span class="tag">Өгөгдсөн</span>
+    <pre style="margin:8px 0 0;background:transparent;border:none;padding:0"><code>Бүтэц:  linear → tanh → linear → L2 loss
+
+W₀ = ( 1    −3 )        W₁ = ( 1  −1 )
+     ( 0.2   1 )
+
+x₀ = ( 1.0 )            y = 0.5        η = 0.2
+     ( 0.1 )</code></pre>
+  </div>
+
+  <h3>Forward pass <span class="chip ch-good">ногоон</span></h3>
+  <ol class="steps">
+    <li>
+      <h4 style="margin-top:0">Эхний шугаман давхарга</h4>
+      <pre style="margin:6px 0 0"><code>x₁ = W₀x₀ = ( 1·1.0 + (−3)·0.1 )  =  ( 0.7 )
+            ( 0.2·1.0 + 1·0.1  )     ( 0.3 )</code></pre>
+    </li>
+    <li>
+      <h4 style="margin-top:0">tanh идэвхжүүлэгч</h4>
+      <pre style="margin:6px 0 0"><code>x₂ = tanh(x₁) = ( tanh(0.7) ) = ( 0.604 )
+                ( tanh(0.3) )   ( 0.291 )</code></pre>
+    </li>
+    <li>
+      <h4 style="margin-top:0">Хоёр дахь шугаман давхарга</h4>
+      <pre style="margin:6px 0 0"><code>x₃ = W₁x₂ = 1·0.604 + (−1)·0.291 = 0.313</code></pre>
+    </li>
+    <li>
+      <h4 style="margin-top:0">Алдагдал</h4>
+      <pre style="margin:6px 0 0"><code>ℒ = ½(x₃ − y)² = ½(0.313 − 0.5)² = ½(−0.1869)² = 0.017</code></pre>
+    </li>
+  </ol>
+
+  <h3>Backward pass <span class="chip ch-warn">улаан</span></h3>
+  <ol class="steps">
+    <li>
+      <h4 style="margin-top:0">Алдагдлын давхаргаас эхэлнэ</h4>
+      <pre style="margin:6px 0 0"><code>∂ℒ/∂x₃ = x₃ − y = 0.313 − 0.5 = <strong>−0.1869</strong></code></pre>
+    </li>
+    <li>
+      <h4 style="margin-top:0">Шугаман давхаргаар буцна — W₁-ээр үржүүлнэ</h4>
+      <pre style="margin:6px 0 0"><code>∂ℒ/∂x₂ = ∂ℒ/∂x₃ · W₁ = −0.1869·( 1  −1 ) = ( −0.1869   0.1869 )</code></pre>
+    </li>
+    <li>
+      <h4 style="margin-top:0">tanh-аар буцна — уламжлалаар гишүүнчлэн үржүүлнэ</h4>
+      <pre style="margin:6px 0 0"><code>1 − tanh²(0.7) = 1 − 0.604² = 0.635
+1 − tanh²(0.3) = 1 − 0.291² = 0.915
+
+∂ℒ/∂x₁ = ( −0.1869·0.635 ,  0.1869·0.915 ) = ( −0.1186   0.171 )</code></pre>
+    </li>
+  </ol>
+
+  <div class="card c-math">
+    <span class="tag">Яагаад гишүүнчлэн үржүүлж болох вэ</span>
+    <p style="margin-bottom:0">tanh нь <strong>цэг бүрийн (pointwise)</strong> үйлдэл —
+    нэг гаралт зөвхөн нэг оролтоос хамаарна. Тиймээс түүний Jacobian нь
+    <strong>диагональ матриц</strong> болдог. Диагональ матрицаар үржүүлэх = гишүүнчлэн
+    үржүүлэх. Лекц энэ санааг тусгайлан онцолсон.</p>
+  </div>
+
+  <h3>Жингийн градиент</h3>
+  <pre><code>∂ℒ/∂W₀ = x₀ · ∂ℒ/∂x₁ = ( 1.0 ) × ( −0.1186   0.171 )
+                        ( 0.1 )
+
+       = ( −0.1186    0.171  )
+         ( −0.01186   0.0171 )
+
+
+∂ℒ/∂W₁ = x₂ · ∂ℒ/∂x₃ = ( 0.604 ) × (−0.1869) = ( −0.113 )
+                        ( 0.291 )               ( −0.054 )</code></pre>
+
+  <div class="card c-warn">
+    <span class="tag">Слайд дээрх алдаа — анхаар!</span>
+    <p>145-р хуудсанд <code>∂ℒ/∂W₁ = x₂ · (−0.1186)</code> гэж бичсэн байна. Энэ нь
+    <strong>буруу</strong> — <code>−0.1186</code> нь <code>∂ℒ/∂x₁</code>-ийн эхний
+    гишүүн, харин энд <code>∂ℒ/∂x₃ = −0.1869</code> хэрэгтэй.</p>
+    <p style="margin-bottom:0">Шалгалт: <code>0.604 × (−0.1869) = −0.113</code> ✓
+    (слайдын хариутай таарч байна), харин
+    <code>0.604 × (−0.1186) = −0.0716</code> ✗. Өөрөөр хэлбэл <strong>хариу нь зөв,
+    бичсэн тоо нь буруу</strong>. Шалгалтанд <code>−0.1869</code> гэж бодоорой.</p>
+  </div>
+
+  <h3>Жин шинэчлэх</h3>
+  <pre><code>W₀ ← W₀ − 0.2·(∂ℒ/∂W₀)ᵀ = ( 1.02   −3.0 )
+                           ( 0.17    1.0 )
+
+W₁ ← W₁ − 0.2·(∂ℒ/∂W₁)ᵀ = ( 1.02   −0.989 )</code></pre>
+
+  <div class="card c-data">
+    <span class="tag">Транспозыг бүү мартаарай</span>
+    <p style="margin-bottom:0"><code>∂ℒ/∂W₀</code>-ийн мөр нь <code>x₀</code>-ийн
+    индекс, багана нь <code>x₁</code>-ийн индекс. Харин <code>W₀</code>-д эсрэгээр.
+    Тиймээс нэмэхээсээ өмнө <strong>транспоз хийнэ</strong>. Хэрэв мартвал
+    <code>0.2 → 0.2024</code> гарна (зөв нь <strong>0.17</strong>) — шалгалтанд энэ
+    алдаа хамгийн элбэг гардаг.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Жин</th><th class="num">Өмнө</th><th class="num">Дараа</th><th class="num">Өөрчлөлт</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td>W₀[0,0]</td><td class="num">1.00</td><td class="num">1.02</td><td class="num">+0.02</td></tr>
+        <tr><td>W₀[0,1]</td><td class="num">−3.00</td><td class="num">−3.00</td><td class="num">+0.002</td></tr>
+        <tr class="hl"><td>W₀[1,0]</td><td class="num">0.20</td><td class="num">0.17</td><td class="num">−0.03</td></tr>
+        <tr><td>W₀[1,1]</td><td class="num">1.00</td><td class="num">1.00</td><td class="num">−0.003</td></tr>
+        <tr><td>W₁[0]</td><td class="num">1.00</td><td class="num">1.02</td><td class="num">+0.02</td></tr>
+        <tr><td>W₁[1]</td><td class="num">−1.00</td><td class="num">−0.989</td><td class="num">+0.011</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>Нэг алхмаар өөрчлөлт маш бага. Бодит сургалтад үүнийг <strong>сая сая удаа</strong>
+  давтана — Лаб 3-ын gradient descent-тэй яг ижил, зөвхөн нэг давхарга биш олон давхаргад.</p>
+</section>
+
+<!-- ================= ХОЛБОО ================= -->
+<section>
+  <p class="eyebrow">Нэгтгэл</p>
+  <h2>Таны хийсэн лабуудтай хэрхэн холбогдох вэ</h2>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Лекц 5-ын ойлголт</th><th>Таны аль хэдийн хийсэн зүйл</th></tr></thead>
+      <tbody>
+        <tr><td>Перцептрон, <code>z = wᵀx + b</code></td><td><strong>Лаб 2</strong> — яг энэ алгоритм</td></tr>
+        <tr><td>Sigmoid, cross-entropy, gradient descent</td><td><strong>Лаб 3</strong> — яг энэ, зөвхөн 1 давхаргатай</td></tr>
+        <tr><td>Softmax, олон ангийн гаралт</td><td><strong>Лаб 2</strong>-ын OvR vs softmax хэлэлцүүлэг</td></tr>
+        <tr><td>Регуляризаци <code>λ‖W‖²</code></td><td><strong>Лаб 2</strong>-ын Pegasos-ын λ</td></tr>
+        <tr><td>Шугаман бус хувиргалт хэрэгтэй</td><td><strong>Лаб 4</strong>-ийн kernel trick (гараар сонгосон)</td></tr>
+        <tr class="hl"><td>«SVM-ээс цааш CNN руу шилжих хэрэгтэй»</td><td><strong>Лаб 4</strong>-ийн эцсийн дүгнэлт (99.29%-ийн дараах алхам)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card c-good">
+    <span class="tag">Хамгийн чухал холбоос</span>
+    <p style="margin-bottom:0"><strong>Лаб 3-ын логистик регресс бол нэг давхаргатай
+    мэдрэлийн сүлжээ.</strong> Та аль хэдийн нэг бичсэн байна. Үүн дээр
+    <code>h = relu(W₁x + b₁)</code> гэсэн <strong>нэг мөр</strong> нэмэхэд л гүн сүлжээ болно.
+    Шинэ ойлголт биш — та сурсан зүйлээ давхарлаж байгаа юм.</p>
+  </div>
+
+  <h3>Гэрийн даалгавар (123, 124-р слайд)</h3>
+  <ul class="plain">
+    <li><strong>Convolution module</strong>-ийн forward ба backward томъёог гаргаж бичих.
+    Оролт ба гаралт нь ижил урттай 1D дохио, kernel-ийн урт K &lt; N. Decision boundary-ийн
+    тухай ярилцах.</li>
+    <li><strong>Max pooling module</strong>-ийн forward ба backward томъёог гаргах.
+    Оролт ба гаралт нь <em>өөр</em> урттай. Хил хязгаарыг хэрхэн давах тухай ярилцах.</li>
+  </ul>
+
+  <h3>Лекцэд дурдсан эх сурвалж</h3>
+  <ul class="plain">
+    <li><strong>Rosenblatt, F.</strong> (1958). The Perceptron. <em>Psychological Review</em> 65(6).</li>
+    <li><strong>Minsky, M. &amp; Papert, S.</strong> (1972). <em>Perceptrons</em>. — XOR-ын нотолгоо.</li>
+    <li><strong>Rumelhart, McClelland нар</strong> (1986). <em>Parallel Distributed Processing</em>.</li>
+    <li><strong>LeCun, Y. нар</strong> (1998). Gradient-Based Learning Applied to Document Recognition. — LeNet-5.</li>
+    <li><strong>Krizhevsky, Sutskever, Hinton</strong> (2012). ImageNet Classification with Deep CNNs. — AlexNet.</li>
+    <li><strong>Belkin, Hsu, Ma, Mandal</strong> (2019). Reconciling modern ML practice and the bias-variance trade-off. <em>PNAS</em>. — double descent.</li>
+    <li><strong>Bengio, Courville, Goodfellow</strong>. <em>Deep Learning</em> ном —
+    <a href="https://www.deeplearningbook.org/contents/mlp.html">deeplearningbook.org/contents/mlp.html</a></li>
+  </ul>
+</section>
+
+<footer>
+  <p style="margin:0">F.CS308 Машин сургалт · Лекц 5: Мэдрэлийн сүлжээ (147 слайд)<br>
+  Б. Өсөхбаяр (B231910012) · Бүх тоон жишээг гараар шалгасан.</p>
+</footer>
+
+</div>
+
+</body>
+</html>

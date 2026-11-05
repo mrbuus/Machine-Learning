@@ -1,0 +1,744 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% F.CS308 Машин сургалт — Лекц 5: Neural Networks
+% Лекц дээр тавигдсан бүх бодлогын бодолт
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}            % UTF8 юникод текст оруулах
+\usepackage[T2A]{fontenc}              % кирил үсгийн кодчилол
+\usepackage[mongolian]{babel}          % олон хэлний текст
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts,fancyhdr,color,comment,graphicx,environ}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{indentfirst}
+\usepackage{longtable}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{mathtools}                 % psmallmatrix
+\usepackage{pifont}                    % \ding{55}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=blue}
+
+\pagestyle{fancy}
+\lhead{B231910012, Б. Өсөхбаяр \\ F.CS308 Машин сургалт, Лекц 5 — Даалгавар}
+\rhead{\thepage}
+\setlength{\headheight}{26pt}
+
+\newenvironment{problem}[2][Бодлого]
+    { \begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\}
+    { \end{mdframed}}
+
+\newenvironment{solution}[1][\textbf{Бодолт.}]
+    { \noindent #1 \smallskip \\ }
+    { \medskip }
+
+\newcommand{\xin}{\mathbf{x}_{\mathrm{in}}}
+\newcommand{\xout}{\mathbf{x}_{\mathrm{out}}}
+\newcommand{\dL}[1]{\frac{\partial \mathcal{L}}{\partial #1}}
+
+\newenvironment{codebox}
+  {\begin{mdframed}[backgroundcolor=gray!8,linewidth=0.4pt]\footnotesize}
+  {\end{mdframed}}
+
+\title{\textbf{Лекц 5: Neural Networks} \\[4pt]
+       \large Лекц дээр тавигдсан бүх бодлогын бодолт}
+\author{Б. Өсөхбаяр \quad (B231910012)}
+\date{2026 оны 10 сарын 15}
+
+\begin{document}
+\maketitle
+
+\noindent
+Энэхүү тайланд \textbf{F.CS308 Лекц 5 (Neural Networks, 147 слайд)}-д тавигдсан бүх
+бодлогыг бодов. Бодлого бүрийн ард лекцийн тухайн слайдын дугаарыг бичсэн болно.
+Бүх тоон үр дүнг NumPy дээр бие даан шалгасан (Хавсралт А).
+
+\tableofcontents
+\bigskip
+\hrule
+
+%==================================================================================
+\section{Бодлого 1 — Гинжний дүрмийн матрицын хэмжээсийг шалгах}
+%==================================================================================
+
+\begin{problem}{1 (слайд 115)}
+Дараах гинжин уламжлалын \textbf{бүх матрицын хэмжээс} таарч байгаа эсэхийг шалга:
+\[
+\left.\frac{\partial \mathbf{z}}{\partial \mathbf{x}}\right|_{\mathbf{x}=\mathbf{a}}
+= \left.\frac{\partial \mathbf{z}}{\partial \mathbf{u}_{L-1}}\right|
+\cdot \left.\frac{\partial \mathbf{u}^{L-1}}{\partial \mathbf{u}_{L-2}}\right|
+\cdots
+\left.\frac{\partial \mathbf{u}_{2}}{\partial \mathbf{u}_{1}}\right|
+\cdot \left.\frac{\partial \mathbf{u}_{1}}{\partial \mathbf{x}}\right|_{\mathbf{x}=\mathbf{a}}
+\]
+энд $h(\mathbf{x}) = f_L(f_{L-1}(\dots f_1(\mathbf{x})))$,
+$\mathbf{u}_1 = f_1(\mathbf{x})$, $\mathbf{u}_l = f_l(\mathbf{u}_{l-1})$,
+$\mathbf{z} = \mathbf{u}_L = f_L(\mathbf{u}_{L-1})$.
+\end{problem}
+
+\begin{solution}
+\textbf{Алхам 1. Jacobian-ы хэмжээсийн дүрмийг тогтооё.}
+Лекцийн ``Matrix тооцоо'' слайдаар:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Юуны уламжлал} & \textbf{Тэмдэглэгээ} & \textbf{Үр дүнгийн хэмжээс} \\
+\midrule
+скаляр / вектор $[n\times 1]$       & $\partial y / \partial \mathbf{x}$        & мөр вектор $[1\times n]$ \\
+вектор $[m\times 1]$ / вектор $[n\times 1]$ & $\partial \mathbf{y} / \partial \mathbf{x}$ & матриц $[m\times n]$ \\
+скаляр / матриц $[n\times m]$       & $\partial y / \partial \mathbf{X}$        & матриц $[m\times n]$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+Тэмдэглэе: $n = |\mathbf{x}|$, \quad $p_l = |\mathbf{u}_l|$, \quad
+$m = |\mathbf{z}| = p_L$.
+
+\medskip
+\textbf{Алхам 2. Үржигдэхүүн бүрийн хэмжээсийг бичье.}
+\begin{align*}
+\frac{\partial \mathbf{z}}{\partial \mathbf{u}_{L-1}}         &: \quad [\,m \times p_{L-1}\,] \\
+\frac{\partial \mathbf{u}_{L-1}}{\partial \mathbf{u}_{L-2}}   &: \quad [\,p_{L-1} \times p_{L-2}\,] \\
+&\;\;\vdots \\
+\frac{\partial \mathbf{u}_{2}}{\partial \mathbf{u}_{1}}       &: \quad [\,p_{2} \times p_{1}\,] \\
+\frac{\partial \mathbf{u}_{1}}{\partial \mathbf{x}}           &: \quad [\,p_{1} \times n\,]
+\end{align*}
+
+\textbf{Алхам 3. Үржвэрийг гүйцэтгэе.}
+Матриц үржихэд зэргэлдээ хэмжээсүүд таарах ёстой. Дээрх дараалалд:
+\[
+\underbrace{[m \times \mathbf{p_{L-1}}]}_{}\;
+\underbrace{[\mathbf{p_{L-1}} \times \mathbf{p_{L-2}}]}_{}\;
+\cdots\;
+\underbrace{[\mathbf{p_{2}} \times \mathbf{p_{1}}]}_{}\;
+\underbrace{[\mathbf{p_{1}} \times n]}_{}
+\;=\; [\,m \times n\,]
+\]
+Дотоод хэмжээс бүр ($p_{L-1}, p_{L-2}, \dots, p_1$) \textbf{яг хоёр удаа} давхцаж
+хоорондоо цуцлагдаж байна. Үлдэх нь хамгийн зүүн талын $m$ ба хамгийн баруун талын $n$.
+
+\medskip
+\textbf{Алхам 4. Хүлээгдэж буй хэмжээстэй харьцуулъя.}
+$\mathbf{z} \in \mathbb{R}^m$, $\mathbf{x} \in \mathbb{R}^n$ тул дүрмийн 2-р мөрөөр
+$\partial \mathbf{z} / \partial \mathbf{x}$ нь $[m \times n]$ байх ёстой.
+Энэ нь Алхам 3-ын үр дүнтэй \textbf{яг таарч байна}. $\blacksquare$
+
+\medskip
+\textbf{Тоон жишээ (лекцийн өөрийнх нь жишээ).}
+$|\mathbf{z}| = 1$, $|\mathbf{u}| = 2$, $|\mathbf{x}| = 4$ үед:
+\[
+h'(\mathbf{x}) \;=\; \underbrace{[1 \times 2]}_{\partial \mathbf{z}/\partial \mathbf{u}}
+\;\cdot\; \underbrace{[2 \times 4]}_{\partial \mathbf{u}/\partial \mathbf{x}}
+\;=\; [1 \times 4] \quad \checkmark
+\]
+Энэ нь лекцийн слайд дээрх цэнхэр ($1\times2$) ба улаан ($2\times4$) блокуудын зураглалтай
+яг тохирч байна.
+
+\medskip
+\begin{mdframed}[backgroundcolor=yellow!12]
+\textbf{Чухал дүгнэлт.} $\mathbf{z}$ нь \emph{скаляр} байх тохиолдолд ($m=1$) үр дүн нь
+\textbf{мөр вектор} $[1 \times n]$ болно. Яг энэ шалтгаанаар алдагдлын давхаргын градиент
+\[
+\dL{\mathbf{x}_L} = (\mathbf{x}_L - \mathbf{y})^{T}
+\]
+гэж \textbf{транспозтой} бичигддэг. Хэрэв транспозыг орхивол дараагийн алхмын
+$\dL{\mathbf{x}_{L-1}} = \dL{\mathbf{x}_L}\cdot \mathbf{W}_L$ үржвэрийн хэмжээс
+таарахгүй болно.
+\end{mdframed}
+\end{solution}
+
+%==================================================================================
+\section{Бодлого 2 — XOR бодлого}
+%==================================================================================
+
+\begin{problem}{2 (слайд 9)}
+XOR функц:
+\begin{center}
+\begin{tabular}{ccc}
+\toprule
+$x_1$ & $x_2$ & гаралт \\
+\midrule
+0 & 0 & 0 \\
+1 & 0 & 1 \\
+0 & 1 & 1 \\
+1 & 1 & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+(а) Нэг давхаргат перцептрон үүнийг \textbf{бодож чадахгүйг} батал. \\
+(б) Хоёр давхаргат сүлжээгээр \textbf{тодорхой жин бичиж} шийд.
+\end{problem}
+
+\begin{solution}[\textbf{(а) Боломжгүйн баталгаа.}]
+Эсрэгээс нь тооцъё: $\exists\, \mathbf{w}=(w_1,w_2)$, $b$ байж
+$f(\mathbf{x}) = \mathbb{1}(w_1x_1 + w_2x_2 + b > 0)$ нь XOR-ыг гаргадаг гэе.
+Дөрвөн мөр тус бүрээс:
+\begin{align}
+f(0,0) = 0 &\;\Longrightarrow\; b \le 0 \\
+f(1,0) = 1 &\;\Longrightarrow\; w_1 + b > 0 \\
+f(0,1) = 1 &\;\Longrightarrow\; w_2 + b > 0 \\
+f(1,1) = 0 &\;\Longrightarrow\; w_1 + w_2 + b \le 0
+\end{align}
+
+(2) ба (3)-ыг нэмбэл:
+\[
+w_1 + w_2 + 2b > 0 \quad\Longrightarrow\quad w_1 + w_2 > -2b
+\]
+Харин (4)-өөс:
+\[
+w_1 + w_2 \le -b
+\]
+Хоёуланг нь нийлүүлбэл
+\[
+-2b \;<\; w_1 + w_2 \;\le\; -b
+\]
+Энэ завсар хоосон биш байхын тулд $-2b < -b$, өөрөөр хэлбэл $\boxed{b > 0}$ байх ёстой.
+Гэтэл (1)-ээс $b \le 0$. \textbf{Зөрчил.} $\blacksquare$
+
+\medskip
+\textbf{Геометр тайлбар.} $(0,0)$ ба $(1,1)$ цэгүүдийн дундаж нь $(0.5,\,0.5)$;
+$(1,0)$ ба $(0,1)$ цэгүүдийн дундаж нь мөн $(0.5,\,0.5)$. Шугаман функц нь дундажийг
+хадгалдаг тул энэ нэг цэг дээр хоёр ангийн дундаж утга \emph{ижил} гарах ёстой —
+иймээс тэднийг ялгах шулуун оршин байх боломжгүй.
+\end{solution}
+
+\begin{solution}[\textbf{(б) Хоёр давхаргат шийдэл.}]
+\textbf{Хувилбар 1 — step идэвхжүүлэгчээр.}
+XOR $=$ (OR) AND (NOT AND) гэдгийг ашиглая.
+\[
+\mathbf{W}_1 = \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix},\quad
+\mathbf{b}_1 = \begin{pmatrix} -0.5 \\ -1.5 \end{pmatrix},\quad
+\mathbf{W}_2 = \begin{pmatrix} 1 & -1 \end{pmatrix},\quad
+b_2 = -0.5
+\]
+\[
+\mathbf{h} = \mathrm{step}(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1),
+\qquad y = \mathrm{step}(\mathbf{W}_2\mathbf{h} + b_2)
+\]
+$h_1$ нь \textbf{OR}, $h_2$ нь \textbf{AND}-ыг тооцоолно. Шалгая:
+\begin{center}
+\begin{tabular}{cc|cc|c|c}
+\toprule
+$x_1$ & $x_2$ & $h_1$ (OR) & $h_2$ (AND) & $y$ & XOR \\
+\midrule
+0 & 0 & $\mathrm{step}(-0.5)=0$ & $\mathrm{step}(-1.5)=0$ & $\mathrm{step}(-0.5)=0$ & 0 \checkmark \\
+1 & 0 & $\mathrm{step}(0.5)=1$  & $\mathrm{step}(-0.5)=0$ & $\mathrm{step}(0.5)=1$  & 1 \checkmark \\
+0 & 1 & $\mathrm{step}(0.5)=1$  & $\mathrm{step}(-0.5)=0$ & $\mathrm{step}(0.5)=1$  & 1 \checkmark \\
+1 & 1 & $\mathrm{step}(1.5)=1$  & $\mathrm{step}(0.5)=1$  & $\mathrm{step}(-0.5)=0$ & 0 \checkmark \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\textbf{Хувилбар 2 — ReLU идэвхжүүлэгчээр} (практикт ашиглагддаг хэлбэр):
+\[
+\mathbf{W}_1 = \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix},\quad
+\mathbf{b}_1 = \begin{pmatrix} 0 \\ -1 \end{pmatrix},\quad
+\mathbf{W}_2 = \begin{pmatrix} 1 & -2 \end{pmatrix},\quad
+b_2 = 0
+\]
+\begin{center}
+\begin{tabular}{cc|c|c|c}
+\toprule
+$x_1$ & $x_2$ & $\mathbf{h} = \mathrm{ReLU}(\mathbf{W}_1\mathbf{x}+\mathbf{b}_1)$ & $y = \mathbf{W}_2\mathbf{h}$ & XOR \\
+\midrule
+0 & 0 & $(0,\,0)$ & $0 - 0 = 0$ & 0 \checkmark \\
+1 & 0 & $(1,\,0)$ & $1 - 0 = 1$ & 1 \checkmark \\
+0 & 1 & $(1,\,0)$ & $1 - 0 = 1$ & 1 \checkmark \\
+1 & 1 & $(2,\,1)$ & $2 - 2 = 0$ & 0 \checkmark \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\begin{mdframed}[backgroundcolor=green!10]
+\textbf{Яагаад ажиллав?} Нуугдмал давхарга $(x_1,x_2)$ орон зайг $(h_1,h_2)$ орон зай
+руу хувиргав. Шинэ орон зайд дөрвөн цэг $(0,0), (1,0), (1,0), (2,1)$ болж — $(1,0)$ цэг
+дээр \textbf{хоёр жишээ давхцаж}, үлдсэн хоёр нь шулуунаар тусгаарлагдах болсон.
+Энэ нь \textbf{Лаб 4-ийн kernel trick}-тэй ижил санаа; ялгаа нь kernel-ийг гараар
+сонгодог бол энд сүлжээ хувиргалтаа \emph{өөрөө сурдаг}.
+\end{mdframed}
+\end{solution}
+
+%==================================================================================
+\section{Бодлого 3 — Convolution module}
+%==================================================================================
+
+\begin{problem}{3 (слайд 123, гэрийн даалгавар)}
+Оролт $\xin$ болон гаралт $\xout$ нь ижил урт $N$-ийн 1D дохио. Конволюцийн кернел нь
+$\mathbf{W}$ бөгөөд урт $K < N$.
+\textbf{Хайрцаг бүрийн доторх тэгшитгэлүүдийг гаргаж ав:} урагшлах тархалт,
+буцах тархалт (оролт руу), жингийн градиент. Хил хязгаарын тухай ярилц.
+\end{problem}
+
+\begin{solution}
+\subsection*{3.1 Урагшлах тархалт (ногоон хайрцаг)}
+Корреляцийн хэлбэрээр тодорхойлъё (машин сургалтад түгээмэл конвенц):
+\begin{equation}
+\boxed{\;\xout[i] \;=\; \sum_{k=0}^{K-1} \mathbf{W}[k]\;\xin[i+k], \qquad i = 0,\dots,N-1\;}
+\end{equation}
+Гаралт нь оролттой ижил урттай байхын тулд $\xin[j] = 0$ для $j \ge N$ гэж
+\textbf{тэгээр дүүргэнэ} (zero padding).
+
+\subsection*{3.2 Буцах тархалт — оролт руу (улаан хайрцаг)}
+Эхлээд нэг элементийн хэсэгчилсэн уламжлалыг олъё:
+\[
+\frac{\partial\, \xout[i]}{\partial\, \xin[j]} =
+\begin{cases}
+\mathbf{W}[j-i], & 0 \le j-i \le K-1 \\[2pt]
+0, & \text{бусад тохиолдолд}
+\end{cases}
+\]
+Гинжний дүрмээр, $\xin[j]$ нь \textbf{олон} гаралтад нөлөөлдөг тул бүгдийг нь нэмнэ
+(лекцийн \emph{branch} дүрэм):
+\begin{equation}
+\boxed{\;\dL{\xin[j]} \;=\; \sum_{i=\max(0,\,j-K+1)}^{j} \dL{\xout[i]}\;\mathbf{W}[j-i]\;}
+\end{equation}
+Энэ нь $\dL{\xout}$ ба $\mathbf{W}$-ийн \textbf{конволюци} (индекс $j-i$) —
+өөрөөр хэлбэл \emph{эргүүлсэн} кернелтэй корреляци. Урагшлах нь корреляци, буцах нь
+конволюци болж байгааг анзаар.
+
+\subsection*{3.3 Жингийн градиент (хоёр дахь улаан хайрцаг)}
+\[
+\frac{\partial\, \xout[i]}{\partial\, \mathbf{W}[k]} = \xin[i+k]
+\]
+$\mathbf{W}[k]$ нь \textbf{бүх} байрлалд дахин ашиглагддаг тул бүх $i$-ээр нэмнэ:
+\begin{equation}
+\boxed{\;\dL{\mathbf{W}[k]} \;=\; \sum_{i=0}^{N-1} \dL{\xout[i]}\;\xin[i+k],
+\qquad k = 0,\dots,K-1\;}
+\end{equation}
+
+\begin{mdframed}[backgroundcolor=yellow!12]
+\textbf{Linear module-тай гол ялгаа.} Linear давхаргад жин бүр \emph{нэг} л удаа
+оролцдог тул $\dL{\mathbf{W}} = \xin \cdot \dL{\xout}$ (нийлбэргүй). Конволюцид жин
+\textbf{хуваалцагддаг} (weight sharing) тул $N$ байрлалаас ирсэн бүх градиентийг
+\emph{нэмж} хуримтлуулна. Энэ нь лекцийн ``Branching'' слайдын дүрмийн шууд үр дагавар:
+\emph{нэг утга олон салаа руу явбал, буцахдаа градиентүүд нэмэгдэнэ}.
+\end{mdframed}
+
+\subsection*{3.4 Матрицын хэлбэр — Linear module-той холбоо}
+Конволюци бол \textbf{Toeplitz} (туузан) матрицаар үржүүлэх явдал:
+\[
+\mathbf{T}[i,j] =
+\begin{cases} \mathbf{W}[j-i], & 0 \le j-i < K \\ 0, & \text{бусад}\end{cases}
+\qquad\Longrightarrow\qquad \xout = \mathbf{T}\,\xin
+\]
+Жишээ нь $N=4$, $K=3$ үед:
+\[
+\mathbf{T} = \begin{pmatrix}
+W_0 & W_1 & W_2 & 0   \\
+0   & W_0 & W_1 & W_2 \\
+0   & 0   & W_0 & W_1 \\
+0   & 0   & 0   & W_0
+\end{pmatrix}
+\]
+Ийнхүү Linear module-ийн томъёо $\dL{\xin} = \dL{\xout}\cdot\mathbf{T}$ шууд хэрэглэгдэнэ.
+Конволюци бол \emph{тусгай бүтэцтэй шугаман давхарга} л гэсэн үг.
+
+\subsection*{3.5 Жингийн шинэчлэлт}
+\[
+\mathbf{W}^{k+1} \;\leftarrow\; \mathbf{W}^{k} - \eta \left(\frac{\partial J}{\partial \mathbf{W}}\right)^{T},
+\qquad J = \sum_{i=1}^{N_{\text{жишээ}}} \mathcal{L}^{(i)}
+\]
+
+\subsection*{3.6 Тоон жишээ}
+$N=4$, $K=3$, $\xin = (1,2,3,4)$, $\mathbf{W} = (1,0,-1)$, тэг дүүргэлттэй.
+
+\textbf{Forward:}
+\begin{align*}
+\xout[0] &= 1\cdot1 + 0\cdot2 + (-1)\cdot3 = -2 \\
+\xout[1] &= 1\cdot2 + 0\cdot3 + (-1)\cdot4 = -2 \\
+\xout[2] &= 1\cdot3 + 0\cdot4 + (-1)\cdot0 = \phantom{-}3 \\
+\xout[3] &= 1\cdot4 + 0\cdot0 + (-1)\cdot0 = \phantom{-}4
+\end{align*}
+$\Longrightarrow \xout = (-2,\,-2,\,3,\,4)$
+
+\medskip
+\textbf{Backward}, $\dL{\xout} = (1,1,1,1)$ гэж авбал:
+\begin{align*}
+\dL{\mathbf{W}[0]} &= 1+2+3+4 = 10 \\
+\dL{\mathbf{W}[1]} &= 2+3+4+0 = \phantom{1}9 \\
+\dL{\mathbf{W}[2]} &= 3+4+0+0 = \phantom{1}7
+\end{align*}
+\begin{align*}
+\dL{\xin[0]} &= 1\cdot W_0 = 1 \\
+\dL{\xin[1]} &= 1\cdot W_1 + 1\cdot W_0 = 0 + 1 = 1 \\
+\dL{\xin[2]} &= 1\cdot W_2 + 1\cdot W_1 + 1\cdot W_0 = -1+0+1 = 0 \\
+\dL{\xin[3]} &= 1\cdot W_2 + 1\cdot W_1 + 1\cdot W_0 = -1+0+1 = 0
+\end{align*}
+$\Longrightarrow \dL{\xin} = (1,\,1,\,0,\,0)$
+
+\subsection*{3.7 Хил хязгаарын тухай хэлэлцүүлэг}
+Бодлогод ``$\xin$ ба $\xout$ нь ижил урттай'' гэж заасан. $K > 1$ үед энэ нь
+\textbf{заавал дүүргэлт (padding) шаардана}:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Тэг дүүргэлт (zero padding).} $K-1$ ширхэг тэг нэмнэ. Хамгийн энгийн,
+        гэхдээ захын гаралтууд \emph{зохиомол} тэгүүдийг уншдаг тул бага зэрэг хазайна.
+        Тэг нь нийлбэрийн хувьд \emph{нейтраль элемент} ($a+0=a$) учраас аюулгүй.
+  \item \textbf{Толин тусгал / давтах (reflect / replicate).} Зургийн боловсруулалтад
+        захын артефактыг багасгахад илүү тохиромжтой.
+  \item \textbf{``Valid'' (дүүргэлтгүй).} Гаралтын урт $N-K+1 < N$ болно —
+        бодлогын нөхцөлийг \emph{зөрчинө}, тиймээс энд тохирохгүй.
+\end{itemize}
+Буцах тархалтын үед: дүүргэсэн байрлалаас уншсан гишүүд $\dL{\mathbf{W}}$-д \textbf{0}
+хувь нэмэр оруулна (учир нь $\xin = 0$); дүүргэлтийн байрлалд хуримтлагдсан
+$\dL{\xin}$-ийг \textbf{хаяна} (тэд жинхэнэ оролт биш).
+
+\medskip
+\textbf{Шийдвэрийн заагийн (decision boundary) тухай.} Конволюци бол хуваалцсан жинтэй
+\emph{шугаман} оператор. Иймээс зөвхөн конволюци давхаргууд дараалвал (шугаман бус
+функцгүйгээр) нийлбэр үр дүн нь мөн л \textbf{шугаман} хэвээр үлдэж, шийдвэрийн зааг нь
+гипер хавтгай л байна — Бодлого 2-ын XOR-ыг бодож чадахгүй. Шийдвэрийн заагийг
+шугаман бус болгодог нь \textbf{ReLU ба pooling}. Конволюцийн өгдөг давуу тал нь
+шугаман бус байдал биш, харин \emph{шилжилтийн эквивариант} ($\xin$-ийг шилжүүлбэл
+$\xout$ нь ижил хэмжээгээр шилжинэ) ба параметрийн тоо эрс багасах явдал юм:
+бүрэн холбоот давхаргад $N^2$ параметр хэрэгтэй бол конволюцид ердөө $K$.
+\end{solution}
+
+%==================================================================================
+\section{Бодлого 4 — Max pooling module}
+%==================================================================================
+
+\begin{problem}{4 (слайд 124, гэрийн даалгавар)}
+Оролтын $\xin$ болон гаралт $\xout$ нь \textbf{өөр өөр} урттай 1D дохио.
+Хайрцаг бүрийн доторх тэгшитгэлүүдийг гаргаж ав.
+Хил хязгаарыг хэрхэн даван туулах тухайгаа ярилц.
+\end{problem}
+
+\begin{solution}
+\subsection*{4.1 Тэмдэглэгээ}
+Цонхны хэмжээ $P$, алхам (stride) $S$, оролтын урт $N$. Гаралтын урт:
+\[
+M = \left\lfloor \frac{N-P}{S} \right\rfloor + 1
+\]
+$i$-р цонхны индексүүдийн олонлог: $\mathcal{R}_i = \{\,iS,\; iS+1,\;\dots,\; iS+P-1\,\}$
+
+\subsection*{4.2 Урагшлах тархалт (ногоон хайрцаг)}
+\begin{equation}
+\boxed{\;\xout[i] \;=\; \max_{k \in \mathcal{R}_i} \xin[k], \qquad i = 0,\dots,M-1\;}
+\end{equation}
+Урагшлах үед \textbf{ялагчийн индексийг хадгалах} ёстой:
+\begin{equation}
+k^{*}(i) \;=\; \arg\max_{k \in \mathcal{R}_i} \xin[k]
+\end{equation}
+Энэ индексийг ``switch'' эсвэл ``argmax mask'' гэж нэрлэдэг ба буцах тархалтад
+зайлшгүй хэрэгтэй.
+
+\subsection*{4.3 Буцах тархалт — оролт руу (улаан хайрцаг)}
+Зөвхөн ялагч элемент гаралтад нөлөөлсөн тул:
+\[
+\frac{\partial\, \xout[i]}{\partial\, \xin[j]} =
+\begin{cases} 1, & j = k^{*}(i) \\ 0, & \text{бусад} \end{cases}
+\]
+Иймээс:
+\begin{equation}
+\boxed{\;\dL{\xin[j]} \;=\; \sum_{\;i\,:\;k^{*}(i)\,=\,j} \dL{\xout[i]}\;}
+\end{equation}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Давхцалгүй цонх} ($S \ge P$): индекс бүр хамгийн ихдээ \emph{нэг} цонхны
+        ялагч байна $\Rightarrow$ градиент зүгээр л \emph{чиглүүлэгдэнэ} (routing),
+        нийлбэр хэрэггүй.
+  \item \textbf{Давхцалтай цонх} ($S < P$): нэг элемент хэд хэдэн цонхны ялагч байж
+        болно $\Rightarrow$ градиентүүдийг \textbf{нэмнэ} (дахин \emph{branch} дүрэм).
+\end{itemize}
+
+\subsection*{4.4 Жингийн градиент (гурав дахь хайрцаг)}
+\begin{equation}
+\boxed{\;\text{Max pooling нь \textbf{параметргүй} тул } \dL{\mathbf{W}} \text{ оршин байхгүй.}\;}
+\end{equation}
+Лекцийн слайд дээрх жин шинэчлэх хайрцаг энд \textbf{хоосон} байна. Max pooling нь
+сурдаг зүйлгүй, зөвхөн \emph{тогтмол} үйлдэл гүйцэтгэдэг.
+
+\subsection*{4.5 Дифференциалагдах чанар}
+$\max$ функц нь \textbf{тэнцүү утгууд дээр} дифференциалагдахгүй (жишээ нь
+$\xin = (3,3)$). Практикт:
+\begin{itemize}[leftmargin=*]
+  \item хамгийн \emph{бага индекстэй} ялагчийг сонгодог (NumPy/PyTorch-ийн анхдагч), эсвэл
+  \item градиентийг тэнцүү ялагчдад хуваадаг.
+\end{itemize}
+Тэнцэх магадлал нь хэмжээс тэг (measure zero) олонлог тул бодит өгөгдөлд нөлөөлөхгүй.
+
+\subsection*{4.6 Тоон жишээ}
+$\xin = (1,\,-3,\,5,\,2,\,-1,\,4)$, \quad $P = S = 2$, \quad $N=6 \Rightarrow M=3$.
+
+\begin{center}
+\begin{tabular}{clcc}
+\toprule
+$i$ & цонх $\mathcal{R}_i$ & $\xout[i]$ & $k^{*}(i)$ \\
+\midrule
+0 & $\{1,\,-3\}$  & 1 & 0 \\
+1 & $\{5,\,2\}$   & 5 & 2 \\
+2 & $\{-1,\,4\}$  & 4 & 5 \\
+\bottomrule
+\end{tabular}
+\end{center}
+$\Longrightarrow \xout = (1,\,5,\,4)$
+
+\medskip
+$\dL{\xout} = (0.5,\,-1,\,2)$ гэж авбал градиент зөвхөн $k^{*}$ байрлалууд руу очно:
+\[
+\dL{\xin} = (\,\underbrace{0.5}_{j=0},\; 0,\; \underbrace{-1}_{j=2},\; 0,\; 0,\; \underbrace{2}_{j=5}\,)
+\]
+Тэг биш элементийн тоо нь яг \textbf{цонхны тоотой тэнцүү} (3) байгааг анзаар.
+
+\subsection*{4.7 Хил хязгаарын тухай хэлэлцүүлэг}
+$(N-P)$ нь $S$-д бүхлээр хуваагдахгүй бол сүүлийн цонх \textbf{бүрэн бус} болно.
+Гурван арга бий:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Хаях} (floor, PyTorch-ийн \texttt{ceil\_mode=False} анхдагч).
+        Сүүлийн хэдэн элемент огт уншигдахгүй $\Rightarrow$ тэдний градиент $0$.
+        Хамгийн энгийн бөгөөд аюулгүй.
+  \item \textbf{Дүүргэх.} Энд \textbf{маш чухал нарийн ширийн зүйл} байна:
+  \begin{mdframed}[backgroundcolor=red!8]
+  Max pooling-ийг \textbf{тэгээр дүүргэж БОЛОХГҮЙ}. Хэрэв бүх бодит утга сөрөг байвал
+  ($\xin = (-5,-2)$ гэх мэт) зохиомол $0$ нь максимумыг \emph{хожиж}, градиент нь
+  \emph{байхгүй} байрлал руу очно. \\[4pt]
+  Зөв нь $-\infty$ (эсвэл тухайн төрлийн хамгийн бага утга) -аар дүүргэх:
+  \[
+  \max(a,\,-\infty) = a \qquad \text{яг л} \qquad a + 0 = a
+  \]
+  \textbf{Гүн шалтгаан:} $0$ нь \emph{нийлбэрийн} нейтраль элемент, $-\infty$ нь
+  \emph{максимумын} нейтраль элемент. Конволюцид нийлбэр хийдэг тул $0$ зөв;
+  pooling-д максимум авдаг тул $-\infty$ зөв.
+  \end{mdframed}
+  \item \textbf{Бүрэн бус цонхыг хэсэгчлэн авах} (\texttt{ceil\_mode=True}).
+        Цонхыг оруулна, гэхдээ зөвхөн \emph{хүчинтэй} элементүүд дээр максимум авна.
+\end{enumerate}
+\end{solution}
+
+%==================================================================================
+\section{Бодлого 5 — Backpropagation, нэг алхам}
+%==================================================================================
+
+\begin{problem}{5 (слайд 139, бодолт нь 141--147)}
+Дараах сүлжээний \textbf{нэг алхмын буцах тархалтыг тооцоол}:
+\[
+\mathbf{x}_0 \;\to\; \boxed{\mathbf{W}_0\mathbf{x}_0} \;\to\; \mathbf{x}_1 \;\to\;
+\boxed{\tanh(\mathbf{x}_1)} \;\to\; \mathbf{x}_2 \;\to\;
+\boxed{\mathbf{W}_1\mathbf{x}_2} \;\to\; \mathbf{x}_3 \;\to\;
+\boxed{\mathcal{L} = \tfrac12\|\mathbf{x}_3-\mathbf{y}\|_2^2}
+\]
+\[
+\mathbf{W}_0 = \begin{pmatrix} 1 & -3 \\ 0.2 & 1 \end{pmatrix},\quad
+\mathbf{W}_1 = \begin{pmatrix} 1 & -1 \end{pmatrix},\quad
+\mathbf{x}_0 = \begin{pmatrix} 1.0 \\ 0.1 \end{pmatrix},\quad
+\mathbf{y} = 0.5,\quad \eta = 0.2
+\]
+\end{problem}
+
+\begin{solution}
+\subsection*{5.1 Хэрэглэх томъёонууд}
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Модуль} & \textbf{Forward} & \textbf{Backward (оролт руу)} & \textbf{Жингийн градиент} \\
+\midrule
+Linear    & $\xout = \mathbf{W}\xin$ & $\dL{\xin}=\dL{\xout}\mathbf{W}$ & $\dL{\mathbf{W}}=\xin\dL{\xout}$ \\[3pt]
+Pointwise & $\xout = h(\xin)$        & $\dL{\xout}\odot h'(\xin)$       & --- \\[3pt]
+$L_2$ loss& $\tfrac12\|\xin-\mathbf{y}\|^2$ & $(\xin-\mathbf{y})^T$     & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+Хэрэгтэй уламжлал: $\;\tanh'(z) = 1 - \tanh^2(z)$
+
+\subsection*{5.2 Forward pass}
+\begin{align}
+\mathbf{x}_1 &= \mathbf{W}_0\mathbf{x}_0
+= \begin{pmatrix} 1 & -3 \\ 0.2 & 1 \end{pmatrix}
+  \begin{pmatrix} 1.0 \\ 0.1 \end{pmatrix}
+= \begin{pmatrix} 1\cdot1.0 + (-3)\cdot 0.1 \\ 0.2\cdot 1.0 + 1\cdot 0.1 \end{pmatrix}
+= \begin{pmatrix} 0.7 \\ 0.3 \end{pmatrix} \\[6pt]
+\mathbf{x}_2 &= \tanh(\mathbf{x}_1)
+= \begin{pmatrix} \tanh(0.7) \\ \tanh(0.3) \end{pmatrix}
+= \begin{pmatrix} 0.604368 \\ 0.291313 \end{pmatrix} \\[6pt]
+\mathbf{x}_3 &= \mathbf{W}_1\mathbf{x}_2
+= 1\cdot 0.604368 + (-1)\cdot 0.291313 = 0.313055 \\[6pt]
+\mathcal{L} &= \tfrac12(\mathbf{x}_3 - \mathbf{y})^2
+= \tfrac12(0.313055 - 0.5)^2 = \tfrac12(-0.186945)^2 = \mathbf{0.017474}
+\end{align}
+
+\subsection*{5.3 Backward pass}
+\paragraph{(i) Алдагдлын давхарга.}
+\begin{equation}
+\dL{\mathbf{x}_3} = \mathbf{x}_3 - \mathbf{y} = 0.313055 - 0.5 = \mathbf{-0.186945}
+\end{equation}
+Сөрөг тэмдэг нь ``$\mathbf{x}_3$-ыг \emph{өсгөх} хэрэгтэй'' гэсэн утгатай.
+
+\paragraph{(ii) Хоёр дахь шугаман давхаргаар буцах.}
+\begin{equation}
+\dL{\mathbf{x}_2} = \dL{\mathbf{x}_3}\,\mathbf{W}_1
+= -0.186945\begin{pmatrix} 1 & -1 \end{pmatrix}
+= \begin{pmatrix} -0.186945 & 0.186945 \end{pmatrix}
+\end{equation}
+
+\paragraph{(iii) $\tanh$ давхаргаар буцах.}
+$\tanh$ нь \textbf{цэг бүрийн (pointwise)} үйлдэл тул түүний Jacobian нь
+\textbf{диагональ матриц} болно:
+\[
+\frac{\partial \tanh(\mathbf{x}_1)}{\partial \mathbf{x}_1} =
+\begin{pmatrix} 1-\tanh^2(0.7) & 0 \\ 0 & 1-\tanh^2(0.3) \end{pmatrix}
+= \begin{pmatrix} 0.634740 & 0 \\ 0 & 0.915137 \end{pmatrix}
+\]
+Диагональ матрицаар үржүүлэх нь \emph{гишүүнчлэн} үржүүлэхтэй адил:
+\begin{equation}
+\dL{\mathbf{x}_1}
+= \begin{pmatrix} -0.186945\cdot 0.634740 & 0.186945\cdot 0.915137 \end{pmatrix}
+= \begin{pmatrix} \mathbf{-0.118661} & \mathbf{0.171080} \end{pmatrix}
+\end{equation}
+
+\subsection*{5.4 Жингийн градиентууд}
+\begin{align}
+\dL{\mathbf{W}_0} &= \mathbf{x}_0 \,\dL{\mathbf{x}_1}
+= \begin{pmatrix} 1.0 \\ 0.1 \end{pmatrix}
+  \begin{pmatrix} -0.118661 & 0.171080 \end{pmatrix}
+= \begin{pmatrix} -0.118661 & 0.171080 \\ -0.011866 & 0.017108 \end{pmatrix} \\[8pt]
+\dL{\mathbf{W}_1} &= \mathbf{x}_2 \,\dL{\mathbf{x}_3}
+= \begin{pmatrix} 0.604368 \\ 0.291313 \end{pmatrix}(-0.186945)
+= \begin{pmatrix} -0.112983 \\ -0.054459 \end{pmatrix}
+\end{align}
+
+\begin{mdframed}[backgroundcolor=red!8]
+\textbf{Слайд 145 дээрх алдаа.} Лекцийн слайдад
+$\dL{\mathbf{W}_1} = \mathbf{x}_2 \cdot (-0.1186)$ гэж бичсэн байна. Энэ нь \textbf{буруу}:
+$-0.1186$ нь $\dL{\mathbf{x}_1}$-ийн эхний гишүүн, харин энд $\dL{\mathbf{x}_3} = -0.186945$
+хэрэгтэй. \\[4pt]
+\textbf{Шалгалт:} $0.604368 \times (-0.186945) = -0.112983$ \checkmark{} (слайдын
+$-0.113$ хариутай таарч байна), харин $0.604368 \times (-0.1186) = -0.071678$ \ding{55}.
+Өөрөөр хэлбэл \emph{хариу нь зөв, бичсэн тоо нь буруу} — слайдын хэвлэлийн алдаа.
+\end{mdframed}
+
+\subsection*{5.5 Жин шинэчлэх}
+\[
+\mathbf{W}^{k+1} = \mathbf{W}^{k} - \eta\left(\dL{\mathbf{W}}\right)^{T}, \qquad \eta = 0.2
+\]
+\paragraph{$\mathbf{W}_0$-ийн хувьд.} Эхлээд транспоз хийнэ:
+\[
+\left(\dL{\mathbf{W}_0}\right)^{T} =
+\begin{pmatrix} -0.118661 & -0.011866 \\ 0.171080 & 0.017108 \end{pmatrix}
+\]
+\begin{align}
+\mathbf{W}_0^{k+1}
+&= \begin{pmatrix} 1 & -3 \\ 0.2 & 1 \end{pmatrix}
+ - 0.2\begin{pmatrix} -0.118661 & -0.011866 \\ 0.171080 & 0.017108 \end{pmatrix} \nonumber\\[4pt]
+&= \begin{pmatrix} 1 + 0.023732 & -3 + 0.002373 \\ 0.2 - 0.034216 & 1 - 0.003422 \end{pmatrix}
+ = \begin{pmatrix} \mathbf{1.0237} & \mathbf{-2.9976} \\ \mathbf{0.1658} & \mathbf{0.9966} \end{pmatrix}
+\end{align}
+
+\paragraph{$\mathbf{W}_1$-ийн хувьд.}
+\begin{equation}
+\mathbf{W}_1^{k+1}
+= \begin{pmatrix} 1 & -1 \end{pmatrix}
+ - 0.2\begin{pmatrix} -0.112983 & -0.054459 \end{pmatrix}
+= \begin{pmatrix} \mathbf{1.0226} & \mathbf{-0.9891} \end{pmatrix}
+\end{equation}
+
+Лекцийн слайд 2 оронгоор дугуйлсан хариу:
+$\mathbf{W}_0 = \begin{psmallmatrix} 1.02 & -3.0 \\ 0.17 & 1.0 \end{psmallmatrix}$,
+$\mathbf{W}_1 = \begin{pmatrix} 1.02 & -0.989 \end{pmatrix}$ — \textbf{бүрэн таарч байна}.
+
+\begin{mdframed}[backgroundcolor=yellow!12]
+\textbf{Транспозыг бүү мартаарай.} $\dL{\mathbf{W}_0}$-ийн мөр нь $\mathbf{x}_0$-ийн
+индекс, багана нь $\mathbf{x}_1$-ийн индекс; харин $\mathbf{W}_0$-д эсрэгээр.
+Транспозыг мартвал $W_0[1,0]$ нь $0.2024$ гарна (зөв нь $\mathbf{0.1658}$) — шалгалтанд
+хамгийн элбэг гардаг алдаа.
+\end{mdframed}
+
+\subsection*{5.6 Шалгалт: алдагдал буурсан уу?}
+Шинэ жингээр forward pass-ыг дахин гүйцэтгэвэл:
+\begin{align*}
+\mathbf{x}_1' &= (0.723969,\; 0.265784) \\
+\mathbf{x}_2' &= (0.619361,\; 0.259717) \\
+\mathbf{x}_3' &= 0.376804 \\
+\mathcal{L}'  &= \tfrac12(0.376804-0.5)^2 = \mathbf{0.007589}
+\end{align*}
+\[
+\boxed{\;\mathcal{L}: \; 0.017474 \;\longrightarrow\; 0.007589
+\qquad (\text{\textbf{56.6\%} буурсан})\;}
+\]
+Мөн $\mathbf{x}_3$ нь $0.3131 \to 0.3768$ болж зорилтот $\mathbf{y}=0.5$ руу
+\emph{ойртсон}. Градиентийн алхам зөв чиглэлд явсан нь баталгаажлаа. $\blacksquare$
+\end{solution}
+
+%==================================================================================
+\appendix
+\section{Хавсралт А — Тоон баталгаажуулалт}
+%==================================================================================
+
+Бүх бодолтыг NumPy дээр бие даан шалгав. Конволюци ба max pooling-ийн градиентийг
+\textbf{тоон градиентийн шалгалтаар} (central difference, $\varepsilon = 10^{-6}$)
+баталсан.
+
+\begin{center}
+\begin{tabular}{llr}
+\toprule
+\textbf{Бодлого} & \textbf{Шалгасан зүйл} & \textbf{Хамгийн их алдаа} \\
+\midrule
+3 (Conv)  & $\partial\mathcal{L}/\partial \xin$ & $2.77\times10^{-10}$ \\
+3 (Conv)  & $\partial\mathcal{L}/\partial \mathbf{W}$ & $2.10\times10^{-10}$ \\
+4 (Pool)  & $\partial\mathcal{L}/\partial \xin$ & $9.84\times10^{-11}$ \\
+5 (Backprop) & Бүх завсрын утга & аналитиктай бүрэн тэнцүү \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{A.1 Конволюцийн модулийн шалгалт}
+\begin{codebox}\begin{verbatim}
+import numpy as np
+N, K = 8, 3
+
+def conv_fwd(x, W):            # x_out[i] = sum_k W[k]*x_in[i+k]
+    xp = np.concatenate([x, np.zeros(K-1)])    # тэгээр дүүргэх
+    return np.array([sum(W[k]*xp[i+k] for k in range(K)) for i in range(N)])
+
+def conv_bwd(x, W, g):         # g = dL/dx_out
+    gW = np.array([sum(g[i]*(x[i+k] if i+k < N else 0.0)
+                       for i in range(N)) for k in range(K)])
+    gx = np.array([sum(g[i]*W[j-i] for i in range(N) if 0 <= j-i < K)
+                   for j in range(N)])
+    return gx, gW
+# Тоон градиенттэй харьцуулахад алдаа ~1e-10
+\end{verbatim}\end{codebox}
+
+\subsection*{A.2 Max pooling модулийн шалгалт}
+\begin{codebox}\begin{verbatim}
+P = S = 2
+
+def pool_fwd(x):
+    return np.array([x[i*S:i*S+P].max() for i in range(N//S)])
+
+def pool_bwd(x, g):
+    gx = np.zeros(N)
+    for i in range(N//S):
+        gx[i*S + np.argmax(x[i*S:i*S+P])] += g[i]   # += нь давхцалтай цонхонд чухал
+    return gx
+\end{verbatim}\end{codebox}
+
+\subsection*{A.3 Backpropagation-ы шалгалт}
+\begin{codebox}\begin{verbatim}
+W0 = np.array([[1.0, -3.0], [0.2, 1.0]]);  W1 = np.array([[1.0, -1.0]])
+x0 = np.array([[1.0], [0.1]]);  y = 0.5;  eta = 0.2
+
+x1 = W0 @ x0;  x2 = np.tanh(x1);  x3 = (W1 @ x2)[0, 0]
+L  = 0.5*(x3 - y)**2                          # 0.017474
+
+g3 = x3 - y                                   # -0.186945
+g2 = g3 * W1                                  # (-0.186945, 0.186945)
+g1 = g2 * (1 - np.tanh(x1.ravel())**2)        # (-0.118661, 0.171080)
+
+gW0 = x0 @ g1;   gW1 = x2 * g3
+W0n = W0 - eta*gW0.T;   W1n = W1 - eta*gW1.T  # транспозыг анхаар!
+# Шинэ алдагдал: 0.007589  (56.6% буурсан)
+\end{verbatim}\end{codebox}
+
+\vfill
+\hrule
+\smallskip
+\noindent\footnotesize
+\textbf{Эх сурвалж:} F.CS308 Машин сургалт, Лекц 5 — Neural Networks (147 слайд).
+Нэмэлт уншлага: Bengio, Courville, Goodfellow, \emph{Deep Learning},
+\url{https://www.deeplearningbook.org/contents/mlp.html}
+
+\end{document}

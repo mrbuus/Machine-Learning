@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CS308 Лабораторийн гарын авлага</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400&family=PT+Sans:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+/* Layout: нэг баганатай уншлагын хуудас, бүтэн өргөнтэй ойлголтын картууд + SVG схемүүд */
+:root{
+  --bg:#f7f6f2;          /* цаасан өнгө */
+  --surface:#ffffff;
+  --surface-2:#eeece5;
+  --fg:#1c1d21;
+  --fg-dim:#5b5d66;
+  --line:#d8d5cb;
+  --ink:#1f4e79;         /* үндсэн өнгө — бэхний цэнхэр */
+
+  --data:#1f6feb;        --data-bg:#e7f0fe;   --data-br:#9dc1f7;
+  --math:#7a3fb5;        --math-bg:#f1e9fa;   --math-br:#cbaeea;
+  --good:#1a7a46;        --good-bg:#e4f4ea;   --good-br:#9ed4b5;
+  --code:#9a5b06;        --code-bg:#fcf0dc;   --code-br:#edc584;
+  --warn:#b3261e;        --warn-bg:#fcebe9;   --warn-br:#f0afa9;
+
+  --f-display:"PT Serif",Georgia,"Times New Roman",serif;
+  --f-body:"PT Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#15161a; --surface:#1d1f25; --surface-2:#24262e;
+    --fg:#e9e8e3; --fg-dim:#a3a5ae; --line:#333640; --ink:#8fc0f0;
+    --data:#71aaf7; --data-bg:#152339; --data-br:#2d4e7d;
+    --math:#c096ea; --math-bg:#231a33; --math-br:#4d3a6b;
+    --good:#67c994; --good-bg:#132a1e; --good-br:#2d5a41;
+    --code:#e3ab5c; --code-bg:#2b2113; --code-br:#5e4723;
+    --warn:#f08a81; --warn-bg:#301816; --warn-br:#6b3430;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15161a; --surface:#1d1f25; --surface-2:#24262e;
+  --fg:#e9e8e3; --fg-dim:#a3a5ae; --line:#333640; --ink:#8fc0f0;
+  --data:#71aaf7; --data-bg:#152339; --data-br:#2d4e7d;
+  --math:#c096ea; --math-bg:#231a33; --math-br:#4d3a6b;
+  --good:#67c994; --good-bg:#132a1e; --good-br:#2d5a41;
+  --code:#e3ab5c; --code-bg:#2b2113; --code-br:#5e4723;
+  --warn:#f08a81; --warn-bg:#301816; --warn-br:#6b3430;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--fg);
+  font-family:var(--f-body); font-size:17px; line-height:1.65;
+  margin:0;
+}
+.wrap{max-width:860px; margin:0 auto; padding-inline:18px; padding-block:0 72px}
+
+/* ---------- Nav ---------- */
+nav{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:30;
+  background:color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.navin{max-width:860px;margin:0 auto;padding:9px 18px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin}
+nav a{
+  flex:0 0 auto; font-size:13px; text-decoration:none; color:var(--fg-dim);
+  padding:5px 11px; border-radius:999px; border:1px solid transparent; white-space:nowrap;
+}
+nav a:hover{color:var(--fg); background:var(--surface-2); border-color:var(--line)}
+nav a:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+/* ---------- Typography ---------- */
+h1{font-family:var(--f-display); font-size:clamp(30px,6.5vw,46px); line-height:1.15; margin:0 0 14px; text-wrap:balance; letter-spacing:-.01em}
+h2{font-family:var(--f-display); font-size:clamp(24px,4.6vw,33px); line-height:1.2; margin:0 0 6px; text-wrap:balance}
+h3{font-family:var(--f-display); font-size:21px; margin:34px 0 8px; text-wrap:balance}
+h4{font-size:16px; margin:22px 0 6px; letter-spacing:.02em}
+p{margin:0 0 15px}
+a{color:var(--ink)}
+strong{font-weight:700}
+.lead{font-size:19px; color:var(--fg-dim)}
+.eyebrow{
+  font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--fg-dim); font-weight:700; margin:0 0 10px;
+}
+
+/* ---------- Hero ---------- */
+header.hero{padding-block:46px 30px; border-bottom:3px double var(--line); margin-bottom:8px}
+.bignum{
+  font-family:var(--f-display); font-size:clamp(54px,13vw,96px); line-height:.95;
+  color:var(--good); font-weight:700; letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;
+}
+.herogrid{display:flex; flex-wrap:wrap; gap:26px; align-items:flex-end; margin-top:26px}
+.herogrid>div{min-width:0}
+
+/* ---------- Өнгөний түлхүүр ---------- */
+.legend{
+  background:var(--surface); border:1px solid var(--line); border-radius:4px;
+  padding:16px 18px; margin:26px 0;
+}
+.legend ul{list-style:none; margin:0; padding:0; display:grid; gap:9px}
+.legend li{display:flex; gap:11px; align-items:flex-start; font-size:15px; min-width:0}
+.sw{flex:0 0 auto; width:15px; height:15px; border-radius:3px; margin-top:4px; border:1px solid rgba(0,0,0,.18)}
+
+/* ---------- Sections ---------- */
+section{padding-block:40px; border-top:1px solid var(--line)}
+section:first-of-type{border-top:none}
+
+/* ---------- Ойлголтын картууд ---------- */
+.card{
+  border-left:4px solid var(--line); background:var(--surface);
+  border-radius:0 4px 4px 0; padding:16px 18px; margin:20px 0;
+}
+.card>:last-child{margin-bottom:0}
+.card .tag{
+  display:inline-block; font-size:11px; font-weight:700; letter-spacing:.11em;
+  text-transform:uppercase; margin-bottom:7px;
+}
+.c-data{border-left-color:var(--data); background:var(--data-bg)} .c-data .tag{color:var(--data)}
+.c-math{border-left-color:var(--math); background:var(--math-bg)} .c-math .tag{color:var(--math)}
+.c-good{border-left-color:var(--good); background:var(--good-bg)} .c-good .tag{color:var(--good)}
+.c-code{border-left-color:var(--code); background:var(--code-bg)} .c-code .tag{color:var(--code)}
+.c-warn{border-left-color:var(--warn); background:var(--warn-bg)} .c-warn .tag{color:var(--warn)}
+
+/* ---------- Томъёо ---------- */
+.formula{
+  background:var(--surface); border:1px solid var(--math-br); border-radius:4px;
+  padding:18px 16px; margin:18px 0; text-align:center;
+  font-family:var(--f-mono); font-size:clamp(15px,3.4vw,19px); line-height:1.9;
+  overflow-x:auto;
+}
+.formula .big{font-size:1.15em}
+.t-w{color:var(--math); font-weight:700}
+.t-x{color:var(--data); font-weight:700}
+.t-y{color:var(--good); font-weight:700}
+.t-c{color:var(--code); font-weight:700}
+.t-e{color:var(--warn); font-weight:700}
+.fkey{
+  display:grid; gap:5px; margin:12px 0 0; padding:0; list-style:none;
+  font-size:14.5px; text-align:left;
+}
+.fkey li{display:flex; gap:9px; align-items:baseline}
+.fkey code{flex:0 0 auto; font-family:var(--f-mono); font-weight:700}
+
+/* ---------- Код ---------- */
+pre{
+  background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--code);
+  border-radius:0 4px 4px 0; padding:14px 16px; margin:18px 0;
+  overflow-x:auto; font-family:var(--f-mono); font-size:13.5px; line-height:1.7;
+}
+code{font-family:var(--f-mono); font-size:.92em; background:var(--surface-2); padding:1px 5px; border-radius:3px}
+pre code{background:none; padding:0; font-size:1em}
+.cm{color:var(--fg-dim)}
+.kw{color:var(--math); font-weight:700}
+.st{color:var(--good)}
+
+/* ---------- Хүснэгт ---------- */
+.tablewrap{overflow-x:auto; margin:20px 0; border:1px solid var(--line); border-radius:4px}
+table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:420px}
+th,td{padding:9px 13px; text-align:left; border-bottom:1px solid var(--line)}
+th{background:var(--surface-2); font-size:12.5px; letter-spacing:.05em; text-transform:uppercase; font-weight:700}
+tbody tr:last-child td{border-bottom:none}
+td.num{text-align:right; font-variant-numeric:tabular-nums; font-family:var(--f-mono)}
+tr.hl td{background:var(--good-bg); font-weight:700}
+
+/* ---------- SVG схем ---------- */
+figure{margin:24px 0; padding:0}
+figure svg{display:block; width:100%; height:auto; max-width:100%}
+figcaption{font-size:14px; color:var(--fg-dim); margin-top:9px; text-align:center; font-style:italic}
+.svgbox{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:14px}
+
+/* ---------- Алхмын жагсаалт ---------- */
+ol.steps{counter-reset:s; list-style:none; padding:0; margin:20px 0; display:grid; gap:14px}
+ol.steps>li{
+  counter-increment:s; position:relative; padding-left:46px; min-width:0;
+}
+ol.steps>li::before{
+  content:counter(s); position:absolute; left:0; top:0;
+  width:31px; height:31px; border-radius:50%;
+  background:var(--ink); color:var(--bg);
+  display:grid; place-items:center; font-weight:700; font-size:15px;
+  font-family:var(--f-mono);
+}
+ul.plain{padding-left:22px; margin:0 0 15px}
+ul.plain li{margin-bottom:7px}
+
+/* ---------- Товч тэмдэг ---------- */
+.chip{
+  display:inline-block; font-size:12.5px; font-weight:700; padding:2px 9px;
+  border-radius:999px; border:1px solid; white-space:nowrap;
+}
+.ch-good{color:var(--good); background:var(--good-bg); border-color:var(--good-br)}
+.ch-warn{color:var(--warn); background:var(--warn-bg); border-color:var(--warn-br)}
+.ch-data{color:var(--data); background:var(--data-bg); border-color:var(--data-br)}
+
+/* ---------- Асуулт/хариулт блок ---------- */
+.qa{margin:20px 0}
+.qa .q{font-family:var(--f-display); font-size:19px; font-weight:700; margin-bottom:6px}
+.qa .q::before{content:"? "; color:var(--ink)}
+
+footer{border-top:3px double var(--line); padding-block:28px; font-size:14px; color:var(--fg-dim)}
+@media (max-width:420px){
+  body{font-size:16px}
+  .card{padding:14px 15px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<nav>
+  <div class="navin">
+    <a href="#эхлэл">Эхлэл</a>
+    <a href="#лаб1">Лаб 1</a>
+    <a href="#лаб2">Лаб 2</a>
+    <a href="#лаб3">Лаб 3</a>
+    <a href="#лаб4">Лаб 4 · SVM</a>
+    <a href="#ахиц">90 → 99%</a>
+    <a href="#сургамж">Сургамж</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">F.CS308 Машин сургалт · Б. Өсөхбаяр · B231910012</p>
+  <h1>Дөрвөн лаборатори, эхнээс нь тайлбарласан</h1>
+  <p class="lead">Машин сургалт огт мэдэхгүй хүн энэ хуудсыг дээрээс нь доош уншаад
+  бүгдийг нь ойлгохоор бичсэн. Томъёо бүрийн доор тэмдэг бүр юу гэсэн үг болохыг
+  бичсэн, өнгө бүр нэг утгатай.</p>
+
+  <div class="herogrid">
+    <div>
+      <div class="bignum">99.29%</div>
+      <p style="margin:4px 0 0;font-size:14px;color:var(--fg-dim)">
+        Гар бичмэл цифр таних эцсийн нарийвчлал<br>
+        <strong>10,000 зурагнаас ердөө 71-д нь л алдсан</strong>
+      </p>
+    </div>
+    <div style="flex:1;min-width:230px">
+      <table style="min-width:0">
+        <tbody>
+          <tr><td>Эхлэх цэг</td><td class="num">90.77%</td></tr>
+          <tr><td>Deskew + RBF</td><td class="num">98.96%</td></tr>
+          <tr class="hl"><td>+ Virtual SV</td><td class="num">99.29%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</header>
+
+<div class="legend">
+  <p class="eyebrow" style="margin-bottom:12px">Өнгөний түлхүүр — хуудсанд мөрдөгдөнө</p>
+  <ul>
+    <li><span class="sw" style="background:var(--data)"></span>
+      <span><strong style="color:var(--data)">ХӨХ — ӨГӨГДӨЛ.</strong>
+      Бодит тоо, зураг, жишээ. Компьютерт юу оруулж байгаа вэ.</span></li>
+    <li><span class="sw" style="background:var(--math)"></span>
+      <span><strong style="color:var(--math)">НИЛ ЯГААН — МАТЕМАТИК.</strong>
+      Томъёо, загварын параметр. Компьютер юу сурч байгаа вэ.</span></li>
+    <li><span class="sw" style="background:var(--code)"></span>
+      <span><strong style="color:var(--code)">ШАР — КОД.</strong>
+      Бодит бичсэн Python мөрүүд.</span></li>
+    <li><span class="sw" style="background:var(--good)"></span>
+      <span><strong style="color:var(--good)">НОГООН — ҮР ДҮН.</strong>
+      Хэмжсэн тоо, амжилттай болсон зүйл.</span></li>
+    <li><span class="sw" style="background:var(--warn)"></span>
+      <span><strong style="color:var(--warn)">УЛААН — АЛДАА, АНХААР.</strong>
+      Гаргасан алдаа, бүдрэх магадлалтай газар.</span></li>
+  </ul>
+</div>
+
+<!-- ===================== ЭХЛЭЛ ===================== -->
+<section id="эхлэл">
+  <p class="eyebrow">Үндэс</p>
+  <h2>Машин сургалт гэж юу вэ?</h2>
+
+  <p>Энгийн програм бичихэд бид <em>дүрмийг</em> нь өөрсдөө бичдэг:
+  «хэрэв гарчигт "хямдрал" гэсэн үг байвал спам гэж үз». Машин сургалтад бид
+  дүрэм бичихгүй. Оронд нь <strong>жишээ</strong> өгнө, компьютер дүрмийг нь
+  өөрөө олно.</p>
+
+  <div class="card c-data">
+    <span class="tag">Өгөгдөл</span>
+    <p><strong>Жишээ:</strong> «Энэ 10,000 имэйл спам, энэ 10,000 нь спам биш» гэж
+    хэлж өгнө. Компьютер эдгээрийг хараад «ямар шинж чанартай имэйл спам байдаг вэ»
+    гэдгийг өөрөө гаргаж авна. Үүнийг <strong>сургалт</strong> гэнэ.</p>
+  </div>
+
+  <h3>Ангилал (classification) гэж юу вэ</h3>
+  <p>Бидний 4 лаб бүгд нэг л төрлийн бодлого бодож байгаа:
+  <strong>объект өгөгдөхөд түүнийг аль бүлэгт хамаарахыг хэлэх</strong>.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Лаб</th><th>Юу өгөгдөх вэ</th><th>Юу хариулах вэ</th></tr></thead>
+      <tbody>
+        <tr><td>Лаб 2</td><td>Хавтгай дээрх цэг (x₁, x₂)</td><td>Хөх үү, улаан уу? (2 бүлэг)</td></tr>
+        <tr><td>Лаб 2–3</td><td>Titanic зорчигчийн нас, хүйс, тасалбарын зэрэглэл</td><td>Амьд үлдсэн үү, үгүй юу?</td></tr>
+        <tr><td>Лаб 3–4</td><td>28×28 пикселтэй гар бичмэл цифрийн зураг</td><td>Энэ ямар цифр вэ? (10 бүлэг)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Хамгийн чухал дүрэм: шалгалтын асуултыг урьдчилж харуулахгүй</h3>
+  <p>Сурагч шалгалтын асуултыг урьдчилж харвал 100 оноо авна — гэхдээ тэр нь
+  юу ч мэдэхгүй байж болно. Компьютер ч яг адилхан.</p>
+
+  <div class="card c-warn">
+    <span class="tag">Анхаар</span>
+    <p>Тиймээс өгөгдлийг <strong>тусад нь хуваадаг</strong>:</p>
+    <ul class="plain">
+      <li><strong>Сургалтын олонлог</strong> — загвар үүн дээр сурна (60,000 зураг).</li>
+      <li><strong>Validation</strong> — тохиргоог сонгоход ашиглана (3,000 зураг).</li>
+      <li><strong>Тестийн олонлог</strong> — <em>зөвхөн хамгийн сүүлд нэг удаа</em>
+      хэмжихэд ашиглана (10,000 зураг). Загвар эдгээрийг урьд өмнө огт хараагүй.</li>
+    </ul>
+    <p style="margin-bottom:0">Энэ хуудсанд бичигдсэн бүх нарийвчлалын тоо
+    <strong>тестийн олонлог дээр</strong> хэмжигдсэн. Өөрөөр хэлбэл шударга тоо.</p>
+  </div>
+</section>
+
+<!-- ===================== ЛАБ 1 ===================== -->
+<section id="лаб1">
+  <p class="eyebrow">Лаборатори 1</p>
+  <h2>Ажлын орчин бэлтгэх</h2>
+  <p class="lead">Код бичихээс өмнө багаж хэрэгслээ суулгах ёстой. Энэ лаб
+  зөвхөн энэ тухай.</p>
+
+  <p>Python өөрөө бол зөвхөн суурь хэл. Матриц үржих, график зурах, машин сургалтын
+  алгоритм ажиллуулах зэргийг <strong>сан (library)</strong> гэж нэрлэгддэг нэмэлт
+  багцууд хийдэг. Тэдгээрийг суулгах хэрэгтэй.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Сан</th><th>Юунд хэрэгтэй вэ</th><th>Хувилбар</th></tr></thead>
+      <tbody>
+        <tr><td><code>numpy</code></td><td>Тоон массив, матрицын үйлдэл — бүх зүйлийн суурь</td><td class="num">2.3.5</td></tr>
+        <tr><td><code>pandas</code></td><td>Хүснэгт хэлбэрийн өгөгдөл (Titanic гэх мэт)</td><td class="num">2.3.3</td></tr>
+        <tr><td><code>matplotlib</code></td><td>График зурах</td><td class="num">3.10.6</td></tr>
+        <tr><td><code>scipy</code></td><td>Шинжлэх ухааны тооцоолол, оновчлол</td><td class="num">1.16.3</td></tr>
+        <tr><td><code>scikit-learn</code></td><td>Бэлэн машин сургалтын алгоритмууд</td><td class="num">1.7.2</td></tr>
+        <tr><td><code>opencv</code>, <code>torch</code></td><td>Зураг боловсруулалт, мэдрэлийн сүлжээ (дараагийн лабуудад)</td><td class="num">5.0.0 / 2.14.0</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Удирдамж тань таны компьютерт тохирохгүй байвал</h3>
+  <p>Багшийн удирдамжид Windows+WSL, Windows+CUDA, Docker гэсэн 4 зам бичсэн байв.
+  Гэтэл энэ компьютер нь <strong>Apple Silicon Mac</strong> — дөрвийн нэг нь ч
+  тохирохгүй.</p>
+
+  <div class="card c-good">
+    <span class="tag">Шийдэл</span>
+    <p>Удирдамжийг хуулбарлахын оронд <em>зорилгыг</em> нь ойлгоод дүйцэх замаар явсан:</p>
+    <ul class="plain">
+      <li><strong>CUDA</strong> гэдэг нь NVIDIA видео картаар тооцоолол хурдасгах технологи.
+      Mac дээр NVIDIA карт байхгүй — гэхдээ Apple-ийн <strong>MPS</strong> яг тэр үүргийг гүйцэтгэнэ.</li>
+      <li>Шалгалтын үр дүн: <code>CUDA: False</code>, <code>MPS: True</code> —
+      өөрөөр хэлбэл GPU хурдасгалт <strong>ажиллаж байна</strong>, зүгээр л өөр нэртэй.</li>
+    </ul>
+  </div>
+
+  <div class="card c-code">
+    <span class="tag">Код</span>
+    <p>Сан бүрийг гараар шалгах нь алдаа гаргамтгай тул <code>check_env.py</code>
+    скрипт бичсэн. Нэг команд ажиллуулахад бүх сангийн хувилбар, GPU-ийн байдлыг
+    хэвлэнэ. Дараа өөр компьютер дээр орчноо дахин босгоход мөн ашиглагдана.</p>
+  </div>
+</section>
+
+<!-- ===================== ЛАБ 2 ===================== -->
+<section id="лаб2">
+  <p class="eyebrow">Лаборатори 2</p>
+  <h2>Шугаман ангилагч — хоёр бүлгийн хооронд шулуун татах</h2>
+
+  <p>Хавтгай дээр хөх цэгүүд, улаан цэгүүд тараагдсан байна гэж төсөөл. Хамгийн
+  энгийн ангилагч бол <strong>нэг шулуун татах</strong>: шулууны нэг талд байвал
+  хөх, нөгөө талд байвал улаан.</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 560 300" role="img" aria-label="Хоёр бүлэг цэгийг шулуунаар тусгаарласан схем">
+      <rect x="0" y="0" width="560" height="300" fill="none"/>
+      <!-- тэнхлэг -->
+      <line x1="55" y1="255" x2="520" y2="255" stroke="currentColor" stroke-width="1.2" opacity=".45"/>
+      <line x1="55" y1="255" x2="55" y2="35" stroke="currentColor" stroke-width="1.2" opacity=".45"/>
+      <text x="515" y="278" font-size="13" fill="currentColor" opacity=".7" font-family="monospace">x₁</text>
+      <text x="30" y="42" font-size="13" fill="currentColor" opacity=".7" font-family="monospace">x₂</text>
+      <!-- тусгаарлах шулуун -->
+      <line x1="110" y1="245" x2="470" y2="60" stroke="var(--math)" stroke-width="3"/>
+      <text x="398" y="60" font-size="14" fill="var(--math)" font-weight="700" font-family="monospace">w·x + b = 0</text>
+      <!-- хэвийн вектор -->
+      <line x1="290" y1="152" x2="340" y2="250" stroke="var(--math)" stroke-width="2.2" stroke-dasharray="5 4"/>
+      <polygon points="340,250 331,236 345,239" fill="var(--math)"/>
+      <text x="345" y="235" font-size="14" fill="var(--math)" font-weight="700" font-family="monospace">w</text>
+      <!-- хөх цэгүүд (дээд тал) -->
+      <circle cx="140" cy="95" r="8" fill="var(--data)"/><circle cx="195" cy="70" r="8" fill="var(--data)"/>
+      <circle cx="235" cy="118" r="8" fill="var(--data)"/><circle cx="160" cy="155" r="8" fill="var(--data)"/>
+      <circle cx="290" cy="80" r="8" fill="var(--data)"/><circle cx="350" cy="62" r="8" fill="var(--data)"/>
+      <!-- улаан цэгүүд (доод тал) -->
+      <rect x="300" y="200" width="15" height="15" fill="var(--warn)"/>
+      <rect x="370" y="175" width="15" height="15" fill="var(--warn)"/>
+      <rect x="420" y="215" width="15" height="15" fill="var(--warn)"/>
+      <rect x="345" y="238" width="15" height="15" fill="var(--warn)"/>
+      <rect x="455" y="160" width="15" height="15" fill="var(--warn)"/>
+      <!-- тайлбар -->
+      <circle cx="90" cy="30" r="7" fill="var(--data)"/>
+      <text x="104" y="35" font-size="13" fill="currentColor">y = +1</text>
+      <rect x="190" y="23" width="14" height="14" fill="var(--warn)"/>
+      <text x="212" y="35" font-size="13" fill="currentColor">y = −1</text>
+    </svg>
+    </div>
+    <figcaption>Шулууныг w вектор ба b тоо хоёр бүрэн тодорхойлно.
+    w нь шулуунд <strong>перпендикуляр</strong> чиглэнэ.</figcaption>
+  </figure>
+
+  <div class="formula">
+    <div class="big">f(<span class="t-x">x</span>) = <span class="t-w">w</span>·<span class="t-x">x</span> + <span class="t-w">b</span></div>
+    <ul class="fkey">
+      <li><code class="t-x">x</code><span>Нэг жишээ. Жишээ нь цэгийн координат (3, 5).</span></li>
+      <li><code class="t-w">w</code><span>Жин. Онцлог бүр хэр чухал вэ гэдгийг хэлнэ — <strong>загвар үүнийг сурна</strong>.</span></li>
+      <li><code class="t-w">b</code><span>Шилжилт (bias). Шулууныг эх цэгээс хэр хол байлгахыг зохицуулна.</span></li>
+      <li><code>f(x)</code><span>Гарсан тоо. <strong>Эерэг</strong> бол нэг бүлэг, <strong>сөрөг</strong> бол нөгөө бүлэг.</span></li>
+    </ul>
+  </div>
+
+  <h3>Perceptron: хамгийн анхны суралцах дүрэм</h3>
+  <p>Perceptron маш энгийн зарчмаар ажиллана: <strong>буруу хариулсан үедээ л засна</strong>.</p>
+
+  <ol class="steps">
+    <li>w-г бүгдийг тэгээр эхлүүлнэ (юу ч мэдэхгүй байдал).</li>
+    <li>Жишээ бүрийг нэг нэгээр нь аваад таамаглана.</li>
+    <li>Зөв таасан бол юу ч хийхгүй, цааш явна.</li>
+    <li>Буруу таасан бол w-г тухайн жишээ рүү чиглүүлж бага зэрэг түлхнэ:
+      <code>w = w + y·x</code></li>
+    <li>Бүх өгөгдлийг олон удаа (epoch) давтана.</li>
+  </ol>
+
+  <div class="card c-math">
+    <span class="tag">Математик</span>
+    <p>«Буруу таасан» гэдгийг яаж мэдэх вэ? <code>y · f(x) ≤ 0</code> байвал буруу.</p>
+    <p style="margin-bottom:0">Яагаад? <code>y</code> нь бодит хариу (+1 эсвэл −1),
+    <code>f(x)</code> нь таамаг. Хоёулаа ижил тэмдэгтэй бол үржвэр нь <strong>эерэг</strong>
+    (зөв таасан). Өөр тэмдэгтэй бол үржвэр нь <strong>сөрөг</strong> (буруу таасан).
+    Нэг үржүүлэхэд л мэдэгдэж байна.</p>
+  </div>
+
+  <h3>Гол нээлт: өгөгдлийн <em>дараалал</em> алгоритмаас багагүй нөлөөтэй</h3>
+  <p>Perceptron-ыг хоёр янзаар ажиллуулав. Код яг ижил. Ялгаа нь зөвхөн
+  жишээнүүдийг ямар дарааллаар үзүүлсэнд.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Арга</th><th>Юу өөр вэ</th><th class="num">Алдагдал</th><th class="num">Нарийвчлал</th></tr></thead>
+      <tbody>
+        <tr><td>Perceptron (дараалсан)</td><td>Файлд байгаа дарааллаар</td><td class="num">0.6729</td><td class="num">0.805</td></tr>
+        <tr><td>Perceptron (холисон)</td><td>Epoch бүрт дарааллыг холино</td><td class="num">0.3388</td><td class="num">0.910</td></tr>
+        <tr><td>Average perceptron</td><td>Бүх алхмын w-гийн дунджийг авна</td><td class="num">0.2766</td><td class="num">0.915</td></tr>
+        <tr class="hl"><td>Pegasos</td><td>Зай (margin) бага байсан ч засна</td><td class="num">0.2509</td><td class="num">0.920</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card c-warn">
+    <span class="tag">Яагаад ингэдэг вэ</span>
+    <p style="margin-bottom:0">Өгөгдөл ангиараа эрэмбэлэгдсэн байвал — эхлээд 100 хөх,
+    дараа нь 100 улаан — алгоритм эхний 100-г хараад «бүгд хөх» гэж шийдээд сурахаа
+    болино. Дараа нь улаанууд ирэхэд огцом эсрэг тийш нь шилжинэ. Дундуур нь холиход
+    ийм хэлбэлзэл арилна. <strong>Алдагдал 0.67-оос 0.34 болж хоёр дахин буурсан —
+    зөвхөн дарааллаас болж.</strong></p>
+  </div>
+
+  <h3>Titanic: бодит өгөгдөл дээр юу сурсан бэ</h3>
+  <p>Хиймэл цэгүүдээс гадна Titanic хөлөг онгоцны 891 зорчигчийн бодит өгөгдөл дээр
+  сургав. Асуулт: «Энэ зорчигч амьд үлдэх үү?»</p>
+
+  <p>Загвар онцлог бүрт нэг жин сурна. Жин нь <strong>эерэг</strong> бол амьд үлдэх
+  магадлалыг нэмэгдүүлнэ, <strong>сөрөг</strong> бол бууруулна.</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 560 250" role="img" aria-label="Titanic өгөгдөл дээр сурсан жингүүдийн баганан график">
+      <line x1="280" y1="20" x2="280" y2="225" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
+      <text x="282" y="243" font-size="12" fill="currentColor" opacity=".65">0</text>
+      <text x="120" y="243" font-size="12" fill="var(--warn)" font-weight="700">← амьд үлдэх магадлал буурна</text>
+      <text x="340" y="243" font-size="12" fill="var(--good)" font-weight="700">өснө →</text>
+      <!-- sex: -3.67 -> scale 36px per unit -->
+      <rect x="148" y="26" width="132" height="22" fill="var(--warn)"/>
+      <text x="142" y="42" font-size="13" fill="currentColor" text-anchor="end">хүйс (эр)</text>
+      <text x="155" y="42" font-size="12" fill="#fff" font-weight="700" font-family="monospace">−3.67</text>
+      <!-- pclass -2.39 -->
+      <rect x="194" y="56" width="86" height="22" fill="var(--warn)" opacity=".85"/>
+      <text x="188" y="72" font-size="13" fill="currentColor" text-anchor="end">тасалбарын зэрэг</text>
+      <text x="201" y="72" font-size="12" fill="#fff" font-weight="700" font-family="monospace">−2.39</text>
+      <!-- age -2.34 -->
+      <rect x="196" y="86" width="84" height="22" fill="var(--warn)" opacity=".75"/>
+      <text x="190" y="102" font-size="13" fill="currentColor" text-anchor="end">нас</text>
+      <text x="203" y="102" font-size="12" fill="#fff" font-weight="700" font-family="monospace">−2.34</text>
+      <!-- sibsp -2.16 -->
+      <rect x="202" y="116" width="78" height="22" fill="var(--warn)" opacity=".65"/>
+      <text x="196" y="132" font-size="13" fill="currentColor" text-anchor="end">ах дүүгийн тоо</text>
+      <text x="209" y="132" font-size="12" fill="#fff" font-weight="700" font-family="monospace">−2.16</text>
+      <!-- alone -1.10 -->
+      <rect x="240" y="146" width="40" height="22" fill="var(--warn)" opacity=".5"/>
+      <text x="234" y="162" font-size="13" fill="currentColor" text-anchor="end">ганцаараа</text>
+      <!-- fare +1.15 -->
+      <rect x="280" y="176" width="41" height="22" fill="var(--good)"/>
+      <text x="330" y="192" font-size="13" fill="currentColor">тасалбарын үнэ  +1.15</text>
+    </svg>
+    </div>
+    <figcaption>Загварын сурсан жингүүд. Хэн нэг нь үүнийг зааж өгөөгүй —
+    зөвхөн өгөгдлөөс гарч ирсэн.</figcaption>
+  </figure>
+
+  <div class="card c-good">
+    <span class="tag">Үр дүн ба дүгнэлт</span>
+    <p>Тестийн нарийвчлал <strong>0.7982</strong>. Scikit-learn-ийн бэлэн
+    <code>LinearSVC</code> ч яг 0.7982 өгсөн — өөрөөр хэлбэл өөрсдийн бичсэн код зөв.</p>
+    <p style="margin-bottom:0">Жингүүд нь түүхэн баримттай нийцэж байна: эмэгтэйчүүд
+    (хүйсийн жин хамгийн том сөрөг), эхний зэрэглэлийн зорчигчид илүү их амьд үлдсэн.
+    Загвар «эхлээд эмэгтэйчүүд, хүүхдүүд» гэсэн дүрмийг өгөгдлөөс нь өөрөө олсон.</p>
+  </div>
+</section>
+
+<!-- ===================== ЛАБ 3 ===================== -->
+<section id="лаб3">
+  <p class="eyebrow">Лаборатори 3</p>
+  <h2>Логистик регресс ба PCA</h2>
+
+  <h3>Асуудал: «тийм/үгүй» гэдэг хангалтгүй</h3>
+  <p>Лаб 2-ын ангилагч зөвхөн «хөх» эсвэл «улаан» гэж хариулдаг. Гэтэл эмч
+  «хавдар мөн» гэхээс илүү «95% магадлалтай хавдар» гэж хэлж чадвал хамаагүй дээр.</p>
+
+  <p>Логистик регресс нь яг үүнийг хийдэг: гарах хариуг <strong>0-ээс 1 хоорондох
+  магадлал</strong> болгон хувиргана. Үүнд <strong>sigmoid</strong> функц ашиглана.</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 560 230" role="img" aria-label="Sigmoid функцийн график">
+      <line x1="40" y1="190" x2="530" y2="190" stroke="currentColor" stroke-width="1.2" opacity=".4"/>
+      <line x1="285" y1="25" x2="285" y2="200" stroke="currentColor" stroke-width="1.2" opacity=".4"/>
+      <line x1="40" y1="107" x2="530" y2="107" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" opacity=".5"/>
+      <text x="18" y="46" font-size="12" fill="currentColor" opacity=".7" font-family="monospace">1.0</text>
+      <text x="18" y="112" font-size="12" fill="currentColor" opacity=".7" font-family="monospace">0.5</text>
+      <text x="18" y="194" font-size="12" fill="currentColor" opacity=".7" font-family="monospace">0.0</text>
+      <path d="M40,188 C150,187 215,183 250,160 C272,146 278,124 285,107 C292,90 298,68 320,54 C355,31 420,27 530,26"
+            fill="none" stroke="var(--math)" stroke-width="3.2"/>
+      <circle cx="285" cy="107" r="6" fill="var(--math)"/>
+      <text x="300" y="100" font-size="13" fill="var(--math)" font-weight="700">шийдвэрийн босго</text>
+      <text x="90" y="215" font-size="13" fill="var(--warn)" font-weight="700">маш итгэлтэй: 0-р анги</text>
+      <text x="380" y="215" font-size="13" fill="var(--good)" font-weight="700">маш итгэлтэй: 1-р анги</text>
+      <text x="482" y="190" font-size="12" fill="currentColor" opacity=".7" font-family="monospace">z = w·x+b</text>
+    </svg>
+    </div>
+    <figcaption>Sigmoid: ямар ч бодит тоог 0 ба 1 хооронд шахна.
+    0.5-аас дээш бол «тийм», доош бол «үгүй».</figcaption>
+  </figure>
+
+  <div class="formula">
+    <div class="big">g(z) = 1 / (1 + e<sup>−z</sup>)</div>
+    <ul class="fkey">
+      <li><code>z</code><span>Лаб 2-ын гаргасан түүхий тоо, <code>w·x + b</code>.</span></li>
+      <li><code>e</code><span>Эйлерийн тоо ≈ 2.718. Зүгээр л тогтмол.</span></li>
+      <li><code>g(z)</code><span>Үр дүн — үргэлж 0 ба 1 хооронд байна, тиймээс магадлал гэж уншиж болно.</span></li>
+    </ul>
+  </div>
+
+  <h3>Gradient descent: манантай уулнаас уруудах</h3>
+  <p>Загвар жингээ яаж сайжруулах вэ? <strong>Алдагдлын функц</strong> нь «одоогийн
+  жин хэр муу вэ» гэдгийг нэг тоогоор хэлнэ. Зорилго нь үүнийг хамгийн бага болгох.</p>
+
+  <div class="card c-math">
+    <span class="tag">Зүйрлэл</span>
+    <p style="margin-bottom:0">Та манантай уулан дээр зогсож байна, доош буух гэж байна.
+    Юу ч харагдахгүй. Гэхдээ хөлийнхөө доорх <strong>налууг</strong> мэдэрч чадна.
+    Хамгийн эгц уруудах зүг рүү нэг алхана. Дахиад мэдэрнэ, дахиад алхана.
+    Эцэст нь хөндийд хүрнэ. Энэ л gradient descent. «Налуу» = <strong>градиент</strong>,
+    «алхмын урт» = <strong>суралцах хурд α</strong>.</p>
+  </div>
+
+  <div class="formula">
+    <div class="big"><span class="t-w">θ</span> := <span class="t-w">θ</span> − <span class="t-c">α</span> · ∇J(<span class="t-w">θ</span>)</div>
+    <ul class="fkey">
+      <li><code class="t-w">θ</code><span>Жингүүд (w ба b-г нийлүүлж бичсэн хэлбэр).</span></li>
+      <li><code class="t-c">α</code><span>Суралцах хурд. Жижиг бол удаан, том бол давж гарч магадгүй.</span></li>
+      <li><code>∇J</code><span>Градиент — «аль зүг рүү алдаа хамгийн хурдан өсөх вэ». Хасах тэмдэг нь эсрэг зүг рүү явахыг хэлнэ.</span></li>
+    </ul>
+  </div>
+
+  <div class="card c-good">
+    <span class="tag">Үр дүн</span>
+    <p style="margin-bottom:0">Зөвхөн NumPy ашиглан эхнээс нь бичсэн логистик регресс
+    <strong>0.96</strong> нарийвчлал өгсөн. Scikit-learn-ийн бэлэн хувилбар ч
+    <strong>0.96</strong>. Таамаглалын <strong>100%</strong> нь яг таарсан.
+    Titanic дээр 0.7848, AUC 0.8478.</p>
+  </div>
+
+  <h3>PCA: 784 хэмжээстэй зургийг жижигрүүлэх</h3>
+  <p>28×28 пикселтэй зураг гэдэг нь компьютерын хувьд <strong>784 тоо</strong>.
+  Өөрөөр хэлбэл 784 хэмжээст орон зай дахь нэг цэг. Хүний тархи 3 хэмжээснээс
+  цааш төсөөлж чадахгүй.</p>
+
+  <p>Гэхдээ 784 тоо бүгд адил чухал биш:</p>
+  <ul class="plain">
+    <li>Зургийн захын пиксэлүүд бараг үргэлж хар — ямар ч мэдээлэл агуулахгүй.</li>
+    <li>Хажуу хажуудаа байгаа пиксэлүүд бараг ижил утгатай — давхардсан мэдээлэл.</li>
+  </ul>
+
+  <p><strong>PCA</strong> нь мэдээллийн хамгийн их хэсгийг агуулсан чиглэлүүдийг олж,
+  бусдыг нь хаядаг.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Мэдээллийн хэдэн хувийг хадгалах вэ</th><th class="num">Хэдэн тоо хэрэгтэй вэ</th><th class="num">784-өөс</th></tr></thead>
+      <tbody>
+        <tr><td>80%</td><td class="num">43</td><td class="num">5.5%</td></tr>
+        <tr><td>90%</td><td class="num">86</td><td class="num">11.0%</td></tr>
+        <tr class="hl"><td>95%</td><td class="num">151</td><td class="num">19.3%</td></tr>
+        <tr><td>99%</td><td class="num">326</td><td class="num">41.6%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card c-good">
+    <span class="tag">Практик ач холбогдол</span>
+    <p style="margin-bottom:0">784 тооны оронд 100 тоо ашиглахад нарийвчлал
+    <strong>0.8863 → 0.8993</strong> болж бүр <em>өссөн</em>, сургалтын хугацаа
+    <strong>1.40 сек → 0.15 сек</strong> болж 9 дахин богиноссон. Илүүдэл мэдээлэл
+    хасагдахад загвар чимээ шуугианд (noise) дасах нь багасдаг.</p>
+  </div>
+</section>
+
+<!-- ===================== ЛАБ 4 ===================== -->
+<section id="лаб4">
+  <p class="eyebrow">Лаборатори 4</p>
+  <h2>Support Vector Machine — аль шулуун нь хамгийн сайн вэ?</h2>
+
+  <p>Лаб 2-т бид хоёр бүлгийг тусгаарлах шулуун татсан. Гэхдээ нэг асуулт үлдсэн:
+  <strong>тусгаарлах шулуун олон байж болно. Аль нь хамгийн сайн вэ?</strong></p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 560 290" role="img" aria-label="Гурван өөр тусгаарлах шулууны харьцуулалт">
+      <!-- data points -->
+      <g>
+        <circle cx="120" cy="90" r="8" fill="var(--data)"/><circle cx="165" cy="60" r="8" fill="var(--data)"/>
+        <circle cx="200" cy="105" r="8" fill="var(--data)"/><circle cx="145" cy="135" r="8" fill="var(--data)"/>
+        <circle cx="245" cy="70" r="8" fill="var(--data)"/>
+        <rect x="330" y="185" width="15" height="15" fill="var(--warn)"/>
+        <rect x="390" y="155" width="15" height="15" fill="var(--warn)"/>
+        <rect x="430" y="205" width="15" height="15" fill="var(--warn)"/>
+        <rect x="365" y="225" width="15" height="15" fill="var(--warn)"/>
+      </g>
+      <!-- bad line 1: too close to blue -->
+      <line x1="230" y1="265" x2="285" y2="25" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="196" y="282" font-size="12" fill="var(--warn)" font-weight="700">хэт ойрхон</text>
+      <!-- bad line 2: too close to red -->
+      <line x1="330" y1="265" x2="300" y2="25" stroke="var(--warn)" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="340" y="282" font-size="12" fill="var(--warn)" font-weight="700">хэт ойрхон</text>
+      <!-- best line: middle -->
+      <line x1="278" y1="268" x2="293" y2="22" stroke="var(--good)" stroke-width="3.4"/>
+      <text x="300" y="22" font-size="13" fill="var(--good)" font-weight="700">хамгийн дунд нь</text>
+    </svg>
+    </div>
+    <figcaption>Гурвуулаа сургалтын өгөгдлийг 100% зөв ангилна.
+    Гэвч ногоон нь л шинэ өгөгдөлд найдвартай ажиллана.</figcaption>
+  </figure>
+
+  <h3>Margin — хамгийн чухал ойлголт</h3>
+  <p>SVM-ийн хариулт: <strong>хамгийн ойрхон цэгүүдээс хамгийн хол байх шулууныг
+  сонго</strong>. Шулуунаас хоёр тийш хамгийн ойрхон цэг хүртэлх зайг
+  <strong>margin</strong> (зах) гэнэ.</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 560 300" role="img" aria-label="Margin ба дэмжигч векторуудын схем">
+      <!-- margin band -->
+      <polygon points="150,285 215,15 290,15 225,285" fill="var(--math)" opacity=".13"/>
+      <!-- margin lines -->
+      <line x1="150" y1="285" x2="215" y2="15" stroke="var(--math)" stroke-width="2" stroke-dasharray="7 5"/>
+      <line x1="225" y1="285" x2="290" y2="15" stroke="var(--math)" stroke-width="2" stroke-dasharray="7 5"/>
+      <!-- main separator -->
+      <line x1="187" y1="285" x2="252" y2="15" stroke="var(--math)" stroke-width="3.4"/>
+      <text x="256" y="22" font-size="13" fill="var(--math)" font-weight="700" font-family="monospace">w·x+b = 0</text>
+      <!-- margin arrow -->
+      <line x1="176" y1="160" x2="252" y2="160" stroke="currentColor" stroke-width="1.8"/>
+      <polygon points="176,160 186,155 186,165" fill="currentColor"/>
+      <polygon points="252,160 242,155 242,165" fill="currentColor"/>
+      <text x="168" y="148" font-size="14" fill="currentColor" font-weight="700" font-family="monospace">margin = 2/‖w‖</text>
+      <!-- support vectors (on margin lines) -->
+      <circle cx="162" cy="235" r="9" fill="var(--data)" stroke="var(--good)" stroke-width="3.5"/>
+      <circle cx="193" cy="105" r="9" fill="var(--data)" stroke="var(--good)" stroke-width="3.5"/>
+      <rect x="241" y="216" width="17" height="17" fill="var(--warn)" stroke="var(--good)" stroke-width="3.5"/>
+      <rect x="272" y="86" width="17" height="17" fill="var(--warn)" stroke="var(--good)" stroke-width="3.5"/>
+      <!-- ordinary points -->
+      <circle cx="75" cy="120" r="8" fill="var(--data)" opacity=".45"/>
+      <circle cx="105" cy="200" r="8" fill="var(--data)" opacity=".45"/>
+      <circle cx="60" cy="250" r="8" fill="var(--data)" opacity=".45"/>
+      <rect x="330" y="150" width="15" height="15" fill="var(--warn)" opacity=".45"/>
+      <rect x="380" y="220" width="15" height="15" fill="var(--warn)" opacity=".45"/>
+      <rect x="350" y="60" width="15" height="15" fill="var(--warn)" opacity=".45"/>
+      <!-- legend -->
+      <circle cx="400" cy="265" r="9" fill="var(--data)" stroke="var(--good)" stroke-width="3.5"/>
+      <text x="418" y="270" font-size="13" fill="var(--good)" font-weight="700">дэмжигч вектор</text>
+      <circle cx="400" cy="292" r="8" fill="var(--data)" opacity=".45"/>
+      <text x="418" y="296" font-size="13" fill="currentColor" opacity=".7">энгийн цэг (нөлөөгүй)</text>
+    </svg>
+    </div>
+    <figcaption>Зөвхөн заагийн шугам дээр буй цэгүүд (ногоон хүрээтэй) шулууны
+    байрлалыг тодорхойлно. Бусад цэгийг устгасан ч шулуун хөдлөхгүй.</figcaption>
+  </figure>
+
+  <div class="card c-data">
+    <span class="tag">Дэмжигч вектор гэж юу вэ</span>
+    <p style="margin-bottom:0">Заагийн яг ирмэг дээр байгаа цэгүүдийг
+    <strong>дэмжигч вектор (support vector)</strong> гэнэ. Эдгээр нь шулууныг
+    «түшиж» барьж байгаа учраас тэр нэртэй. Бодит MNIST өгөгдөлд 60,000 зурагнаас
+    ердөө <strong>7,648 нь (12.7%)</strong> дэмжигч вектор болсон. Үлдсэн 87% нь
+    эцсийн шийдвэрт <em>огт нөлөөлөхгүй</em>. Энэ баримт сүүлд маш чухал болно.</p>
+  </div>
+
+  <h3>Максимум margin-ийн томъёо</h3>
+  <div class="formula">
+    <div class="big">min <span class="t-w">½‖w‖²</span> &nbsp;&nbsp;нөхцөл:&nbsp;&nbsp;
+      <span class="t-y">y<sub>i</sub></span>(<span class="t-w">w</span>·<span class="t-x">x<sub>i</sub></span> + <span class="t-w">b</span>) ≥ 1</div>
+    <ul class="fkey">
+      <li><code class="t-w">‖w‖</code><span>w векторын урт. Margin = 2/‖w‖ учраас <strong>‖w‖-г багасгах = margin-г ихэсгэх</strong>. Энэ бол бүх SVM-ийн цөм.</span></li>
+      <li><code>≥ 1</code><span>Жишээ бүр зөвхөн зөв талд биш, <strong>заагаас тодорхой зайд</strong> байх ёстой гэсэн шаардлага.</span></li>
+    </ul>
+  </div>
+
+  <div class="card c-warn">
+    <span class="tag">Асуудал</span>
+    <p style="margin-bottom:0">Бодит өгөгдөлд хоёр бүлэг бага зэрэг
+    <strong>давхцдаг</strong>. Тэгвэл дээрх нөхцөлийг хангах шулуун <em>огт байхгүй</em> —
+    загвар шийдэлгүй болно.</p>
+  </div>
+
+  <div class="formula">
+    <div class="big">min <span class="t-w">½‖w‖²</span> + <span class="t-c">C</span>·Σ<span class="t-e">ξ<sub>i</sub></span></div>
+    <ul class="fkey">
+      <li><code class="t-e">ξ</code><span>«кси» — зөрчлийн хэмжээ. Жишээ буруу талд орохыг зөвшөөрөх боловч төлбөртэй.</span></li>
+      <li><code class="t-c">C</code><span>Торгуулийн хэмжээ. <strong>Том C</strong> = алдаа тэвчихгүй, нарийн загвар. <strong>Бага C</strong> = зөөлөн, өргөн margin.</span></li>
+    </ul>
+  </div>
+  <p>Үүнийг <strong>зөөлөн зах (soft margin)</strong> гэнэ — Cortes &amp; Vapnik, 1995.
+  Ийм байдлаар SVM бодит, бохир өгөгдөл дээр ажиллах боломжтой болсон.</p>
+
+  <h3>Kernel trick: шулуунаар огт тусгаарлагдахгүй бол?</h3>
+  <p>Доорх XOR хэлбэрийн өгөгдлийг хар. <strong>Ямар ч шулуун</strong> хоёр өнгийг
+  тусгаарлаж чадахгүй. Юу хийх вэ?</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 560 270" role="img" aria-label="XOR өгөгдөл ба kernel хувиргалтын схем">
+      <!-- left: 2D XOR -->
+      <text x="30" y="22" font-size="13" fill="currentColor" font-weight="700">Анхны орон зай (2 хэмжээс)</text>
+      <rect x="30" y="34" width="210" height="210" fill="none" stroke="currentColor" stroke-width="1" opacity=".35"/>
+      <line x1="135" y1="34" x2="135" y2="244" stroke="currentColor" stroke-width="1" opacity=".25"/>
+      <line x1="30" y1="139" x2="240" y2="139" stroke="currentColor" stroke-width="1" opacity=".25"/>
+      <g>
+        <circle cx="70" cy="75" r="7" fill="var(--data)"/><circle cx="95" cy="98" r="7" fill="var(--data)"/>
+        <circle cx="60" cy="105" r="7" fill="var(--data)"/>
+        <circle cx="190" cy="185" r="7" fill="var(--data)"/><circle cx="210" cy="205" r="7" fill="var(--data)"/>
+        <circle cx="175" cy="210" r="7" fill="var(--data)"/>
+        <rect x="185" y="68" width="13" height="13" fill="var(--warn)"/>
+        <rect x="205" y="95" width="13" height="13" fill="var(--warn)"/>
+        <rect x="170" y="100" width="13" height="13" fill="var(--warn)"/>
+        <rect x="65" y="185" width="13" height="13" fill="var(--warn)"/>
+        <rect x="90" y="205" width="13" height="13" fill="var(--warn)"/>
+        <rect x="55" y="212" width="13" height="13" fill="var(--warn)"/>
+      </g>
+      <text x="48" y="262" font-size="12" fill="var(--warn)" font-weight="700">шулуунаар боломжгүй</text>
+      <!-- arrow -->
+      <line x1="258" y1="139" x2="312" y2="139" stroke="var(--math)" stroke-width="2.5"/>
+      <polygon points="318,139 306,133 306,145" fill="var(--math)"/>
+      <text x="246" y="124" font-size="12" fill="var(--math)" font-weight="700">kernel</text>
+      <!-- right: lifted -->
+      <text x="330" y="22" font-size="13" fill="currentColor" font-weight="700">Шинэ онцлог x₁·x₂ нэмэхэд</text>
+      <rect x="330" y="34" width="210" height="210" fill="none" stroke="currentColor" stroke-width="1" opacity=".35"/>
+      <line x1="330" y1="139" x2="540" y2="139" stroke="var(--good)" stroke-width="3"/>
+      <text x="422" y="133" font-size="12" fill="var(--good)" font-weight="700">зааг</text>
+      <g>
+        <circle cx="360" cy="70" r="7" fill="var(--data)"/><circle cx="395" cy="92" r="7" fill="var(--data)"/>
+        <circle cx="430" cy="62" r="7" fill="var(--data)"/><circle cx="470" cy="100" r="7" fill="var(--data)"/>
+        <circle cx="505" cy="78" r="7" fill="var(--data)"/><circle cx="455" cy="55" r="7" fill="var(--data)"/>
+        <rect x="355" y="185" width="13" height="13" fill="var(--warn)"/>
+        <rect x="400" y="205" width="13" height="13" fill="var(--warn)"/>
+        <rect x="445" y="180" width="13" height="13" fill="var(--warn)"/>
+        <rect x="485" y="210" width="13" height="13" fill="var(--warn)"/>
+        <rect x="515" y="190" width="13" height="13" fill="var(--warn)"/>
+      </g>
+      <text x="352" y="262" font-size="12" fill="var(--good)" font-weight="700">одоо шулуун хангалттай</text>
+    </svg>
+    </div>
+    <figcaption>XOR-д <code>x₁·x₂</code> гэсэн нэг шинэ онцлог нэмэхэд л асуудал
+    шийдэгдэнэ: хоёр өнгө өөр өөр түвшинд сална.</figcaption>
+  </figure>
+
+  <div class="card c-math">
+    <span class="tag">Kernel trick гэж юу вэ</span>
+    <p>Шинэ онцлог нэмэх санаа ойлгомжтой. Асуудал нь — олон онцлог нэмбэл
+    тооцоолол тэсрэх шиг өснө. Заримдаа <strong>төгсгөлгүй</strong> олон онцлог хэрэгтэй болдог.</p>
+    <p style="margin-bottom:0"><strong>Заль мэх:</strong> SVM-ийн томъёонд онцлогууд нь
+    зөвхөн <em>хос хосоороо үржигдэж</em> ордог. Тиймээс шинэ онцлогуудыг
+    <strong>огт тооцоолохгүйгээр</strong>, зөвхөн тэдний үржвэрийг шууд өгдөг нэг
+    функц бичвэл хангалттай. Энэ функцийг <strong>kernel</strong> гэнэ.
+    Төгсгөлгүй хэмжээст орон зайд ажиллаж байгаа мөртлөө тооцоолол нь хямд хэвээр.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Kernel</th><th>Томъёо</th><th>Юунд сайн вэ</th><th class="num">XOR тест</th></tr></thead>
+      <tbody>
+        <tr><td>RBF (Гауссын)</td><td><code>exp(−γ‖x−x'‖²)</code></td><td>Ерөнхий зориулалт, хамгийн түгээмэл</td><td class="num">0.955</td></tr>
+        <tr class="hl"><td>Полином d=2</td><td><code>(1+x·x')²</code></td><td>Хоёр онцлогийн <em>үржвэр</em> чухал үед</td><td class="num">0.975</td></tr>
+        <tr><td>Полином d=3</td><td><code>(1+x·x')³</code></td><td>Илүү нийлмэл, энд давуу тал өгөөгүй</td><td class="num">0.970</td></tr>
+        <tr><td>Лаплас</td><td><code>exp(−γ‖x−x'‖₁)</code></td><td>Хурц зааг, илүү олон SV ашиглана</td><td class="num">0.975</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card c-good">
+    <span class="tag">Сургамж</span>
+    <p style="margin-bottom:0">Хамгийн <strong>нийлмэл</strong> kernel хожоогүй —
+    бодлогын бүтэцтэй <strong>тохирсон</strong> нь хожсон. XOR бол «хоёр онцлог
+    хоорондоо үржигдэх» бодлого, тиймээс полином d=2 яг таарсан. d=3 болгоход
+    зөвхөн төвөгтэй болсон, сайжраагүй.</p>
+  </div>
+
+  <h3>One-vs-Rest: 2 биш 10 бүлэгтэй бол?</h3>
+  <p>Энэ бүх бүтээц «хөх үү, улаан уу» гэсэн <strong>хоёр</strong> бүлэгт зориулагдсан.
+  Гар бичмэл цифрт 10 бүлэг (0–9) байна. Яах вэ?</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 560 215" role="img" aria-label="One-vs-Rest аргын схем">
+      <rect x="18" y="78" width="78" height="52" rx="4" fill="var(--data-bg)" stroke="var(--data-br)" stroke-width="1.5"/>
+      <text x="57" y="100" font-size="13" fill="currentColor" text-anchor="middle" font-weight="700">зураг</text>
+      <text x="57" y="119" font-size="12" fill="var(--fg-dim)" text-anchor="middle" font-family="monospace">784 тоо</text>
+
+      <g stroke="currentColor" stroke-width="1.3" opacity=".45" fill="none">
+        <path d="M100,104 C130,104 130,26 160,26"/>
+        <path d="M100,104 C130,104 130,65 160,65"/>
+        <path d="M100,104 C130,104 130,104 160,104"/>
+        <path d="M100,104 C130,104 130,182 160,182"/>
+      </g>
+
+      <g font-size="12.5" font-family="monospace">
+        <rect x="162" y="12" width="178" height="28" rx="4" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="172" y="31" fill="currentColor">SVM ①: «0 мөн үү, бусад уу»</text>
+        <text x="352" y="31" fill="var(--fg-dim)">−2.1</text>
+
+        <rect x="162" y="51" width="178" height="28" rx="4" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="172" y="70" fill="currentColor">SVM ②: «1 мөн үү, бусад уу»</text>
+        <text x="352" y="70" fill="var(--fg-dim)">−0.8</text>
+
+        <rect x="162" y="90" width="178" height="28" rx="4" fill="var(--good-bg)" stroke="var(--good)" stroke-width="2"/>
+        <text x="172" y="109" fill="currentColor" font-weight="700">SVM ③: «2 мөн үү, бусад уу»</text>
+        <text x="352" y="109" fill="var(--good)" font-weight="700">+3.4</text>
+
+        <text x="250" y="140" fill="var(--fg-dim)" text-anchor="middle">⋮</text>
+
+        <rect x="162" y="168" width="178" height="28" rx="4" fill="var(--surface-2)" stroke="var(--line)"/>
+        <text x="172" y="187" fill="currentColor">SVM ⑩: «9 мөн үү, бусад уу»</text>
+        <text x="352" y="187" fill="var(--fg-dim)">−1.5</text>
+      </g>
+
+      <path d="M392,104 L432,104" stroke="var(--good)" stroke-width="2.5"/>
+      <polygon points="438,104 426,98 426,110" fill="var(--good)"/>
+      <rect x="444" y="78" width="100" height="52" rx="4" fill="var(--good-bg)" stroke="var(--good)" stroke-width="2"/>
+      <text x="494" y="99" font-size="12" fill="var(--fg-dim)" text-anchor="middle">хамгийн өндөр</text>
+      <text x="494" y="120" font-size="19" fill="var(--good)" text-anchor="middle" font-weight="700" font-family="monospace">«2»</text>
+    </svg>
+    </div>
+    <figcaption>One-vs-Rest: 10 тусдаа хоёртын SVM сургаад, хамгийн өндөр
+    оноо өгсөн нь хожино.</figcaption>
+  </figure>
+
+  <p>Ангилагч бүр ердөө «энэ миний цифр мөн үү, эсвэл бусад нь уу» гэсэн
+  <strong>хоёртын</strong> асуулт л бодож байгааг анзаар. Ингэснээр бидний бүтээсэн
+  бүх хоёртын машин ямар ч өөрчлөлтгүйгээр 10 бүлэгт ажиллана.</p>
+</section>
+
+<!-- ===================== АХИЦ ===================== -->
+<section id="ахиц">
+  <p class="eyebrow">Гол хэсэг</p>
+  <h2>90.77% → 99.29% яаж болов?</h2>
+
+  <p>Эхний шугаман загвар <strong>90.77%</strong> өгсөн. Зорилт <strong>99%</strong>.
+  Энэ зөрүүг хэрхэн давсныг алхам алхмаар тайлбарлая.</p>
+
+  <div class="card c-warn">
+    <span class="tag">Юу хийгээгүй вэ</span>
+    <p style="margin-bottom:0">Epoch нэмэх, параметрүүдийг санамсаргүй туршиж үзэх —
+    <strong>утгагүй</strong>. Шугаман загвар энэ өгөгдөлд ~92% дээр тогтдог нь олон
+    судалгаагаар батлагдсан «тааз». Загварын <em>төрлийг</em> өөрчлөхөөс өөр гарц байхгүй.
+    Таазыг таних нь цаг хэмнэнэ.</p>
+  </div>
+
+  <h3>Алхам 1 — Deskew: хазайлтыг арилгах</h3>
+  <p>Хүмүүс цифрийг өөр өөр налуугаар бичдэг. Гэхдээ <strong>налуу нь тэр цифр ямар
+  цифр болохыг өөрчилдөггүй</strong> — налуу «7» ч «7» хэвээрээ. Загварт энэ хэрэггүй
+  хувьсал зөвхөн саад болно.</p>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 560 190" role="img" aria-label="Deskew хувиргалтын өмнөх ба дараах байдал">
+      <text x="110" y="22" font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">Өмнө — налуу</text>
+      <rect x="40" y="34" width="140" height="130" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+      <g stroke="var(--data)" stroke-width="9" stroke-linecap="round" fill="none">
+        <path d="M78,52 L148,52"/><path d="M148,52 L92,148"/>
+      </g>
+      <line x1="110" y1="34" x2="110" y2="164" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <path d="M120,52 L82,148" stroke="var(--warn)" stroke-width="1.5" stroke-dasharray="4 4" fill="none"/>
+      <text x="152" y="182" font-size="12" fill="var(--warn)" font-weight="700" text-anchor="middle">хазайлт α</text>
+
+      <line x1="212" y1="99" x2="266" y2="99" stroke="var(--math)" stroke-width="2.5"/>
+      <polygon points="272,99 260,93 260,105" fill="var(--math)"/>
+      <text x="240" y="86" font-size="12" fill="var(--math)" font-weight="700" text-anchor="middle">shear</text>
+
+      <text x="380" y="22" font-size="13" fill="currentColor" font-weight="700" text-anchor="middle">Дараа — босоо</text>
+      <rect x="310" y="34" width="140" height="130" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+      <g stroke="var(--good)" stroke-width="9" stroke-linecap="round" fill="none">
+        <path d="M345,52 L415,52"/><path d="M415,52 L383,148"/>
+      </g>
+      <line x1="380" y1="34" x2="380" y2="164" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <text x="380" y="182" font-size="12" fill="var(--good)" font-weight="700" text-anchor="middle">бүх «7» одоо ижил налуутай</text>
+    </svg>
+    </div>
+    <figcaption>Хазайлтыг арилгахад ижил цифрүүд хоорондоо илүү төстэй болж,
+    өөр цифрүүдээс илүү сайн ялгарна.</figcaption>
+  </figure>
+
+  <p>Хазайлтыг яаж хэмжих вэ? Зургийн <strong>момент</strong> гэдэг статистик ашиглана.
+  Энэ нь «цифрийн бэх хаана, яаж тархсан бэ» гэдгийг тоогоор илэрхийлнэ.</p>
+
+  <div class="formula">
+    <div class="big"><span class="t-c">α</span> = <span class="t-x">μ<sub>rc</sub></span> / <span class="t-x">μ<sub>rr</sub></span></div>
+    <ul class="fkey">
+      <li><code class="t-x">μ<sub>rc</sub></code><span>Мөр ба баганын <strong>ковариац</strong>: доошоо явахад цифр хажуу тийш хэр зөрөх вэ.</span></li>
+      <li><code class="t-x">μ<sub>rr</sub></code><span>Мөрийн <strong>дисперс</strong>: цифр босоо чиглэлд хэр сунасан бэ.</span></li>
+      <li><code class="t-c">α</code><span>Налуу. «Нэг мөр доошлоход хэдэн пиксел хажуу тийш шилжих вэ». Үүнийг эсрэгээр нь хазайлгаж арилгана.</span></li>
+    </ul>
+  </div>
+
+  <div class="card c-warn">
+    <span class="tag">Энд алдаа гаргасан</span>
+    <p>Эхний хувилбарт <code>α = μ<sub>rc</sub> / μ<sub>cc</sub></code> гэж бичсэн —
+    <strong>буруу тэнхлэгийн дисперст</strong> хуваасан.</p>
+    <div class="tablewrap" style="margin:12px 0 0">
+      <table>
+        <thead><tr><th>Хувилбар</th><th class="num">Шугаман загварын нарийвчлал</th></tr></thead>
+        <tbody>
+          <tr><td>Deskew огт хийгээгүй</td><td class="num">0.9068</td></tr>
+          <tr><td>Deskew, буруу томъёо (μ<sub>cc</sub>)</td><td class="num" style="color:var(--warn);font-weight:700">0.8999</td></tr>
+          <tr class="hl"><td>Deskew, зөв томъёо (μ<sub>rr</sub>)</td><td class="num">0.9436</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin:12px 0 0">Буруу томъёо нь <strong>юу ч хийхээс муу</strong> үр дүн
+    өгсөн. Энэ нь чухал шалгуур болсон: «сайжруулалт» нэмэхдээ үр дүнг нь үргэлж
+    тусад нь хэмжих ёстой, эс бөгөөс өөрийгөө хуурна.</p>
+  </div>
+
+  <h3>Алхам 2 — RBF kernel ба бүтэн өгөгдөл</h3>
+  <p>Deskew хийсэн бүтэн 60,000 зураг дээр RBF kernel-тэй SVM сургав.</p>
+  <div class="card c-good">
+    <span class="tag">Үр дүн</span>
+    <p style="margin-bottom:0">Тестийн нарийвчлал <strong>98.96%</strong>.
+    Сургалт 102 секунд. Дэмжигч вектор: <strong>7,648</strong> ширхэг (60,000-ийн 12.7%).</p>
+  </div>
+
+  <h3>Алхам 3 — Virtual Support Vectors</h3>
+  <p>Хоёр дахь мэдэхгүй байж болохгүй баримт: <strong>зургийг 1 пикселээр хажуу тийш
+  шилжүүлэхэд ч тэр цифр хэвээрээ</strong>. Загварт энэ мэдлэгийг яаж өгөх вэ?</p>
+
+  <p>Хамгийн энгийн арга: бүх 60,000 зургийн шилжүүлсэн хуулбарыг нэмж 300,000
+  болгох. Гэхдээ энэ нь маш удаан. Илүү ухаалаг арга бий.</p>
+
+  <div class="card c-math">
+    <span class="tag">Гол санаа</span>
+    <p style="margin-bottom:0">Дээр хэлсэнчлэн <strong>зөвхөн дэмжигч векторууд</strong>
+    шийдвэрт нөлөөлдөг. Үлдсэн 87% нь математикийн хувьд жингийн коэффициент нь яг
+    тэг — тэдгээрийг хуулбарлах нь тооцоолол нэмэхээс өөр ямар ч нэмэргүй.
+    Тиймээс <strong>зөвхөн 7,648 дэмжигч векторыг</strong> 4 зүг рүү 1 пикселээр
+    шилжүүлж, 38,240 дээж болгоод дахин сургана.</p>
+  </div>
+
+  <pre><code><span class="cm"># Зөвхөн дэмжигч векторуудыг авна</span>
+sv_idx = np.unique(stage1.support_)          <span class="cm"># 7,648 ширхэг</span>
+X_sv = X_train_dsk[sv_idx]
+
+<span class="cm"># 4 зүг рүү 1 пикселээр шилжүүлнэ → 5 дахин нэмэгдэнэ</span>
+X_vsv = np.vstack([X_sv] + [shift(X_sv, dy, dx)
+                   <span class="kw">for</span> dy, dx <span class="kw">in</span> [(1,0), (-1,0), (0,1), (0,-1)]])
+
+<span class="cm"># One-vs-Rest: 10 цифрт 10 SVM, зэрэгцээ сургана</span>
+final = OneVsRestClassifier(SVC(C=10, gamma=0.02), n_jobs=5).fit(X_vsv, y_vsv)</code></pre>
+
+  <p>Энэ арга нь <strong>DeCoste &amp; Schölkopf (2002)</strong> судалгааны ажлаас гаралтай.
+  Тэд MNIST дээр 0.6–0.8% алдаа тайлагнасан. Бидний үр дүн <strong>0.71% алдаа</strong> —
+  яг тэр мужид байна.</p>
+
+  <h3>Эцсийн үр дүн</h3>
+
+  <figure>
+    <div class="svgbox">
+    <svg viewBox="0 0 560 270" role="img" aria-label="Гурван алхмын нарийвчлалын ахиц">
+      <!-- scale: 90% -> y=230, 100% -> y=30 ; 20px per 1% -->
+      <line x1="72" y1="230" x2="545" y2="230" stroke="currentColor" stroke-width="1.3" opacity=".5"/>
+      <!-- gridlines -->
+      <g opacity=".3">
+        <line x1="72" y1="30" x2="545" y2="30" stroke="currentColor" stroke-dasharray="3 4"/>
+        <line x1="72" y1="130" x2="545" y2="130" stroke="currentColor" stroke-dasharray="3 4"/>
+      </g>
+      <g font-size="11.5" font-family="monospace" fill="currentColor" opacity=".7">
+        <text x="66" y="34" text-anchor="end">100%</text>
+        <text x="66" y="134" text-anchor="end">95%</text>
+        <text x="66" y="234" text-anchor="end">90%</text>
+      </g>
+      <!-- target line 99% -->
+      <line x1="72" y1="50" x2="545" y2="50" stroke="var(--warn)" stroke-width="2" stroke-dasharray="7 5"/>
+      <text x="540" y="44" font-size="12" fill="var(--warn)" font-weight="700" text-anchor="end">зорилт 99%</text>
+      <!-- bars: 90.77 -> 230-15.4=214.6 ; 98.96 -> 230-179.2=50.8 ; 99.29 -> 230-185.8=44.2 -->
+      <rect x="110" y="214.6" width="104" height="15.4" fill="#9a9a9a"/>
+      <rect x="240" y="50.8" width="104" height="179.2" fill="var(--data)"/>
+      <rect x="370" y="44.2" width="104" height="185.8" fill="var(--good)"/>
+      <g font-family="monospace" font-weight="700" font-size="15">
+        <text x="162" y="206" fill="currentColor" text-anchor="middle">90.77%</text>
+        <text x="292" y="42" fill="var(--data)" text-anchor="middle">98.96%</text>
+        <text x="422" y="35" fill="var(--good)" text-anchor="middle">99.29%</text>
+      </g>
+      <g font-size="12" fill="currentColor">
+        <text x="162" y="248" text-anchor="middle">Шугаман OvR</text>
+        <text x="162" y="263" text-anchor="middle" opacity=".65">12k дээж, түүхий пиксел</text>
+        <text x="292" y="248" text-anchor="middle">+ deskew + RBF</text>
+        <text x="292" y="263" text-anchor="middle" opacity=".65">бүтэн 60k</text>
+        <text x="422" y="248" text-anchor="middle">+ Virtual SV</text>
+        <text x="422" y="263" text-anchor="middle" opacity=".65">One-vs-Rest</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>Босоо тэнхлэг 90%-иас эхэлж байгааг анзаар — ингэснээр
+    сүүлийн хувиудын ялгаа харагдана.</figcaption>
+  </figure>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Алхам</th><th>Юуг өөрчилсөн</th><th class="num">Нарийвчлал</th><th class="num">Алдаа / 10,000</th></tr></thead>
+      <tbody>
+        <tr><td>Эхлэл</td><td>Шугаман SVM, 12,000 дээж</td><td class="num">0.9077</td><td class="num">923</td></tr>
+        <tr><td>+ Deskew, + RBF, + 60k</td><td>Налууг арилгаж, kernel ашигласан</td><td class="num">0.9896</td><td class="num">104</td></tr>
+        <tr class="hl"><td>+ Virtual SV (OvR)</td><td>Шилжилтийн инвариантыг заасан</td><td class="num">0.9929</td><td class="num">71</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="qa">
+    <p class="q">OvR болон OvO хоёрын аль нь дээр гарав?</p>
+    <p>OvO (one-vs-one) гэдэг нь цифр бүрийн <em>хос болгонд</em> нэг ангилагч сургах
+    арга — 45 ангилагч. Хоёуланг нь хэмжсэн:
+    <span class="chip ch-good">OvR 0.9929</span>
+    <span class="chip ch-data">OvO 0.9912</span>.
+    OvR нь ангилагч бүрдээ бүх өгөгдлийг харуулдаг тул илүү тогтвортой зааг олсон.</p>
+  </div>
+
+  <div class="qa">
+    <p class="q">Үлдсэн 71 алдаа юу вэ?</p>
+    <p>Дийлэнх нь хүний нүдэнд ч эргэлзээтэй бичлэгүүд — хагас бичигдсэн, хэт
+    мушгиралдсан цифрүүд. Эндээс цааш ахихын тулд SVM-ийн хүрээнээс гарч
+    convolution сүлжээ рүү шилжих хэрэгтэй.</p>
+  </div>
+
+  <div class="card c-data">
+    <span class="tag">Давтагдах чанар</span>
+    <p style="margin-bottom:0">Бүх шатанд <code>SEED = 42</code> ашигласан —
+    өгөгдөл хуваах, SVM сургах, OvR бүрт. Өөр хүн ижил кодыг ажиллуулбал
+    яг ижил 99.29% гарна. Энэ нь шинжлэх ухааны ажлын үндсэн шаардлага.</p>
+  </div>
+</section>
+
+<!-- ===================== СУРГАМЖ ===================== -->
+<section id="сургамж">
+  <p class="eyebrow">Нэгтгэл</p>
+  <h2>Таван гол сургамж</h2>
+
+  <ol class="steps">
+    <li>
+      <h4 style="margin-top:0">Өгөгдлийн дараалал алгоритмаас багагүй нөлөөтэй</h4>
+      <p style="margin:0">Яг ижил perceptron код — зөвхөн жишээнүүдийг холиход алдагдал
+      0.6729-өөс 0.3388 болж хоёр дахин буурсан. Алгоритм солихоос өмнө
+      өгөгдлөө хэрхэн үзүүлж байгаагаа шалга.</p>
+    </li>
+    <li>
+      <h4 style="margin-top:0">Таазыг таних нь цаг хэмнэнэ</h4>
+      <p style="margin:0">Шугаман загвар энэ бодлогод ~92% дээр тогтдог. Үүнийг мэдэлгүй
+      epoch нэмж суувал хэдэн цаг дэмий өнгөрнө. Загварын төрлөө солихоос өөр гарц байхгүй.</p>
+    </li>
+    <li>
+      <h4 style="margin-top:0">Бодлогын тухай мэдлэгээ загварт заа</h4>
+      <p style="margin:0">«Налуу нь цифрийг өөрчлөхгүй», «1 пикселийн шилжилт цифрийг
+      өөрчлөхгүй» — энэ хоёр энгийн баримт л 90.77%-ийг 99.29% болгосон. Үүнийг
+      <em>prior knowledge</em> гэнэ, ямар ч параметр тохируулалт үүнийг орлохгүй.</p>
+    </li>
+    <li>
+      <h4 style="margin-top:0">Сайжруулалт бүрийг тусад нь хэмж</h4>
+      <p style="margin:0">Deskew-ийн буруу хувилбар 0.8999 өгсөн — огт хийхээс ч муу.
+      Хэрэв бусад өөрчлөлттэй хамт нэмсэн бол анзаарагдахгүй өнгөрөх байсан.</p>
+    </li>
+    <li>
+      <h4 style="margin-top:0">Өөрийн кодоо бэлэн сантай харьцуул</h4>
+      <p style="margin:0">Логистик регресс: өөрийн 0.96 = sklearn 0.96, таамаг 100%
+      ижил. Titanic: өөрийн 0.7982 = LinearSVC 0.7982. Энэ бол «миний код зөв»
+      гэдгийг батлах хамгийн хямд арга.</p>
+    </li>
+  </ol>
+
+  <h3>Эх сурвалж</h3>
+  <ul class="plain">
+    <li><strong>Cortes, C. &amp; Vapnik, V.</strong> (1995). Support-Vector Networks.
+    <em>Machine Learning</em> 20, 273–297. — зөөлөн зах (soft margin).</li>
+    <li><strong>LeCun, Y. нар</strong> (1998). Gradient-Based Learning Applied to
+    Document Recognition. <em>Proc. IEEE</em> 86(11). — MNIST, deskewing.</li>
+    <li><strong>DeCoste, D. &amp; Schölkopf, B.</strong> (2002). Training Invariant
+    Support Vector Machines. <em>Machine Learning</em> 46, 161–190. — Virtual SV.</li>
+    <li><strong>Schölkopf, B. &amp; Smola, A.</strong> (2002). Learning with Kernels. — kernel онол.</li>
+  </ul>
+
+  <h3>Файлууд хаана байна вэ</h3>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Хавтас</th><th>Агуулга</th></tr></thead>
+      <tbody>
+        <tr><td><code>Lab/Lab1/</code></td><td>Орчны шалгах скрипт, тайлан</td></tr>
+        <tr><td><code>Lab/Lab2/</code></td><td>Шугаман ангилагчийн notebook</td></tr>
+        <tr><td><code>Lab/Lab3/</code></td><td>Логистик регресс ба PCA</td></tr>
+        <tr><td><code>Lab/Lab4/</code></td><td>SVM, kernel, 99.29%-ийн pipeline</td></tr>
+        <tr><td><code>Lab/Ilgeeh_lab23/</code></td><td>Багшид илгээх хувилбар + zip</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <p style="margin:0">F.CS308 Машин сургалт · Б. Өсөхбаяр (B231910012) · 2026 оны 10 сар<br>
+  Энэ хуудсан дахь бүх тоо нотебүүкүүдийг бодитоор ажиллуулж хэмжсэн утга.</p>
+</footer>
+
+</div>
+
+</body>
+</html>

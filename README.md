@@ -6,13 +6,27 @@ Local кодоо Mac дээр засаж, GitHub-д хадгална. GPU шаа
 
 ## Notebook-ууд
 
-| Notebook | Colab |
+| Лаб | Агуулга | Runtime | Хугацаа | Colab |
+|---|---|---|---|---|
+| **Lab 1** | Орчны шалгалт (Apple Silicon / MPS) | — | — | — |
+| **Lab 2** | Perceptron, average perceptron, Pegasos | CPU | ~1 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab2/CS308_lab2_B231910012.ipynb) |
+| **Lab 3** | Hinge loss, logistic regression, gradient descent | CPU | ~2 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab3/CS308_lab3_B231910012.ipynb) |
+| **Lab 2–3** | Илгээсэн нэгтгэсэн хувилбар | CPU | ~2 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Ilgeeh_lab23/CS308_lab23_B231910012.ipynb) |
+| **Lab 4** | SVM: max-margin, OvR, deskew + Virtual SV → **99.29%** | CPU | ~35 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab4/svm_lab4_2324.ipynb) |
+| **Lab 5–6** | Мэдрэлийн сүлжээ эхнээс: NumPy → CuPy → PyTorch → **0.98** | **T4 GPU** | ~5 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab5-6/CS308_lab5_6_B231910012.ipynb) |
+| **Lab 10** | Transformers: монгол мэдээ ангилал (Eduge, BERT) | **T4 GPU** | ~15 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab10/CS308_lab10_B231910012.ipynb) |
+
+> **GPU сонгох:** Colab-д notebook нээгээд `Runtime → Change runtime type → T4 GPU`.
+> Lab 4-ийн `sklearn.svm.SVC` нь зөвхөн CPU дээр ажилладаг тул GPU сонгох нь түүнийг хурдасгахгүй.
+> Lab 10 нь GPU-гүйгээр ~3 цаг болно.
+
+### Нэмэлт тайлбар (HTML)
+
+| Файл | Агуулга |
 |---|---|
-| [Lab/CS308_lab_23_udirdamj.ipynb](Lab/CS308_lab_23_udirdamj.ipynb) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/CS308_lab_23_udirdamj.ipynb) |
-| [Lab/Ilgeeh_lab23/CS308_lab23_B231910012.ipynb](Lab/Ilgeeh_lab23/CS308_lab23_B231910012.ipynb) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Ilgeeh_lab23/CS308_lab23_B231910012.ipynb) |
-| [Lab/Lab2/CS308_lab2_B231910012.ipynb](Lab/Lab2/CS308_lab2_B231910012.ipynb) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab2/CS308_lab2_B231910012.ipynb) |
-| [Lab/Lab3/CS308_lab3_B231910012.ipynb](Lab/Lab3/CS308_lab3_B231910012.ipynb) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab3/CS308_lab3_B231910012.ipynb) |
-| [svm_lab4_2324.ipynb](svm_lab4_2324.ipynb) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/svm_lab4_2324.ipynb) |
+| [CS308_tailbar.html](CS308_tailbar.html) | Лаб 1–4-ийн кодыг функц функцээр, яагаад гэдэг үндэслэлтэй |
+| [CS308_lecture5_tailbar.html](CS308_lecture5_tailbar.html) | Лекц 5 — мэдрэлийн сүлжээ, backpropagation |
+| [Lecture/Lecture5_Neural_Networks_daalgavar.tex](Lecture/Lecture5_Neural_Networks_daalgavar.tex) | Лекц 5-ийн бодлогууд LaTeX дээр бодсон |
 
 ## Өдөр тутмын ажил
 
