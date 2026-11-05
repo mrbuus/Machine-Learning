@@ -9,3 +9,8 @@ torch
 torchvision
 jupyter
 ipykernel
+transformers
+datasets
+accelerate
+sentencepiece
+protobuf>=5

@@ -16,9 +16,15 @@ Book/
 *.zip
 
 # Downloaded datasets and training artifacts
-Data/mnist.npz
+mnist.npz
 *.pt
 *.pth
 *.ckpt
 runs/
 wandb/
+
+# Lab 10-ийн локал өгөгдөл (eduge.csv, sentencepiece модель ~736MB).
+# Notebook нь өгөгдлийг tugstugi/mongolian-nlp-аас өөрөө татдаг.
+Lab/Lab10/textclassification/
+Lab/Lab10/transformers_text_classification.ipynb
+Lab/Lab9/
