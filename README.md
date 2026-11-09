@@ -14,19 +14,25 @@ Local кодоо Mac дээр засаж, GitHub-д хадгална. GPU шаа
 | **Lab 2–3** | Илгээсэн нэгтгэсэн хувилбар | CPU | ~2 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Ilgeeh_lab23/CS308_lab23_B231910012.ipynb) |
 | **Lab 4** | SVM: max-margin, OvR, deskew + Virtual SV → **99.29%** | CPU | ~35 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab4/svm_lab4_2324.ipynb) |
 | **Lab 5–6** | Мэдрэлийн сүлжээ эхнээс: NumPy → CuPy → PyTorch → **0.98** | **T4 GPU** | ~5 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab5-6/CS308_lab5_6_B231910012.ipynb) |
+| **Lab 6–7** | Hyperparameter tuning, 6-fold CV, ROC/AUC, confusion matrix | **T4 GPU** | ~20 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab6-7/CS308_lab6_7_B231910012.ipynb) |
+| **Lab 8** | Ensemble: stacking, out-of-fold, bagging / boosting | CPU | ~1 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab8/CS308_lab8_B231910012.ipynb) |
+| **Lab 9–10** | Knowledge distillation + **FitNets** (завсрын давхарга) | **T4 GPU** | ~25 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab9-10/CS308_lab9_10_B231910012.ipynb) |
 | **Lab 10** | Transformers: монгол мэдээ ангилал (Eduge, BERT) | **T4 GPU** | ~15 мин | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Lab/Lab10/CS308_lab10_B231910012.ipynb) |
 
-> **GPU сонгох:** Colab-д notebook нээгээд `Runtime → Change runtime type → T4 GPU`.
-> Lab 4-ийн `sklearn.svm.SVC` нь зөвхөн CPU дээр ажилладаг тул GPU сонгох нь түүнийг хурдасгахгүй.
-> Lab 10 нь GPU-гүйгээр ~3 цаг болно.
+> **GPU сонгох:** Colab-д notebook нээгээд `Runtime` → `Change runtime type` → **T4 GPU**.
+> Lab 4 ба Lab 8-ийн sklearn нь зөвхөн CPU дээр ажилладаг тул GPU сонгох нь тэднийг хурдасгахгүй.
 
-### Нэмэлт тайлбар (HTML)
+### Нэмэлт тайлбар
 
 | Файл | Агуулга |
 |---|---|
-| [CS308_tailbar.html](CS308_tailbar.html) | Лаб 1–4-ийн кодыг функц функцээр, яагаад гэдэг үндэслэлтэй |
+| [CS308_tailbar.html](CS308_tailbar.html) | Лаб 1–4 — функц функцээр, үндэслэлтэй |
+| [CS308_lab5_10_tailbar.html](CS308_lab5_10_tailbar.html) | **Лаб 5–10** — функц функцээр, «яагаад» товчтой, графикийн хэлбэрийн тайлбартай |
 | [CS308_lecture5_tailbar.html](CS308_lecture5_tailbar.html) | Лекц 5 — мэдрэлийн сүлжээ, backpropagation |
-| [Lecture/Lecture5_Neural_Networks_daalgavar.tex](Lecture/Lecture5_Neural_Networks_daalgavar.tex) | Лекц 5-ийн бодлогууд LaTeX дээр бодсон |
+| [Lecture/Lecture5_Neural_Networks_daalgavar.tex](Lecture/Lecture5_Neural_Networks_daalgavar.tex) | Лекц 5-ийн бодлогууд LaTeX дээр |
+
+> HTML файлуудыг GitHub дээр шууд үзэх боломжгүй (код харагдана).
+> Татаж аваад браузераар нээнэ, эсвэл [htmlpreview](https://htmlpreview.github.io/) ашиглана.
 
 ## Өдөр тутмын ажил
 
