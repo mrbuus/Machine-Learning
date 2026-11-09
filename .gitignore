@@ -28,3 +28,12 @@ wandb/
 Lab/Lab10/textclassification/
 Lab/Lab10/transformers_text_classification.ipynb
 Lab/Lab9/
+
+# Lab 9-10-ийн татаж авсан өгөгдөл, сургасан жин
+Lab/Lab9-10/_data/
+Lab/Lab9-10/models/
+Lab/Lab6-7/data/
+Lab/Lab6-7/exec.log
+Lab/Lab6-7/best_model.pth
+models/
+data/
