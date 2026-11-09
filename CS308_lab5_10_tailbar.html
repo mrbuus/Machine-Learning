@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CS308 Лаборатори 5–10 тайлбар</title>
+<style>
+  :root{
+    --bg:#0f1117; --panel:#171a22; --panel2:#1e222c; --line:#2a2f3c;
+    --fg:#e6e8ee; --dim:#9aa3b2;
+    --blue:#6aa9ff; --green:#5fd68a; --amber:#f0b429; --red:#ff6b6b;
+    --violet:#b990ff; --cyan:#4fd1c5;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg:#f7f8fa; --panel:#ffffff; --panel2:#f0f2f6; --line:#dfe3ea;
+      --fg:#1b1f2a; --dim:#5a6478;
+      --blue:#1c6ef2; --green:#128a4a; --amber:#9a6700; --red:#c62828;
+      --violet:#6b3fd4; --cyan:#0d7f78;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:16px/1.65 -apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 16px 80px}
+  header{padding:38px 0 14px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  h1{font-size:1.7rem;margin:0 0 6px}
+  h2{font-size:1.32rem;margin:40px 0 10px;padding-top:14px;border-top:1px solid var(--line)}
+  h3{font-size:1.06rem;margin:24px 0 8px;color:var(--blue)}
+  .sub{color:var(--dim);font-size:.95rem}
+  nav{position:sticky;top:0;z-index:9;background:var(--bg);
+      border-bottom:1px solid var(--line);padding:8px 0;margin-bottom:8px;
+      display:flex;gap:6px;flex-wrap:wrap}
+  nav a{font-size:.85rem;color:var(--dim);text-decoration:none;
+        padding:5px 11px;border:1px solid var(--line);border-radius:999px;white-space:nowrap}
+  nav a:hover{color:var(--fg);border-color:var(--blue)}
+  code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:.88em;
+       background:var(--panel2);padding:1px 5px;border-radius:4px}
+  pre{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--blue);
+      border-radius:8px;padding:13px 15px;overflow-x:auto;font-size:.84rem;line-height:1.55}
+  pre code{background:none;padding:0}
+  .k{color:var(--violet)}   /* түлхүүр үг */
+  .f{color:var(--cyan)}     /* функц */
+  .s{color:var(--green)}    /* тэмдэгт мөр / тоо */
+  .c{color:var(--dim);font-style:italic} /* тайлбар */
+  .bad{color:var(--red)}  .good{color:var(--green)}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+          margin:10px 0;overflow:hidden}
+  details[open]{border-color:var(--blue)}
+  summary{cursor:pointer;padding:10px 14px;font-weight:600;font-size:.92rem;
+          background:var(--panel2);list-style:none;user-select:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:"▸ ";color:var(--blue)}
+  details[open] summary::before{content:"▾ "}
+  details .body{padding:12px 15px;border-top:1px solid var(--line)}
+  .why summary{border-left:3px solid var(--amber)}
+  .src summary{border-left:3px solid var(--violet)}
+  .plot summary{border-left:3px solid var(--cyan)}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+       padding:13px 16px;margin:14px 0}
+  .box.warn{border-left:3px solid var(--amber)}
+  .box.err{border-left:3px solid var(--red)}
+  .box.ok{border-left:3px solid var(--green)}
+  .box h4{margin:0 0 6px;font-size:.98rem}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:.9rem}
+  th,td{border:1px solid var(--line);padding:7px 10px;text-align:left}
+  th{background:var(--panel2);font-weight:600}
+  .tag{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:999px;
+       border:1px solid var(--line);color:var(--dim);margin-left:6px;vertical-align:middle}
+  .num{font-variant-numeric:tabular-nums}
+  footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);
+         color:var(--dim);font-size:.86rem}
+  .pending{color:var(--amber);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>CS308 Машин сургалт — Лаборатори 5–10-ын дэлгэрэнгүй тайлбар</h1>
+  <p class="sub">Б. Өсөхбаяр (B231910012) · Лаб 1–4-ийн тайлбар нь
+  <code>CS308_tailbar.html</code> файлд, Лекц 5-ынх <code>CS308_lecture5_tailbar.html</code>-д байна.</p>
+  <p class="sub">Доорх <strong>шар товчнууд</strong> нь «яагаад ингэж хийсэн бэ» гэдгийг,
+  <strong>ягаан товчнууд</strong> нь эх сурвалжийг, <strong>цэнхэр товчнууд</strong> нь
+  графикийн хэлбэрийг хэрхэн унших талаар тайлбарлана. Товч бүрийг дарж дэлгэнэ.</p>
+</header>
+
+<nav>
+  <a href="#l56">Лаб 5–6 · Мэдрэлийн сүлжээ</a>
+  <a href="#l67">Лаб 6–7 · Tuning / KFold / AUC</a>
+  <a href="#l8">Лаб 8 · Ensemble</a>
+  <a href="#l910">Лаб 9–10 · Distillation</a>
+  <a href="#l10">Лаб 10 · Transformers</a>
+  <a href="#defend">Багшид хамгаалах</a>
+</nav>
+
+<!-- ══════════════════════════ ЛАБ 5–6 ══════════════════════════ -->
+<h2 id="l56">Лаб 5–6 — Мэдрэлийн сүлжээг эхнээс кодчилох</h2>
+
+<p>Энэ лабын гол зорилго нь <strong>backpropagation-ийг өөрийн гараар бичих</strong>.
+Гадны сан ашиглахгүйгээр давхарга бүрийн уламжлалыг гаргаж, PyTorch-той ижил
+үр дүн гарахыг батлана.</p>
+
+<h3>1. Linear давхарга — forward</h3>
+<pre><code><span class="k">class</span> <span class="f">Linear</span>:
+    <span class="k">def</span> <span class="f">forward</span>(self, inp):
+        self.inp = inp                        <span class="c"># backward-д хэрэгтэй тул хадгална</span>
+        self.z   = inp @ self.w + self.b      <span class="c"># z = xW + b</span>
+        <span class="k">return</span> self.z</code></pre>
+
+<details class="why"><summary>Яагаад оролтоо <code>self.inp</code>-д хадгалах ёстой вэ?</summary>
+<div class="body">
+Жингийн уламжлал нь <code>dW = xᵀ · dz</code>. Өөрөөр хэлбэл <strong>оролт x</strong>
+уламжлалд шууд орж ирдэг. Forward дуусаад x-ээ хаячихвал backward хийх үед
+дахин тооцоолох шаардлага гарна. Тиймээс бүх framework (PyTorch, TensorFlow)
+энэ завсрын утгыг «computation graph»-даа хадгалдаг.
+Яг ийм учраас сургалт нь дүгнэлт (inference) хийхээс илүү их санах ой иддэг.
+</div></details>
+
+<h3>2. Linear давхарга — backward</h3>
+<pre><code>    <span class="k">def</span> <span class="f">backward</span>(self, grads):
+        <span class="c"># CELoss.backward аль хэдийн 1/m-ээр хуваасан тул энд ДАХИН хуваахгүй</span>
+        dw      = self.inp.T @ grads
+        db      = grads.sum(axis=<span class="s">0</span>, keepdims=<span class="k">True</span>)
+        da_prev = grads @ self.w.T
+        <span class="k">return</span> (da_prev, dw, db)</code></pre>
+
+<details class="why"><summary>Яагаад энд <code>/ m</code> хийхгүй вэ? (хамгийн их андуурдаг зүйл)</summary>
+<div class="body">
+Дундаж алдагдал нь <code>L = (1/m) Σᵢ Lᵢ</code>. Тэр <code>1/m</code> нь
+<strong>нэг л удаа</strong> орох ёстой. Манай кодонд түүнийг
+<code>CELoss.backward</code> дотор хийсэн. Хэрэв Linear дотор дахин хуваавал
+бодит градиент <code>1/m²</code> дахин багасна — m = 60 000 үед энэ нь
+градиентийг <strong>60 000 дахин</strong> жижигрүүлж, сүлжээ бараг огт суралцахгүй болно.
+<br><br>
+<span class="bad">Багшийн эх кодонд <code>m = self.inp.shape[1]</code> гэж бичсэн нь
+бас алдаатай:</span> <code>shape[1]</code> нь <em>шинжийн тоо</em> (784) болохоос
+<em>багцын хэмжээ</em> биш. Зөв нь <code>shape[0]</code>.
+</div></details>
+
+<h3>3. Sigmoid ба тоон тогтвортой байдал</h3>
+<pre><code><span class="k">class</span> <span class="f">Sigmoid</span>:
+    <span class="k">def</span> <span class="f">forward</span>(self, inp):
+        self.out = <span class="s">1.0</span> / (<span class="s">1.0</span> + np.<span class="f">exp</span>(-np.<span class="f">clip</span>(inp, -<span class="s">500</span>, <span class="s">500</span>)))
+        <span class="k">return</span> self.out
+    <span class="k">def</span> <span class="f">backward</span>(self, grads):
+        s = self.out
+        <span class="k">return</span> grads * s * (<span class="s">1</span> - s)        <span class="c"># σ'(z) = σ(z)(1−σ(z))</span></code></pre>
+
+<details class="why"><summary>Яагаад <code>np.clip(inp, -500, 500)</code> хэрэгтэй вэ?</summary>
+<div class="body">
+<code>np.exp(800)</code> нь float64-ийн багтаамжаас хальж <code>inf</code> болно.
+Дараа нь <code>1/(1+inf) = 0</code> гарч, цааш <code>log(0) = -inf</code> → бүх
+алдагдал <code>NaN</code> болно. Нэг л NaN гарвал тэр нь үржүүлэг бүрээр
+тархаж, сүлжээ бүхэлдээ сүйрнэ.
+<br><br>
+±500 дээр таслах нь <strong>утгыг гажуудуулахгүй</strong>: σ(500) ба σ(∞) хоёрын
+зөрүү нь 10⁻²¹⁷ орчим, float-ийн нарийвчлалаас хамаагүй жижиг.
+</div></details>
+
+<h3>4. Cross-entropy алдагдал</h3>
+<pre><code><span class="k">class</span> <span class="f">CELoss</span>:
+    <span class="k">def</span> <span class="f">forward</span>(self, pred, target):
+        self.yhat = np.<span class="f">clip</span>(pred, <span class="s">1e-12</span>, <span class="s">1</span>-<span class="s">1e-12</span>)     <span class="c"># log(0)-оос хамгаална</span>
+        self.y = target
+        m = self.y.shape[<span class="s">0</span>]
+        <span class="k">return</span> -np.<span class="f">sum</span>(self.y*np.<span class="f">log</span>(self.yhat)
+                       + (<span class="s">1</span>-self.y)*np.<span class="f">log</span>(<span class="s">1</span>-self.yhat)) / m</code></pre>
+
+<div class="box err">
+<h4>Багшийн эх кодон дахь тэмдгийн алдаа</h4>
+Эх хувилбарт <code>loss = (-term1 + term2) / m</code> гэж бичигдсэн байв.
+Зөв нь <code>-(term1 + term2)</code>. Хоёр дахь гишүүний тэмдэг буруу байсан тул
+алдагдлын утга утгагүй болдог. Сонирхолтой нь <code>backward</code> нь
+<strong>зөв</strong> томьёогоор бичигдсэн байсан — өөрөөр хэлбэл forward ба backward
+хоёр нь хоорондоо зөрчилдөж байсан.
+</div>
+
+<details class="src"><summary>Эх сурвалж</summary>
+<div class="body">
+Goodfellow, Bengio, Courville — <em>Deep Learning</em> (MIT Press, 2016), 6.2.1.1:
+cross-entropy ба maximum likelihood-ийн хамаарал.<br>
+He et al., <em>Delving Deep into Rectifiers</em> (ICCV 2015) — He initialization,
+доорх сайжруулалтад ашигласан.
+</div></details>
+
+<h3>5. Сайжруулалт: 0.12 → 0.98</h3>
+<table>
+<tr><th>Хувилбар</th><th>Epoch</th><th>Accuracy</th></tr>
+<tr><td>Багшийн суурь</td><td>10</td><td class="num">0.1245</td></tr>
+<tr><td>Багшийн суурь</td><td>300</td><td class="num">0.3435</td></tr>
+<tr><td class="good">Сайжруулсан NumPy</td><td>—</td><td class="num good">0.9789</td></tr>
+<tr><td>PyTorch (шалгалт)</td><td>—</td><td class="num">0.9775</td></tr>
+</table>
+
+<details class="why"><summary>Яагаад ийм том ялгаа гарсан бэ? (3 шалтгаан)</summary>
+<div class="body">
+<strong>1. Жингийн эхлэл.</strong> Багшийн код жинг жижиг санамсаргүй тоогоор
+эхлүүлдэг. Давхарга бүрт дохио багасч, 3 дахь давхаргад бараг тэг болно
+(«vanishing signal»). <em>He initialization</em> нь дисперсийг
+<code>2/n_in</code> болгож, дохиог давхарга дамжин тогтвортой байлгана.
+<br><br>
+<strong>2. Softmax + cross-entropy-г НЭГТГЭХ.</strong> Тусад нь бодвол
+<code>σ'(z)</code> үржигдэж градиент сулардаг. Нэгтгэвэл уламжлал нь
+<strong><code>(p − y)/m</code></strong> гэсэн маш энгийн хэлбэртэй болж,
+σ' огт орохгүй — тиймээс ханалтаас (saturation) болж градиент үхэхгүй.
+<br><br>
+<strong>3. Mini-batch SGD.</strong> Бүх 60 000 дээжээр нэг алхам хийхийн оронд
+64-өөр хувааж олон алхам хийнэ. Нэг epoch-д 1 биш ~937 шинэчлэл болно.
+</div></details>
+
+<details class="plot"><summary>График хэрхэн харагдах ёстой вэ?</summary>
+<div class="body">
+<strong>Loss муруй:</strong> эхэндээ <em>огцом</em> буурч, дараа нь <em>тэгширнэ</em> —
+хажуу тийш харсан «тохой» (elbow) хэлбэр. Энэ нь <span class="good">зөв</span>.
+Эхэндээ жин санамсаргүй учир алдаа их, оновчлол хурдан сайжруулна; сүүлдээ
+хамгийн доод цэгт ойртох тусам ахиц багасна.
+<br><br>
+<strong>Хэрэв loss шулуун доошоо унаж тэгширэхгүй бол</strong> — хараахан дуусаагүй,
+илүү олон epoch хэрэгтэй.<br>
+<strong>Хэрэв loss дээш үсэрч эхэлбэл</strong> — сургалтын хурд хэт их
+(бидний туршилтад <code>lr=0.5</code> дээр яг ийм зүйл болж accuracy 0.0991
+хүртэл унасан — өөрөөр хэлбэл санамсаргүй таамаглалтай тэнцсэн).<br>
+<strong>Accuracy муруй</strong> нь эсрэгээрээ: хурдан дээшилж, дараа нь хавтгайрна.
+Хавтгайрсан хойно үргэлжлүүлэх нь ашиггүй.
+</div></details>
+
+<!-- ══════════════════════════ ЛАБ 6–7 ══════════════════════════ -->
+<h2 id="l67">Лаб 6–7 — Hyperparameter tuning, KFold, ROC/AUC</h2>
+
+<p>Энэ лаб нь Лаб 5–6-ийн файл дээр үргэлжилдэг (79% нь давхцдаг). Шинэ даалгавар нь
+дөрөв: <strong>параметр тохируулах</strong>, <strong>эцсийн үнэлгээ (F1/Precision/Recall/AUC)</strong>,
+<strong>6-fold cross validation</strong>, <strong>confusion matrix</strong>.</p>
+
+<div class="box err">
+<h4>Багшийн кодоос олдсон 4 бодит алдаа</h4>
+<ol style="margin:6px 0 0;padding-left:20px">
+<li><code>SimpleNN.forward</code> дотор <code>x[:, :512]</code> гэж <strong>512-ыг шууд
+бичсэн</strong> бөгөөд <code>fc_b1 = Linear(512,128)</code> тогтмол. Тиймээс энэ нь
+зөвхөн <code>hidden_size1=1024</code> үед ажиллана. Grid search хийх гэхээр унана.
+<span class="good">Засвар:</span> хуваалтыг <code>hidden_size1 // 2</code> болгов.</li>
+<li><code>_assert_shapes</code> нь <code>dw1…db3</code>-ийг <strong>аргумент авалгүй</strong>
+нэрээр нь хэрэглэдэг. Тэдгээр нь <code>backward()</code>-ийн локал хувьсагч тул Python
+тэднийг <em>глобал</em> орчноос хайж, өмнөх жишээ нүдэнд үлдсэн хуучин
+<code>dw1</code> (784×16)-ийг олоод <code>AssertionError</code> өгдөг байв.</li>
+<li><code>y_train = np.argmax(y_train, axis=1)</code> гэж <strong>глобал хувьсагчийг дарж
+бичдэг</strong> тул доорх PyTorch хэсэгт one-hot биш индекс ирж
+<code>expected target dtype to be Long or Byte</code> алдаа өгдөг байв.</li>
+<li><code>CrossEntropyLoss</code>-ийн өмнө <code>sigmoid</code> тавьсан (доор тайлбарлав).</li>
+</ol>
+</div>
+
+<h3>1. Яагаад sigmoid-ийг авч хаясан бэ?</h3>
+<pre><code>x = self.<span class="f">fc3</span>(x)
+<span class="c"># CrossEntropyLoss нь дотроо log_softmax хийдэг тул ТҮҮХИЙ logit хүлээдэг.</span>
+<span class="k">return</span> self.<span class="f">sigmoid</span>(x) <span class="k">if</span> self.use_sigmoid <span class="k">else</span> x</code></pre>
+
+<details class="why"><summary>Яагаад sigmoid нь энд саад болдог вэ?</summary>
+<div class="body">
+<code>nn.CrossEntropyLoss</code> нь оролт дээрээ <code>log_softmax</code>-ийг
+<strong>өөрөө</strong> хэрэглэдэг. Урьдчилж sigmoid тавихад:
+<ul style="margin:6px 0;padding-left:20px">
+<li>Гаралт (0, 1) завсарт шахагдана → ангиудын хоорондох <em>зөрүү</em> багасна.</li>
+<li>Softmax нь зөрүүгээс хамаардаг тул магадлалууд бүгд 0.1-д ойртоно.</li>
+<li>Нэмж sigmoid-ийн уламжлал <code>σ(1−σ) ≤ 0.25</code> нь градиентийг дахин сулруулна.</li>
+</ul>
+Үүнийг <strong>батлахын тулд</strong> би sigmoid-ийг grid search-ийн нэг параметр болгосон.
+Үр дүн: <strong>дөрвөн хос тохиргоо бүрт</strong> sigmoid-гүй хувилбар давуу гарсан
+(дунджаар +1.3 оноо). Нэг тохиолдол бол санамсаргүй байж болох ч 4/4 бол тогтмол.
+</div></details>
+
+<h3>2. Яагаад тестээр модель сонгож болохгүй гэж?</h3>
+<div class="box warn">
+Багшийн <code>evaluate_model</code> нь <strong>тестийн</strong> accuracy-гаар
+<code>best_model.pth</code> хадгалдаг, мөн hyperparameter-ээ тестээр шалгаруулдаг.
+Ингэснээр тестийн мэдээлэл сонголтод нэвтэрч, эцсийн тоо <em>бодит чадвараас өндөр</em> гарна.
+</div>
+
+<details class="why"><summary>Яг ямар хэмжээний хазайлт гарах вэ? (notebook дотор тоогоор хэмжсэн)</summary>
+<div class="body">
+Epoch бүрт тестийг хэмжээд хамгийн сайныг нь сонгоно гэдэг нь
+<em>N удаагийн хэмжилтийн дээд утгыг</em> авч байна гэсэн үг. Тест олонлог хязгаарлагдмал
+(10 000 дээж) тул хэмжилт бүр санамсаргүй хэлбэлзэлтэй. Дээд утга нь тэр хэлбэлзлийн
+оргилыг барьдаг учир <strong>шинэ өгөгдөл дээр давтагдахгүй</strong>.
+<br><br>
+Тиймээс notebook-д хоёуланг нь хэвлэдэг: <code>max(test over epochs)</code> (багшийн арга,
+өөдрөг) ба validation-аар сонгосон ганц тестийн тоо (шударга). Хоёрын зөрүү нь
+яг тэр хазайлт.
+</div></details>
+
+<details class="src"><summary>Эх сурвалж</summary>
+<div class="body">
+Hastie, Tibshirani, Friedman — <em>The Elements of Statistical Learning</em> (2009),
+7.10.2 «The Wrong and Right Way to Do Cross-validation»: сонголтын алхамд тестийн
+өгөгдөл оролцвол алдааны тооцоо хэт өөдрөг болохыг тайлбарласан.<br>
+Cawley &amp; Talbot, <em>On Over-fitting in Model Selection…</em>, JMLR 11 (2010).
+</div></details>
+
+<h3>3. AUC гэж юу вэ, яагаад accuracy-гаас өндөр байдаг вэ?</h3>
+<details class="why"><summary>AUC-ийн утга (энгийнээр)</summary>
+<div class="body">
+AUC нь <strong>санамсаргүй сонгосон зөв жишээг санамсаргүй сонгосон буруу жишээнээс
+илүү өндөр оноогоор эрэмбэлэх магадлал</strong>. Өөрөөр хэлбэл энэ нь
+<em>эрэмбийг</em> хэмждэг болохоос шийдвэрийн босгыг хэмждэггүй.
+<br><br>
+Тиймээс загвар зөв ангийг хамгийн өндөр магадлалаар тавьж чаддаг ч босго нь
+бага зэрэг хазайсан бол accuracy буурна, AUC өндөр хэвээр үлдэнэ. Манай
+олон ангиллын тохиолдолд <code>multi_class="ovr"</code> (нэг эсрэг бусад) хэлбэрээр
+анги бүрт тооцоод дунджийг нь авна.
+</div></details>
+
+<details class="plot"><summary>Confusion matrix-ийг хэрхэн унших вэ?</summary>
+<div class="body">
+Диагональ нь зөв таамаглал — <strong>хамгийн тод</strong> байх ёстой.
+Диагоналиас гадуурх тод нүд бүр нь «жинхэнэ i-г j гэж андуурсан» гэсэн үг.
+<br><br>
+Манай үр дүнд хамгийн нягт хос нь <strong>5 → 3</strong>, дараа нь <strong>4 → 9</strong>.
+Энэ нь <span class="good">сайн шинж</span>: загвар санамсаргүй биш,
+<em>бичгийн хувьд үнэхээр төстэй</em> цифрүүдийг андуурч байна. Хэрэв
+0 ба 1 зэрэг огт өөр цифрүүд хоорондоо андуурагдаж байвал өгөгдөл эсвэл
+шошгонд асуудал байна гэсэн үг.
+</div></details>
+
+<div class="box" id="l67res"><h4>Үр дүн</h4>
+<p class="pending">Энэ хэсгийн тоо notebook ажиллаж дууссаны дараа бичигдэнэ.</p>
+</div>
+
+<!-- ══════════════════════════ ЛАБ 8 ══════════════════════════ -->
+<h2 id="l8">Лаб 8 — Ensemble (загваруудыг нэгтгэх)</h2>
+
+<div class="box err">
+<h4>Хамгийн чухал олдвор: тест олонлог нь сургалтын олонлогийн ХУУЛБАР байсан</h4>
+<pre style="margin:10px 0 6px"><code>x_train, y_train = <span class="f">make_classification</span>(..., random_state=<span class="s">15</span>, ...)
+x_test,  y_test  = <span class="f">make_classification</span>(..., random_state=<span class="s">15</span>, ...)   <span class="c"># ← ижил seed!</span></code></pre>
+<code>np.array_equal(x_train, x_test)</code> → <strong class="bad">True</strong>.
+Тиймээс багшийн <code>0.949</code> нь тестийн үзүүлэлт биш, зүгээр л сургалтын үзүүлэлт.
+Зөв хуваалт дээр хамгийн сайн загвар <strong>≈0.87</strong> гардаг —
+<strong>6 оноо</strong> нь бүхэлдээ leakage байсан.
+</div>
+
+<h3>1. Stacking дахь хоёр дахь leakage</h3>
+<details class="why"><summary>Meta загварыг яагаад out-of-fold таамаглалаар сургах ёстой вэ?</summary>
+<div class="body">
+Суурь загварууд <code>x_train</code> дээр сурсан. Дараа нь <strong>яг тэр мөрүүд дээрээ</strong>
+таамаг гаргавал тэд хэт сайн таамагладаг (зарим нь цээжилсэн). Meta загвар тэр
+«хэт цэвэрхэн» оролтыг хараад сурдаг.
+<br><br>
+Гэтэл тест үед суурь загварууд <em>хараагүй</em> мөрүүд дээр таамаглах тул чанар нь
+доогуур байна. Өөрөөр хэлбэл meta загвар <strong>нэг тархалт дээр сурчихаад өөр
+тархалт дээр ажиллах</strong> болно.
+<br><br>
+<strong>Out-of-fold:</strong> өгөгдлийг K хэсэг болгож, хэсэг бүрийн таамгийг түүнийг
+<em>хараагүй</em> загвараар гаргана. Ингэснээр meta загварын оролт нь тестийн үеийнхтэй
+ижил чанартай болно.
+<br><br>
+Бидний хэмжилтээр энэ засвар нь <strong>0.851 → 0.870</strong> болгож,
+алдагдсан ~2 оноог нөхсөн.
+</div></details>
+
+<details class="src"><summary>Эх сурвалж</summary>
+<div class="body">
+Wolpert, D. H. — <em>Stacked Generalization</em>, Neural Networks 5(2), 1992.<br>
+Breiman, L. — <em>Bagging Predictors</em>, Machine Learning 24, 1996.<br>
+Breiman, L. — <em>Random Forests</em>, Machine Learning 45, 2001.<br>
+Dietterich, T. — <em>Ensemble Methods in Machine Learning</em>, MCS 2000.
+</div></details>
+
+<h3>2. Ensemble үргэлж тустай юу? — Үгүй</h3>
+<table>
+<tr><th>Загвар</th><th>CV (train)</th><th>Test</th></tr>
+<tr><td>Ганц мод (max_depth=3)</td><td class="num">0.8180 ± 0.0112</td><td class="num">0.8010</td></tr>
+<tr><td>Ганц мод (гүн хязгааргүй)</td><td class="num">0.8320 ± 0.0093</td><td class="num">0.8310</td></tr>
+<tr><td class="good">Bagging (100 мод)</td><td class="num">0.8930 ± 0.0093</td><td class="num good">0.8870</td></tr>
+<tr><td class="good">RandomForest (100 мод)</td><td class="num">0.8780 ± 0.0186</td><td class="num good">0.8860</td></tr>
+<tr><td class="good">GradientBoosting (100)</td><td class="num">0.8840 ± 0.0169</td><td class="num good">0.8840</td></tr>
+<tr><td>SVM (RBF)</td><td class="num">0.8510 ± 0.0086</td><td class="num">0.8700</td></tr>
+<tr><td class="bad">Voting (мод+SVM+logreg)</td><td class="num">0.8390 ± 0.0066</td><td class="num bad">0.8360</td></tr>
+</table>
+
+<details class="why"><summary>Яагаад bagging тусалж, stacking/voting тусалсангүй вэ?</summary>
+<div class="body">
+Ensemble нь <strong>дисперсийг</strong> бууруулж ажилладаг. Дисперс буурахын тулд
+суурь загварууд <em>хоорондоо хамааралгүй</em> алдаа гаргах ёстой.
+<br><br>
+<strong>Bagging:</strong> 100 мод тус бүр өгөгдлийн өөр түүвэр дээр сурдаг тул өөр
+өөр алдаа гаргана. Дундажлахад алдаанууд харилцан хасагдана → +8 оноо.
+<br>
+<strong>RandomForest</strong> нь нэмж багана санамсаргүй сонгож хамаарлыг улам таслана.
+<br><br>
+<strong>Stacking (3 загвар):</strong> бидний хэмжсэн санал зөрөх хувь ердөө
+<strong>8.9–10.3%</strong>. Өөрөөр хэлбэл гурвуулаа ихэвчлэн <em>ижил</em> мөрүүдийг
+андуурдаг. Дундажлах зүйл бага, бас SVM нь нөгөө хоёроосоо хүчтэй тул meta
+загварын хийж чадах дээд зүйл бол SVM-ийг дагах явдал.
+<br>
+<strong>Voting</strong> нь бүр муудсан — учир нь сул гишүүд (мод, logreg) хүчтэй
+гишүүнийг татаж буулгадаг.
+</div></details>
+
+<div class="box ok">
+<h4>Гол сургамж</h4>
+Ensemble нь өөрөө шидэт арга биш. <strong>Олон</strong> ба <strong>хоорондоо
+хамааралгүй</strong> суурь загвар байж гэмээнэ ажиллана. Цөөн, тэнцвэргүй, ижил
+алдаатай загваруудыг нэгтгэх нь ашиггүй, бүр хортой байж болно.
+</div>
+
+<!-- ══════════════════════════ ЛАБ 9–10 ══════════════════════════ -->
+<h2 id="l910">Лаб 9–10 — Knowledge Distillation (мэдлэг дамжуулах)</h2>
+
+<p><strong>Санаа:</strong> том, хүчтэй загвар (<em>teacher</em>)-аас жижиг, хурдан загвар
+(<em>student</em>) руу мэдлэг дамжуулах. Жижиг загварыг шууд сургахаас илүү сайн
+үр дүн гарна.</p>
+
+<h3>1. Яагаад «зөөлөн шошго» нь жинхэнэ шошгоос илүү мэдээлэлтэй вэ?</h3>
+<details class="why"><summary>Dark knowledge гэж юу вэ?</summary>
+<div class="body">
+Жинхэнэ шошго нь «энэ бол 7» гэж л хэлнэ. Багшийн гаралт нь үүнээс илүүг хэлдэг:
+«95% магадлалтай 7, 4% магадлалтай 1, 0.9% магадлалтай 9, 0.01% магадлалтай 0».
+<br><br>
+Энэ <em>харьцангуй</em> магадлалууд нь ангиудын хоорондох <strong>төстэй байдлын
+бүтцийг</strong> агуулж байна — 7 нь 1-тэй төстэй, 0-тэй огт төстэй биш. Hinton
+үүнийг «dark knowledge» гэж нэрлэсэн. Оюутан энэ бүтцийг сурснаар ердөө
+«зөв хариулт»-аас илүү зүйл авна.
+<br><br>
+<strong>Температур T:</strong> softmax-ийг <code>z/T</code> дээр хэрэглэвэл магадлалын
+тархалт <em>тэгширнэ</em> — жижиг магадлалууд (0.01%) мэдэгдэхүйц болно. Тиймээс
+distillation-д T &gt; 1 хэрэглэдэг.
+</div></details>
+
+<div class="box err">
+<h4>Багшийн distillation алдагдал дахь 3 алдаа</h4>
+<table style="margin-top:8px">
+<tr><th>#</th><th>Багшийн кодод</th><th>Байх ёстой</th><th>Нөлөө</th></tr>
+<tr><td>1</td><td><code>(T*T*2.0 + alpha)</code></td><td><code>alpha * T*T</code></td>
+    <td>T=20, α=0.7 үед жин нь <strong>800.7</strong> — α огт үйлчлэхгүй</td></tr>
+<tr><td>2</td><td><code>KLDivLoss()</code> (mean)</td><td><code>batchmean</code></td>
+    <td>KL-ийг ангийн тоонд (10) нэмж хуваана</td></tr>
+<tr><td>3</td><td><code>log_softmax(y/T)</code></td><td><code>dim=1</code> нэмэх</td>
+    <td>Шинэ PyTorch дээр алдаа өгнө</td></tr>
+</table>
+</div>
+
+<h3>2. Даалгавар: «дундаас нь» мэдлэг дамжуулах = FitNets</h3>
+<p>Багшийн даалгавар нь <em>«Teacher болон Student загварын <strong>дундаас нь</strong>
+мэдлэгийг дамжуулах»</em>. Logit-distillation нь зөвхөн <strong>эцсийн</strong> шийдвэрийг
+дамжуулдаг. FitNets нь <strong>завсрын давхаргын дүрслэлийг</strong> дамжуулна.</p>
+
+<pre><code><span class="c"># 1. Багшийн завсрын гаралт (hint)</span>
+ep = Teacher.<span class="f">extract_endpoints</span>(xb)
+hint = F.<span class="f">adaptive_avg_pool2d</span>(ep[<span class="s">"reduction_4"</span>], <span class="s">1</span>).<span class="f">flatten</span>(<span class="s">1</span>)   <span class="c"># 112 хэмжээст</span>
+
+<span class="c"># 2. Оюутны дунд давхарга + хэмжээг тааруулах regressor</span>
+h2  = F.<span class="f">relu</span>(self.<span class="f">bn2</span>(self.<span class="f">fc2</span>(h1)))      <span class="c"># 800 хэмжээст</span>
+hs  = self.<span class="f">reg</span>(h2)                          <span class="c"># 800 → 112</span>
+
+<span class="c"># 3. 1-р шат: зөвхөн дунд давхаргыг ойртуулна</span>
+loss = F.<span class="f">mse_loss</span>(hs, hint)</code></pre>
+
+<details class="why"><summary>Яагаад <code>reduction_4</code>-ийг сонгосон бэ?</summary>
+<div class="body">
+EfficientNet-B0 нь 6 завсрын гаралттай:
+<code>reduction_1</code> (16 суваг) … <code>reduction_6</code> (1280 суваг).
+<ul style="margin:6px 0;padding-left:20px">
+<li><code>reduction_1/2</code> — ирмэг, өнцөг зэрэг <em>хэт энгийн</em> шинж.
+Оюутанд дамжуулах мэдлэг бага.</li>
+<li><code>reduction_5/6</code> — аль хэдийн ангиллын шийдвэрт маш ойр.
+Эдгээрийг дамжуулах нь logit-distillation-тай <em>давхцана</em>, шинэ зүйл өгөхгүй.</li>
+<li><code>reduction_4</code> (112 суваг) — сүлжээний <strong>дунд</strong>. Даалгаврын
+«дундаас нь» гэсэн шаардлагад яг нийцнэ.</li>
+</ul>
+</div></details>
+
+<details class="why"><summary>Яагаад regressor хэрэгтэй вэ?</summary>
+<div class="body">
+Багшийн hint нь 112 хэмжээст, оюутны дунд давхарга нь 800 хэмжээст. Хоёрыг шууд
+харьцуулах боломжгүй. FitNets нь оюутан дээр <strong>нэмэлт шугаман давхарга</strong>
+(regressor) тавьж 800 → 112 буулгана.
+<br><br>
+Чухал нь: энэ regressor нь зөвхөн <em>сургалтын үед</em> хэрэглэгдэнэ. Сургаж
+дууссаны дараа түүнийг хаяна — оюутны эцсийн бүтэц өөрчлөгдөхгүй, хурд нь хэвээр.
+</div></details>
+
+<details class="src"><summary>Эх сурвалж</summary>
+<div class="body">
+Hinton, Vinyals, Dean — <em>Distilling the Knowledge in a Neural Network</em>,
+NIPS 2014 Deep Learning Workshop (arXiv:1503.02531).<br>
+Romero, Ballas, Kahou, Chassang, Gatta, Bengio — <em>FitNets: Hints for Thin Deep Nets</em>,
+ICLR 2015 (arXiv:1412.6550). 3-р хэсэгт hint/guided давхарга, regressor-ийн тодорхойлолт.
+</div></details>
+
+<details class="why"><summary>Яагаад багшийн гаралтыг урьдчилж тооцоолсон бэ?</summary>
+<div class="body">
+Багш нь <strong>хөлдөөстэй</strong> (жин нь өөрчлөгдөхгүй) бөгөөд өгөгдөл дээр
+санамсаргүй өөрчлөлт (augmentation) хийхгүй. Тиймээс нэг зураг дээрх багшийн
+гаралт <em>epoch бүрт яг ижил</em> байна.
+<br><br>
+Эдгээрийг нэг удаа тооцоолоод санах ойд хадгалснаар 4 хувилбар × 15 epoch =
+60 удаагийн илүүц тооцооллыг арилгана. Энэ нь үр дүнг <strong>огт өөрчлөхгүй</strong>,
+зөвхөн хурдасгана.
+<br><br>
+<span class="bad">Анхаар:</span> хэрэв augmentation байсан бол энэ оновчлол
+<em>буруу</em> болно — зураг epoch бүрт өөрчлөгддөг тул багшийн гаралт ч өөр байх ёстой.
+</div></details>
+
+<div class="box" id="l910res"><h4>Үр дүн</h4>
+<p class="pending">Дөрвөн хувилбарын харьцуулалт (оюутан ганцаараа / багшийн KD /
+засварласан KD / FitNets) Colab дээр ажиллаж дууссаны дараа бичигдэнэ.
+Механизм нь жижиг хэмжээнд <strong>0 алдаатай</strong> шалгагдсан.</p>
+</div>
+
+<!-- ══════════════════════════ ЛАБ 10 ══════════════════════════ -->
+<h2 id="l10">Лаб 10 — Transformers: монгол мэдээ ангилах</h2>
+
+<p><strong>Датасет:</strong> Eduge news corpus — 75,661 мэдээ → цэвэрлэсний дараа
+<strong>73,875</strong>, 9 ангилал. <strong>Загвар:</strong>
+<code>tugstugi/bert-base-mongolian-cased</code>.</p>
+
+<h3>1. Яагаад эхлээд TF-IDF суурь загвар хийх ёстой вэ?</h3>
+<details class="why"><summary>Суурь загварын үүрэг</summary>
+<div class="body">
+TF-IDF + шугаман ангилагч нь <strong>8.7 секундэд 0.8904</strong> accuracy өгсөн.
+BERT нь 110.6 сая параметртэй, GPU дээр хэдэн арван минут сургана.
+<br><br>
+Хэрэв BERT 0.89-оос тийм ч их давахгүй бол <em>зардал нь үр өгөөжөө нөхөхгүй</em>
+гэсэн үг. Суурь загваргүйгээр «0.92 гарлаа, сайн байна» гэж хэлэх үндэслэлгүй —
+юутай харьцуулж сайн гэж байгаагаа мэдэхгүй.
+<br><br>
+Энэ бол судалгааны ажлын үндсэн зарчим: <strong>хямд шийдлийг эхлээд туршина</strong>.
+</div></details>
+
+<h3>2. Токенчлолын асуудал: fertility ба 256 токены хязгаар</h3>
+<table>
+<tr><th>Хэмжилт</th><th>Утга</th><th>Юу гэсэн үг вэ</th></tr>
+<tr><td>Fertility</td><td class="num">1.41 токен/үг</td>
+    <td>Монгол үг дунджаар 1.41 хэсэгт хуваагдана — задралт бага, сайн</td></tr>
+<tr><td>Медиан урт</td><td class="num">216 токен</td><td>Ихэнх мэдээ 256-д багтана</td></tr>
+<tr><td class="bad">256-аас урт</td><td class="num bad">42%</td>
+    <td>Бараг тал хувь нь <strong>таслагдана</strong></td></tr>
+</table>
+
+<details class="why"><summary>42% таслагдах нь яагаад чухал вэ?</summary>
+<div class="body">
+BERT-ийн анхаарлын механизм нь урттай квадратаар өсдөг
+(<code>O(n²)</code>) тул 512-оос урт дараалал ачаалал ихтэй. 256 сонгоход
+мэдээний <strong>42%</strong> нь сүүлээ алдана.
+<br><br>
+Мэдээний <em>төгсгөлд</em> ихэвчлэн дүгнэлт, гол баримт байдаг. Тиймээс таслалт нь
+зөвхөн «бага зэрэг мэдээлэл алдах» биш, <strong>системтэй хазайлт</strong> үүсгэж болно.
+<br><br>
+<strong>head+tail арга:</strong> эхний 128 + сүүлийн 128 токеныг авна. Ингэснээр
+урт нь хэвээр 256 боловч төгсгөлийн мэдээлэл хадгалагдана.
+</div></details>
+
+<details class="src"><summary>Эх сурвалж</summary>
+<div class="body">
+Sun, Qiu, Xu, Huang — <em>How to Fine-Tune BERT for Text Classification?</em>,
+CCL 2019 (arXiv:1905.05583). 5.3-т head-only, tail-only, head+tail аргуудыг харьцуулсан.<br>
+Northcutt, Jiang, Chuang — <em>Confident Learning: Estimating Uncertainty in
+Dataset Labels</em>, JAIR 70 (2021) — шошгын алдааг олоход.
+</div></details>
+
+<h3>3. Алдааны ангилал (Даалгавар 5)</h3>
+<pre><code><span class="k">def</span> <span class="f">categorize</span>(i, r):
+    <span class="k">if</span> i <span class="k">in</span> fixed:       <span class="k">return</span> <span class="s">"1. Таслалтаас"</span>              <span class="c"># head+tail засдаг</span>
+    <span class="k">if</span> r[<span class="s">"p1"</span>] &gt; <span class="s">0.90</span>:  <span class="k">return</span> <span class="s">"2. Шошгын алдаа (сэжигтэй)"</span>  <span class="c"># confident learning</span>
+    <span class="k">if</span> r[<span class="s">"gap"</span>] &lt; <span class="s">0.25</span>: <span class="k">return</span> <span class="s">"3. Олон сэдэвт"</span>
+    <span class="k">return</span> <span class="s">"4. Загварын алдаа"</span></code></pre>
+
+<details class="why"><summary>Энэ логикийн үндэслэл</summary>
+<div class="body">
+<strong>1.</strong> Хэрэв head+tail хувилбар уг жишээг зөв таасан бол анхны алдаа нь
+<em>таслалтаас</em> байсан нь тодорхой.
+<br><br>
+<strong>2.</strong> Загвар <strong>90%-иас дээш итгэлтэйгээр</strong> шошгоос өөр хариулт
+өгсөн бол шошго нь буруу байх магадлал өндөр. Энэ нь confident learning-ийн
+үндсэн зарчим: загварын өндөр итгэл + шошготой зөрөх = шошгын алдааны дохио.
+<br><br>
+<strong>3.</strong> Эхний хоёр магадлалын зөрүү (<code>gap</code>) бага байна гэдэг нь
+загвар хоёр ангийн хооронд эргэлзэж байна гэсэн үг — мэдээ үнэхээр
+<em>олон сэдэвт</em> байж магадгүй. Энэ нь таны эрдэм шинжилгээний сэдэвтэй шууд холбоотой.
+<br><br>
+<strong>4.</strong> Үлдсэн нь жинхэнэ загварын алдаа.
+</div></details>
+
+<details class="plot"><summary>Сургалтын график хэрхэн харагдах ёстой вэ?</summary>
+<div class="body">
+<strong>Train loss:</strong> тасралтгүй буурна.<br>
+<strong>Validation loss:</strong> эхлээд буурч, дараа нь <em>тэгширнэ</em>. Хэрэв
+validation loss <strong>дээш эргэж эхэлбэл</strong> — хэт тохирол (overfitting) эхэлсэн,
+тэр цэгт зогсоох ёстой.
+<br><br>
+Fine-tuning-д epoch цөөн (2–3) байдаг нь санамсаргүй биш: BERT аль хэдийн
+урьдчилан сургагдсан тул хэт удаан сургавал тэр мэдлэгээ «мартаж» эхэлдэг
+(catastrophic forgetting).
+<br><br>
+<span class="bad">Анхаар:</span> графикийн нүд хоосон байвал (<code>log_history</code>
+хоосон) энэ нь <code>logging_steps</code> хэт том байсан эсвэл сургалт таслагдсаны
+шинж — notebook дотор түүнийг шалгаад алгасдаг болгосон.
+</div></details>
+
+<div class="box" id="l10res"><h4>Үр дүн</h4>
+<p><strong>TF-IDF суурь:</strong> accuracy <span class="num">0.8904</span>,
+macro-F1 <span class="num">0.8906</span> (8.7 секунд) — <em>хэмжигдсэн</em>.</p>
+<p class="pending">BERT-ийн үр дүн болон 6 даалгаврын харьцуулалт Colab дээр
+ажиллаж дууссаны дараа бичигдэнэ.</p>
+</div>
+
+<!-- ══════════════════════════ ХАМГААЛАХ ══════════════════════════ -->
+<h2 id="defend">Багшид хэрхэн хамгаалах вэ</h2>
+
+<div class="box ok">
+<h4>Хэрэв «яагаад багшийн кодыг өөрчилсөн бэ?» гэж асуувал</h4>
+Бүх засвар нь <strong>нэг бүрчлэн тайлбартай</strong>, notebook дотор яг тэр мөрний
+дэргэд бичигдсэн. Засвар бүрийн ард <em>хэмжсэн нотолгоо</em> байгаа:
+<ul style="margin:6px 0;padding-left:20px">
+<li>Лаб 6–7-ийн <code>_assert_shapes</code> — засахгүй бол notebook
+<code>AssertionError</code>-оор <strong>унана</strong>.</li>
+<li>Лаб 8-ийн <code>np.array_equal(x_train, x_test) == True</code> — энэ бол
+<strong>баримт</strong>, санал биш.</li>
+<li>sigmoid-ийн нөлөө — 4/4 тохиргоонд давтагдсан.</li>
+</ul>
+</div>
+
+<div class="box warn">
+<h4>Хэрэв «яагаад чиний тоо багшийнхаас бага байна?» гэж асуувал</h4>
+Багшийн тоо нь <strong>тестийг олон удаа хэмжээд хамгийн сайныг нь авсан</strong>
+үр дүн. Миний тоо нь validation-аар сонгоод тестэд <strong>нэг л удаа</strong> хүрсэн үр дүн.
+Эхнийх нь өндөр гарах нь зүй ёсны — гэхдээ шинэ өгөгдөл дээр давтагдахгүй.
+Notebook дотор энэ зөрүүг <em>тоогоор хэмжиж</em> харуулсан.
+</div>
+
+<div class="box">
+<h4>Хэрэв «ensemble яагаад тусалсангүй вэ?» гэж асуувал</h4>
+Энэ нь алдаа биш, <strong>хүлээгдэж буй үр дүн</strong>. Санал зөрөх хувийг хэмжсэн
+(8.9–10.3%) — суурь загварууд ижил алдаа гаргадаг. Харин bagging/RandomForest
+нь ганц модноос <strong>+8 оноо</strong> өгсөн, өөрөөр хэлбэл ensemble-ийн зарчим
+ажиллаж байгаа, зүгээр л <em>зөв нөхцөлд</em> ажилладаг.
+</div>
+
+<footer>
+  Бүх тоо энэ хичээлийн notebook-уудыг биечлэн ажиллуулж гаргасан.
+  «Colab дээр гарна» гэж тэмдэглэсэн хэсгүүдэд тоо бичээгүй —
+  ажиллаагүй үр дүнг урьдчилан бичихгүй.
+</footer>
+
+</div>
+</body>
+</html>
