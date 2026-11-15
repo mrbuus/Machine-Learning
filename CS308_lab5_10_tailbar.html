@@ -633,11 +633,60 @@ Fine-tuning-д epoch цөөн (2–3) байдаг нь санамсаргүй �
 шинж — notebook дотор түүнийг шалгаад алгасдаг болгосон.
 </div></details>
 
-<div class="box" id="l10res"><h4>Үр дүн</h4>
-<p><strong>TF-IDF суурь:</strong> accuracy <span class="num">0.8904</span>,
-macro-F1 <span class="num">0.8906</span> (8.7 секунд) — <em>хэмжигдсэн</em>.</p>
-<p class="pending">BERT-ийн үр дүн болон 6 даалгаврын харьцуулалт Colab дээр
-ажиллаж дууссаны дараа бичигдэнэ.</p>
+<div class="box ok" id="l10res"><h4>Үр дүн <span class="tag">Colab T4 дээр хэмжигдсэн</span></h4>
+
+<p><strong>Үндсэн харьцуулалт</strong> (2025 тестийн мэдээ):</p>
+<table>
+<tr><th>Загвар</th><th>accuracy</th><th>macro-F1</th><th>хугацаа</th></tr>
+<tr><td>TF-IDF + LogReg (суурь)</td><td class="num">0.8904</td><td class="num">0.8906</td><td class="num">48.5 сек</td></tr>
+<tr><td>BERT fine-tuned</td><td class="num">0.9032</td><td class="num">0.9032</td><td class="num">~10 мин</td></tr>
+<tr><td class="good">BERT + Head&amp;Tail (дүгнэлтэд)</td><td class="num good">0.9126</td><td class="num good">0.9123</td><td class="num">—</td></tr>
+</table>
+<p>BERT нь суурь загвараас ердөө <strong>+0.0128</strong> давсан — тэр ч байтугай хоёр
+эрэмбээр их тооцоолол зарцуулаад. Яг энэ харьцуулалтыг хийхийн тулд суурь загвар хэрэгтэй байсан.</p>
+
+<p><strong>Даалгавар 4 — монгол vs олон хэлний загвар</strong> (хамгийн тод үр дүн):</p>
+<table>
+<tr><th>Загвар</th><th>fertility</th><th>параметр</th><th>accuracy</th><th>macro-F1</th></tr>
+<tr><td class="good">bert-base-mongolian-cased</td><td class="num good">1.40</td><td class="num">110.6M</td><td class="num good">0.8685</td><td class="num">0.8681</td></tr>
+<tr><td>xlm-roberta-base</td><td class="num">1.87</td><td class="num">278.1M</td><td class="num">0.8130</td><td class="num">0.8125</td></tr>
+<tr><td class="bad">bert-base-multilingual-cased</td><td class="num bad">3.07</td><td class="num">177.9M</td><td class="num bad">0.7185</td><td class="num">0.7134</td></tr>
+</table>
+<p>Монгол тусгай загвар нь mBERT-ээс <strong>1.6 дахин цөөн параметртэй</strong> мөртлөө
+<strong>+15 оноо</strong> давлаа. Гурвуулангийнх нь хувьд <strong>fertility өндөр байх тусам
+accuracy доошилж байна</strong> — токенчлол муу бол загвар үгийг олон хэсэг болгон
+таширдаж, утгыг нь барихад хэцүү болдог.</p>
+
+<p><strong>Даалгавар 5 — 196 алдааны (9.7%) задаргаа:</strong></p>
+<table>
+<tr><th>Шалтгаан</th><th>тоо</th><th>хувь</th></tr>
+<tr><td>4. Загварын алдаа</td><td class="num">71</td><td class="num">36.2%</td></tr>
+<tr><td class="good">2. Шошгын алдаа (сэжигтэй)</td><td class="num">70</td><td class="num good">35.7%</td></tr>
+<tr><td>1. Таслалтаас</td><td class="num">33</td><td class="num">16.8%</td></tr>
+<tr><td class="good">3. Олон сэдэвт</td><td class="num">22</td><td class="num good">11.2%</td></tr>
+</table>
+<p>Алдааны <strong>тал орчим</strong> нь загварынх биш, <em>өгөгдлийнх</em>:
+35.7% шошгын, 11.2% олон сэдэвт. Энэ нь загварыг цаашид сайжруулахаас илүү
+<strong>өгөгдлийг цэвэрлэх</strong> нь илүү үр дүнтэй болохыг харуулна.</p>
+
+<p><strong>Даалгавар 6 — Head+Tail:</strong> нийт 0.9032 → <strong>0.9126</strong>;
+зөвхөн урт мэдээн дээр (919 ширхэг) 0.8727 → <strong>0.8945</strong>.</p>
+</div>
+
+<div class="box warn">
+<h4>Нэг зөрүүтэй үр дүн — үүнийг нуухгүй</h4>
+Head+Tail-ийг <strong>дүгнэлтийн үед</strong> хэрэглэхэд тусалсан (дээрх тоо).
+Гэтэл Head+Tail-аар <strong>дахин сургахад</strong> ablation хэмжээнд үр дүн
+<strong class="bad">буурсан</strong>: macro-F1 0.8803 → 0.8664 (<span class="num">−0.0139</span>).
+<br><br>
+<strong>Яагаад зөрж байна вэ?</strong> Ablation нь ангилал тус бүрээс 400 дээж
+авдаг бол үндсэн гүйлт 1500 авдаг — өөрөөр хэлбэл хоёр тоо <em>шууд
+харьцуулагдахгүй</em>. Жижиг түүвэр дээр head+tail нь илүү олон янзын оролт
+үүсгэж, 2520 дээжээр сурахад хүрэлцэхгүй болсон байж болно.
+<br><br>
+Notebook хоёуланг нь хэвлэдэг бөгөөд хэмжсэн тооноос цааш дүгнэлт хийгээгүй.
+Багш асуувал: «хоёр туршилтын хэмжээ өөр тул шууд харьцуулж болохгүй,
+илүү том түүвэр дээр дахин шалгах шаардлагатай» гэж хариулна.
 </div>
 
 <!-- ══════════════════════════ ХАМГААЛАХ ══════════════════════════ -->
