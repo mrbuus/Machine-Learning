@@ -325,33 +325,38 @@ AUC нь <strong>санамсаргүй сонгосон зөв жишээг с�
 шошгонд асуудал байна гэсэн үг.
 </div></details>
 
-<div class="box ok" id="l67res"><h4>Үр дүн <span class="tag">хэмжигдсэн</span></h4>
+<div class="box ok" id="l67res"><h4>Үр дүн <span class="tag">Colab T4 дээр хэмжигдсэн</span></h4>
 <table>
 <tr><th>Үзүүлэлт</th><th>Утга</th></tr>
 <tr><td>Сонгосон тохиргоо (validation-аар)</td><td><code>lr=1e-3</code>, hidden <code>(1024,128)</code>, sigmoid-<strong>гүй</strong></td></tr>
-<tr><td>Хамгийн сайн epoch</td><td class="num">20 (val 0.9837), early stopping 26-д</td></tr>
-<tr><td class="good">Test accuracy</td><td class="num good">0.9843</td></tr>
-<tr><td>F1 (weighted)</td><td class="num">0.9843</td></tr>
-<tr><td>Precision / Recall</td><td class="num">0.9844 / 0.9843</td></tr>
+<tr><td>Хамгийн сайн epoch</td><td class="num">8 (val 0.9817), early stopping 14-т</td></tr>
+<tr><td class="good">Test accuracy</td><td class="num good">0.9815</td></tr>
+<tr><td>F1 (weighted)</td><td class="num">0.9815</td></tr>
+<tr><td>Precision / Recall</td><td class="num">0.9816 / 0.9815</td></tr>
 <tr><td class="good">AUC (macro OvR)</td><td class="num good">0.9997</td></tr>
-<tr><td>6-fold CV accuracy</td><td class="num">0.9535 ± 0.0044</td></tr>
+<tr><td>6-fold CV accuracy</td><td class="num">0.9533 ± 0.0047</td></tr>
 <tr><td>6-fold CV AUC</td><td class="num">0.9982 ± 0.0004</td></tr>
 </table>
 <p><strong>sigmoid-ийн нөлөө:</strong> дөрвөн lr/hidden хос тус бүрт sigmoid-гүй хувилбар
-давуу гарсан — дунджаар <strong>+1.3 оноо</strong>. 4/4 давтагдсан тул санамсаргүй биш.</p>
+давуу гарсан: +0.0130, +0.0135, +0.0170, +0.0143. 4/4 давтагдсан тул санамсаргүй биш.</p>
 </div>
 
 <div class="box warn">
-<h4>Сонголтын хазайлт энэ гүйлтэд ГАРААГҮЙ — үүнийг хэрхэн ойлгох вэ</h4>
-Notebook нь хоёр аргыг тоогоор харьцуулдаг:
-<code>max(test over epochs)</code> = <span class="num">0.9843</span>,
-validation-аар сонгосон = <span class="num">0.9843</span>, зөрүү = <strong>+0.0000</strong>.
+<h4>Тестээр сонгохын хазайлт — тоогоор</h4>
+Notebook нь хоёр аргыг зэрэг хэмждэг:
+<table style="margin-top:8px">
+<tr><th>Арга</th><th>Test accuracy</th></tr>
+<tr><td>Багшийн арга: epoch бүрт тест хэмжээд хамгийн сайныг авах</td><td class="num">0.9834</td></tr>
+<tr><td>Validation-аар сонгоод тестэд нэг удаа хүрэх</td><td class="num">0.9815</td></tr>
+<tr><td>Зөрүү (өөдрөг хазайлт)</td><td class="num">+0.0019</td></tr>
+</table>
+Анхаар: багшийн аргаар тооцсон <strong>0.9834</strong> нь багшийн өөрийнх нь гаргасан тоотой
+(0.9834–0.9835) яг таарч байна. Өөрөөр хэлбэл хоёр загвар бараг ижил чадвартай,
+ялгаа нь зөвхөн <em>яаж хэмжсэнд</em> байна.
 <br><br>
-Өөрөөр хэлбэл энэ гүйлтэд хоёр арга <em>ижил epoch</em>-ийг сонгосон.
-<span class="bad">Гэхдээ энэ нь «тестээр сонгох нь аюулгүй» гэсэн үг БИШ.</span>
-Зөрүү нь санамсаргүй — өөр seed эсвэл өөр өгөгдөл дээр эерэг гарч болно.
-Гол нь: тестээр сонговол тэр эрсдэлийг <strong>хэмжих боломжгүй</strong> болдог.
-Validation-аар сонговол тест нь хараат бус хэвээр үлдэж, үнэлгээ утга учиртай байна.
+Хазайлтын хэмжээ гүйлт бүрт өөр: өмнөх нэг гүйлтэд хоёр арга ижил epoch-ийг сонгож
+зөрүү 0 гарч байсан. Тиймээс «үргэлж ийм хэмжээгээр хазайна» гэж хэлж болохгүй —
+гол нь тестээр сонговол энэ хазайлтыг <strong>хэмжих боломжгүй</strong> болдог.
 </div>
 
 <!-- ══════════════════════════ ЛАБ 8 ══════════════════════════ -->
@@ -738,16 +743,14 @@ Notebook хоёуланг нь хэвлэдэг бөгөөд хэмжсэн то
 </div>
 
 <div class="box ok">
-<h4>Хэрэв «чиний тоо багшийнхаас яагаад өөр вэ?» гэж асуувал</h4>
-Лаб 6–7-д багш <strong>0.9834</strong>, би <strong>0.9843</strong> гаргасан. Гэхдээ гол нь
-тоо нь өндөр байгаад биш, <strong>хэрхэн гаргасанд</strong> байна:
+<h4>Хэрэв «чиний тоо багшийнхаас яагаад бага вэ?» гэж асуувал</h4>
+Лаб 6–7-д багш <strong>0.9834</strong>, би <strong>0.9815</strong> гаргасан. Ялгаа нь загварт биш, хэмжих аргад байна:
 <ul style="margin:6px 0;padding-left:20px">
-<li>Багш 50 epoch сургаж, <em>тест</em> дээрх хамгийн сайн утгыг авсан.</li>
-<li>Би hyperparameter-ээ <em>validation</em> дээр сонгож, тестэд <strong>нэг л удаа</strong> хүрсэн.</li>
+<li>Багш epoch бүрт <em>тест</em> дээр хэмжээд хамгийн сайн утгыг авсан.</li>
+<li>Би hyperparameter болон epoch-оо <em>validation</em> дээр сонгож, тестэд <strong>нэг л удаа</strong> хүрсэн.</li>
 </ul>
-Энэ гүйлтэд хоёр арга ижил epoch-ийг сонгосон тул зөрүү <span class="num">+0.0000</span>
-гарсан — өөрөөр хэлбэл миний давуу тал нь аргазүйгээс биш, илүү сайн тохиргооноос
-(sigmoid-гүй, lr=1e-3) ирсэн. Үүнийг notebook тоогоор баталж харуулдаг.
+Миний загварыг багшийн аргаар хэмжихэд мөн <span class="num">0.9834</span> гардаг — notebook үүнийг хэвлэж харуулдаг.
+Тэгэхээр хоёр тоо зөрчилдөөгүй: 0.0019-ийн зөрүү нь тестээр сонгосны өөдрөг хазайлт.
 </div>
 
 <div class="box">
