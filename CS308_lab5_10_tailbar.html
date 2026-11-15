@@ -322,8 +322,33 @@ AUC нь <strong>санамсаргүй сонгосон зөв жишээг с�
 шошгонд асуудал байна гэсэн үг.
 </div></details>
 
-<div class="box" id="l67res"><h4>Үр дүн</h4>
-<p class="pending">Энэ хэсгийн тоо notebook ажиллаж дууссаны дараа бичигдэнэ.</p>
+<div class="box ok" id="l67res"><h4>Үр дүн <span class="tag">хэмжигдсэн</span></h4>
+<table>
+<tr><th>Үзүүлэлт</th><th>Утга</th></tr>
+<tr><td>Сонгосон тохиргоо (validation-аар)</td><td><code>lr=1e-3</code>, hidden <code>(1024,128)</code>, sigmoid-<strong>гүй</strong></td></tr>
+<tr><td>Хамгийн сайн epoch</td><td class="num">20 (val 0.9837), early stopping 26-д</td></tr>
+<tr><td class="good">Test accuracy</td><td class="num good">0.9843</td></tr>
+<tr><td>F1 (weighted)</td><td class="num">0.9843</td></tr>
+<tr><td>Precision / Recall</td><td class="num">0.9844 / 0.9843</td></tr>
+<tr><td class="good">AUC (macro OvR)</td><td class="num good">0.9997</td></tr>
+<tr><td>6-fold CV accuracy</td><td class="num">0.9535 ± 0.0044</td></tr>
+<tr><td>6-fold CV AUC</td><td class="num">0.9982 ± 0.0004</td></tr>
+</table>
+<p><strong>sigmoid-ийн нөлөө:</strong> дөрвөн lr/hidden хос тус бүрт sigmoid-гүй хувилбар
+давуу гарсан — дунджаар <strong>+1.3 оноо</strong>. 4/4 давтагдсан тул санамсаргүй биш.</p>
+</div>
+
+<div class="box warn">
+<h4>Сонголтын хазайлт энэ гүйлтэд ГАРААГҮЙ — үүнийг хэрхэн ойлгох вэ</h4>
+Notebook нь хоёр аргыг тоогоор харьцуулдаг:
+<code>max(test over epochs)</code> = <span class="num">0.9843</span>,
+validation-аар сонгосон = <span class="num">0.9843</span>, зөрүү = <strong>+0.0000</strong>.
+<br><br>
+Өөрөөр хэлбэл энэ гүйлтэд хоёр арга <em>ижил epoch</em>-ийг сонгосон.
+<span class="bad">Гэхдээ энэ нь «тестээр сонгох нь аюулгүй» гэсэн үг БИШ.</span>
+Зөрүү нь санамсаргүй — өөр seed эсвэл өөр өгөгдөл дээр эерэг гарч болно.
+Гол нь: тестээр сонговол тэр эрсдэлийг <strong>хэмжих боломжгүй</strong> болдог.
+Validation-аар сонговол тест нь хараат бус хэвээр үлдэж, үнэлгээ утга учиртай байна.
 </div>
 
 <!-- ══════════════════════════ ЛАБ 8 ══════════════════════════ -->
@@ -631,12 +656,17 @@ macro-F1 <span class="num">0.8906</span> (8.7 секунд) — <em>хэмжиг
 </ul>
 </div>
 
-<div class="box warn">
-<h4>Хэрэв «яагаад чиний тоо багшийнхаас бага байна?» гэж асуувал</h4>
-Багшийн тоо нь <strong>тестийг олон удаа хэмжээд хамгийн сайныг нь авсан</strong>
-үр дүн. Миний тоо нь validation-аар сонгоод тестэд <strong>нэг л удаа</strong> хүрсэн үр дүн.
-Эхнийх нь өндөр гарах нь зүй ёсны — гэхдээ шинэ өгөгдөл дээр давтагдахгүй.
-Notebook дотор энэ зөрүүг <em>тоогоор хэмжиж</em> харуулсан.
+<div class="box ok">
+<h4>Хэрэв «чиний тоо багшийнхаас яагаад өөр вэ?» гэж асуувал</h4>
+Лаб 6–7-д багш <strong>0.9834</strong>, би <strong>0.9843</strong> гаргасан. Гэхдээ гол нь
+тоо нь өндөр байгаад биш, <strong>хэрхэн гаргасанд</strong> байна:
+<ul style="margin:6px 0;padding-left:20px">
+<li>Багш 50 epoch сургаж, <em>тест</em> дээрх хамгийн сайн утгыг авсан.</li>
+<li>Би hyperparameter-ээ <em>validation</em> дээр сонгож, тестэд <strong>нэг л удаа</strong> хүрсэн.</li>
+</ul>
+Энэ гүйлтэд хоёр арга ижил epoch-ийг сонгосон тул зөрүү <span class="num">+0.0000</span>
+гарсан — өөрөөр хэлбэл миний давуу тал нь аргазүйгээс биш, илүү сайн тохиргооноос
+(sigmoid-гүй, lr=1e-3) ирсэн. Үүнийг notebook тоогоор баталж харуулдаг.
 </div>
 
 <div class="box">
