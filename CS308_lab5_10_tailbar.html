@@ -194,7 +194,7 @@ He et al., <em>Delving Deep into Rectifiers</em> (ICCV 2015) — He initializati
 <tr><td>PyTorch, тохируулсан</td><td>—</td><td class="num">0.9809</td></tr>
 </table>
 
-<p><strong>GPU хурдасгалт</strong> (Colab T4, 2000×2000 матрицын үржвэр): NumPy (CPU) 128.7 ms, CuPy (CUDA) 3.8 ms — <strong>34.3 дахин хурдан</strong>; PyTorch (CUDA) мөн 3.8 ms.</p>
+<p><strong>GPU хурдасгалт</strong> (Colab T4, 2000×2000 матрицын үржвэр): NumPy (CPU) 124.8 ms, CuPy (CUDA) 4.3 ms — <strong>29.3 дахин хурдан</strong>; PyTorch (CUDA) 4.2 ms. (Хугацааны хэмжилт гүйлт бүрт бага зэрэг хэлбэлздэг: өмнөх гүйлтэд 34 дахин гарсан.)</p>
 
 <details class="why"><summary>Яагаад ийм том ялгаа гарсан бэ? (3 шалтгаан)</summary>
 <div class="body">
@@ -548,17 +548,17 @@ ICLR 2015 (arXiv:1412.6550). 3-р хэсэгт hint/guided давхарга, reg
 <div class="box ok" id="l910res"><h4>Үр дүн <span class="tag">Colab T4 дээр хэмжигдсэн</span></h4>
 <table>
 <tr><th>Хувилбар</th><th>Test accuracy</th><th>Суурь оюутнаас</th></tr>
-<tr><td>Teacher (EfficientNet-B0)</td><td class="num">0.9954</td><td>—</td></tr>
+<tr><td>Teacher (EfficientNet-B0)</td><td class="num">0.9951</td><td>—</td></tr>
 <tr><td>1. Оюутан ганцаараа (CE)</td><td class="num">0.9847</td><td>—</td></tr>
-<tr><td>2. Logit-KD (багшийн томьёо)</td><td class="num">0.9880</td><td class="num">+0.0033</td></tr>
-<tr><td>3. Logit-KD (засварласан)</td><td class="num">0.9897</td><td class="num">+0.0050</td></tr>
-<tr><td class="good">4. FitNets: дунд давхарга + KD</td><td class="num good">0.9905</td><td class="num good">+0.0058</td></tr>
+<tr><td>2. Logit-KD (багшийн томьёо)</td><td class="num">0.9864</td><td class="num">+0.0017</td></tr>
+<tr><td>3. Logit-KD (засварласан)</td><td class="num">0.9890</td><td class="num">+0.0043</td></tr>
+<tr><td class="good">4. FitNets: дунд давхарга + KD</td><td class="num good">0.9907</td><td class="num good">+0.0060</td></tr>
 </table>
 <p>Дөрвөн хувилбар ижил seed, ижил optimizer, ижил 15 epoch-оор сурсан — зөвхөн
 <strong>алдагдлын функц</strong> нь өөр. Эрэмбэ нь онолтой таарч байна: мэдлэг дамжуулах нь
 тусалдаг, зөв жинтэй томьёо нь багшийнхаас дээр, <strong>завсрын давхаргын мэдлэг нэмэхэд
-хамгийн өндөр</strong> гарсан. Hint-ийн MSE 1.4347 → 0.6572 болж буурсан нь оюутны дунд
-давхарга багшийн дүрслэлд үнэхээр ойртсоныг харуулна.</p>
+хамгийн өндөр</strong> гарсан. Hint-ийн MSE 1.2431 → 0.5603 болж буурсан нь оюутны дунд
+давхарга багшийн дүрслэлд үнэхээр ойртсоныг харуулна. Хоёр тусдаа бүтэн гүйлтэд (teacher-ийг дахин сургасан) энэ эрэмбэ хоёуланд нь давтагдсан.</p>
 </div>
 
 <div class="box warn">
