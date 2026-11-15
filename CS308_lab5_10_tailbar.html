@@ -676,10 +676,10 @@ Fine-tuning-д epoch цөөн (2–3) байдаг нь санамсаргүй �
 <table>
 <tr><th>Загвар</th><th>accuracy</th><th>macro-F1</th><th>хугацаа</th></tr>
 <tr><td>TF-IDF + LogReg (суурь)</td><td class="num">0.8904</td><td class="num">0.8906</td><td class="num">48.5 сек</td></tr>
-<tr><td>BERT fine-tuned</td><td class="num">0.9032</td><td class="num">0.9032</td><td class="num">~10 мин</td></tr>
-<tr><td class="good">BERT + Head&amp;Tail (дүгнэлтэд)</td><td class="num good">0.9126</td><td class="num good">0.9123</td><td class="num">—</td></tr>
+<tr><td>BERT fine-tuned</td><td class="num">0.9037</td><td class="num">0.9038</td><td class="num">~10 мин</td></tr>
+<tr><td class="good">BERT + Head&amp;Tail (дүгнэлтэд)</td><td class="num good">0.9141</td><td class="num good">0.9138</td><td class="num">—</td></tr>
 </table>
-<p>BERT нь суурь загвараас ердөө <strong>+0.0128</strong> давсан — тэр ч байтугай хоёр
+<p>BERT нь суурь загвараас ердөө <strong>+0.0133</strong> давсан — тэр ч байтугай хоёр
 эрэмбээр их тооцоолол зарцуулаад. Яг энэ харьцуулалтыг хийхийн тулд суурь загвар хэрэгтэй байсан.</p>
 
 <p><strong>Даалгавар 4 — монгол vs олон хэлний загвар</strong> (хамгийн тод үр дүн):</p>
@@ -694,27 +694,27 @@ Fine-tuning-д epoch цөөн (2–3) байдаг нь санамсаргүй �
 accuracy доошилж байна</strong> — токенчлол муу бол загвар үгийг олон хэсэг болгон
 таширдаж, утгыг нь барихад хэцүү болдог.</p>
 
-<p><strong>Даалгавар 5 — 196 алдааны (9.7%) задаргаа:</strong></p>
+<p><strong>Даалгавар 5 — 195 алдааны (9.6%) задаргаа:</strong></p>
 <table>
 <tr><th>Шалтгаан</th><th>тоо</th><th>хувь</th></tr>
-<tr><td>4. Загварын алдаа</td><td class="num">71</td><td class="num">36.2%</td></tr>
-<tr><td class="good">2. Шошгын алдаа (сэжигтэй)</td><td class="num">70</td><td class="num good">35.7%</td></tr>
-<tr><td>1. Таслалтаас</td><td class="num">33</td><td class="num">16.8%</td></tr>
-<tr><td class="good">3. Олон сэдэвт</td><td class="num">22</td><td class="num good">11.2%</td></tr>
+<tr><td class="good">2. Шошгын алдаа (сэжигтэй)</td><td class="num">70</td><td class="num good">35.9%</td></tr>
+<tr><td>4. Загварын алдаа</td><td class="num">67</td><td class="num">34.4%</td></tr>
+<tr><td>1. Таслалтаас</td><td class="num">35</td><td class="num">17.9%</td></tr>
+<tr><td class="good">3. Олон сэдэвт</td><td class="num">23</td><td class="num good">11.8%</td></tr>
 </table>
 <p>Алдааны <strong>тал орчим</strong> нь загварынх биш, <em>өгөгдлийнх</em>:
-35.7% шошгын, 11.2% олон сэдэвт. Энэ нь загварыг цаашид сайжруулахаас илүү
+35.9% шошгын, 11.8% олон сэдэвт. Энэ нь загварыг цаашид сайжруулахаас илүү
 <strong>өгөгдлийг цэвэрлэх</strong> нь илүү үр дүнтэй болохыг харуулна.</p>
 
-<p><strong>Даалгавар 6 — Head+Tail:</strong> нийт 0.9032 → <strong>0.9126</strong>;
-зөвхөн урт мэдээн дээр (919 ширхэг) 0.8727 → <strong>0.8945</strong>.</p>
+<p><strong>Даалгавар 6 — Head+Tail:</strong> нийт 0.9037 → <strong>0.9141</strong>;
+зөвхөн урт мэдээн дээр (919 ширхэг) 0.8738 → <strong>0.8988</strong>.</p>
 </div>
 
 <div class="box warn">
 <h4>Нэг зөрүүтэй үр дүн — үүнийг нуухгүй</h4>
 Head+Tail-ийг <strong>дүгнэлтийн үед</strong> хэрэглэхэд тусалсан (дээрх тоо).
 Гэтэл Head+Tail-аар <strong>дахин сургахад</strong> ablation хэмжээнд үр дүн
-<strong class="bad">буурсан</strong>: macro-F1 0.8803 → 0.8664 (<span class="num">−0.0139</span>).
+<strong class="bad">буурсан</strong>: macro-F1 0.8803 → 0.8684 (<span class="num">−0.0119</span>).
 <br><br>
 <strong>Яагаад зөрж байна вэ?</strong> Ablation нь ангилал тус бүрээс 400 дээж
 авдаг бол үндсэн гүйлт 1500 авдаг — өөрөөр хэлбэл хоёр тоо <em>шууд
