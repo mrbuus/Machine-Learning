@@ -44,6 +44,7 @@ data/
 *.fls
 *.out
 *.synctex.gz
+*.xdv
 Bie_daalt/**/*.log
 
 # Бие даалт 2-ын татаж авсан өгөгдөл
