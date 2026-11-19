@@ -38,7 +38,7 @@ Local кодоо Mac дээр засаж, GitHub-д хадгална. GPU шаа
 
 | Даалгавар | Файл | Агуулга |
 |---|---|---|
-| **Бие даалт 1** | [Bie_daalt/Bie_daalt1/BD1_DKT_B231910012.tex](Bie_daalt/Bie_daalt1/BD1_DKT_B231910012.tex) | Өгүүллийн онолын тайлан (4 хуудас). PDF: `latexmk -pdf` |
+| **Бие даалт 1** | [Bie_daalt/Bie_daalt1/BD1_DKT_B231910012.tex](Bie_daalt/Bie_daalt1/BD1_DKT_B231910012.tex) | Өгүүллийн хэлбэртэй онолын тайлан (2 багана, 4 хуудас). PDF: `latexmk -pdf` |
 | **Бие даалт 2** | [Bie_daalt/Bie_daalt2/CS308_BD2_DKT_B231910012.ipynb](Bie_daalt/Bie_daalt2/CS308_BD2_DKT_B231910012.ipynb) | DKT-г PyTorch-оор хэрэгжүүлэх, Marginal/BKT/PFA-тай харьцуулах, өгөгдлийн хэмжээний туршилт · **T4 GPU** · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Bie_daalt/Bie_daalt2/CS308_BD2_DKT_B231910012.ipynb) |
 
 ## Өдөр тутмын ажил
