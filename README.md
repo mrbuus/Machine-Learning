@@ -34,6 +34,13 @@ Local кодоо Mac дээр засаж, GitHub-д хадгална. GPU шаа
 > HTML файлуудыг GitHub дээр шууд үзэх боломжгүй (код харагдана).
 > Татаж аваад браузераар нээнэ, эсвэл [htmlpreview](https://htmlpreview.github.io/) ашиглана.
 
+## Бие даалт — Deep Knowledge Tracing (Piech нар, NeurIPS 2015)
+
+| Даалгавар | Файл | Агуулга |
+|---|---|---|
+| **Бие даалт 1** | [Bie_daalt/Bie_daalt1/BD1_DKT_B231910012.tex](Bie_daalt/Bie_daalt1/BD1_DKT_B231910012.tex) | Өгүүллийн онолын тайлан (4 хуудас). PDF: `latexmk -pdf` |
+| **Бие даалт 2** | [Bie_daalt/Bie_daalt2/CS308_BD2_DKT_B231910012.ipynb](Bie_daalt/Bie_daalt2/CS308_BD2_DKT_B231910012.ipynb) | DKT-г PyTorch-оор хэрэгжүүлэх, Marginal/BKT/PFA-тай харьцуулах, өгөгдлийн хэмжээний туршилт · **T4 GPU** · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Bie_daalt/Bie_daalt2/CS308_BD2_DKT_B231910012.ipynb) |
+
 ## Өдөр тутмын ажил
 
 1. Mac дээр ажил эхлэхдээ GitHub Desktop → Fetch origin → Pull origin.

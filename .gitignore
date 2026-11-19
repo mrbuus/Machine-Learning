@@ -37,3 +37,14 @@ Lab/Lab6-7/exec.log
 Lab/Lab6-7/best_model.pth
 models/
 data/
+
+# LaTeX-ийн туслах файлууд
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+Bie_daalt/**/*.log
+
+# Бие даалт 2-ын татаж авсан өгөгдөл
+dkt_data/
