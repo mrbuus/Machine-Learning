@@ -194,14 +194,14 @@ He et al., <em>Delving Deep into Rectifiers</em> (ICCV 2015) — He initializati
 <tr><td>PyTorch, тохируулсан</td><td>—</td><td class="num">0.9809</td></tr>
 </table>
 
-<p><strong>GPU хурдасгалт</strong> (Colab T4, 2000×2000 матрицын үржвэр): NumPy (CPU) 215.9 ms, CuPy (CUDA) 4.0 ms — <strong>53.6 дахин хурдан</strong>; PyTorch (CUDA) 4.0 ms. (Хугацааны хэмжилт гүйлт бүрт хэлбэлздэг: өмнөх гүйлтүүдэд 29–46 дахин гарсан.)</p>
+<p><strong>GPU хурдасгалт</strong> (Colab T4, 2000×2000 матрицын үржвэр): NumPy (CPU) 251.9 ms, CuPy (CUDA) 3.8 ms — <strong>66.7 дахин хурдан</strong>; PyTorch (CUDA) 3.7 ms. (Хугацааны хэмжилт гүйлт бүрт хэлбэлздэг: өмнөх гүйлтүүдэд 29–54 дахин гарсан.)</p>
 <h3>6. Жижиг загвар: 9000-аас бага параметр</h3>
 <p>Ижил төсөвтэй хоёр загварыг харьцуулсан (50k сургалт, 10k validation, тестийг нэг удаа).</p>
 <table>
 <tr><th>Загвар</th><th>Параметр</th><th>Тестийн accuracy</th><th>Алдаа (10 000-аас)</th></tr>
 <tr><td>PyTorch MLP (784→256→64→10)</td><td class="num">218 058</td><td class="num">0.9777</td><td class="num">223</td></tr>
 <tr><td>Жижиг MLP (784→11→10)</td><td class="num">8 755</td><td class="num">0.9403</td><td class="num">597</td></tr>
-<tr><td class="good">Жижиг CNN (3×3 conv 5 давхар + BatchNorm)</td><td class="num">8 450</td><td class="num good">0.9955</td><td class="num">45</td></tr>
+<tr><td class="good">Жижиг CNN (3×3 conv 5 давхар + BatchNorm)</td><td class="num">8 450</td><td class="num good">0.9944</td><td class="num">56</td></tr>
 </table>
 <details class="why"><summary>Яагаад CNN 25 дахин бага параметрээр илүү гарсан бэ?</summary>
 <div class="body">
@@ -217,28 +217,50 @@ Conv давхаргын параметр зургийн хэмжээнээс х�
 6 epoch fine-tune хийсэн. Харьцуулалт болгож ижил хэмжээтэй загварыг эхнээс 15 epoch сургасан. Түвшинг validation
 дээр сонгосон (анхныхаас ≤ 0.2 пункт алдах), тестийг нэг удаа.</p>
 <table>
-<tr><th>Үлдээсэн суваг</th><th>Параметр</th><th>Тасласны дараа</th><th>Fine-tune</th><th>Эхнээс</th></tr>
-<tr><td>87.5%</td><td class="num">6 513</td><td class="num">0.8096</td><td class="num">0.9931</td><td class="num">0.9922</td></tr>
-<tr><td class="good">75% (сонгосон)</td><td class="num">4 828</td><td class="num">0.6216</td><td class="num good">0.9916</td><td class="num">0.9928</td></tr>
-<tr><td>62.5%</td><td class="num">3 395</td><td class="num">0.1127</td><td class="num">0.9907</td><td class="num">0.9909</td></tr>
-<tr><td>50%</td><td class="num">2 214</td><td class="num">0.1513</td><td class="num">0.9854</td><td class="num">0.9873</td></tr>
-<tr><td>37.5%</td><td class="num">1 285</td><td class="num">0.0991</td><td class="num">0.9762</td><td class="num">0.9821</td></tr>
+<tr><th>Үлдээсэн суваг</th><th>Параметр</th><th>Тасласны дараа</th><th>Зөвхөн BN дахин тооцсон</th><th>Fine-tune</th><th>Эхнээс</th></tr>
+<tr><td>87.5%</td><td class="num">6 513</td><td class="num">0.8604</td><td class="num">0.9645</td><td class="num">0.9934</td><td class="num">0.9936</td></tr>
+<tr><td>75%</td><td class="num">4 828</td><td class="num">0.4099</td><td class="num">0.7730</td><td class="num">0.9919</td><td class="num">0.9913</td></tr>
+<tr><td class="good">62.5% (сонгосон)</td><td class="num">3 395</td><td class="num">0.1881</td><td class="num">0.6041</td><td class="num">0.9907</td><td class="num">0.9913</td></tr>
+<tr><td>50%</td><td class="num">2 214</td><td class="num">0.1016</td><td class="num">0.3842</td><td class="num">0.9856</td><td class="num">0.9879</td></tr>
+<tr><td>37.5%</td><td class="num">1 285</td><td class="num">0.1068</td><td class="num">0.1851</td><td class="num">0.9736</td><td class="num">0.9828</td></tr>
 </table>
-<p>(validation нарийвчлал; анхны загвар 0.9933)</p>
-<table>
-<tr><th>Загвар</th><th>Параметр</th><th>Тестийн accuracy</th><th>Алдаа</th></tr>
-<tr><td>Жижиг CNN</td><td class="num">8 450</td><td class="num">0.9955</td><td class="num">45</td></tr>
-<tr><td class="good">Pruned + fine-tune</td><td class="num">4 828 (−43%)</td><td class="num good">0.9942</td><td class="num">58</td></tr>
-<tr><td>Ижил хэмжээ, эхнээс</td><td class="num">4 828</td><td class="num">0.9927</td><td class="num">73</td></tr>
-</table>
-<details class="why"><summary>Pruning ашигтай байсан уу?</summary>
+<p>(validation нарийвчлал; анхны загвар 0.9923)</p>
+<details class="why"><summary>Тасласны дараа 0.41 болоод 6 epoch-д 0.99 руу буцах боломжтой юу?</summary>
 <div class="body">
-Параметр 43%-иар буурч, нарийвчлал 0.13 пунктээр л буурсан. Гэхдээ validation дээр эхнээс сургасан загвар ихэнх
-түвшинд тэнцүү эсвэл арай илүү гарсан; 0.1 пункт нь 10 орчим зураг тул нэг seed-ээр ялгах боломжгүй. Тиймээс
-энд pruning-ийн гол ашиг нь «хэдэн суваг хангалттай вэ» гэдгийг олох явдал байв (Liu нар, 2019).
+Тийм. Уналтын том хэсэг нь жин эвдэрснээс биш, BatchNorm-ын хадгалсан дундаж ба дисперс хуучирснаас болдог:
+өмнөх давхаргын сувгийг хасахад дараагийн давхаргын оролт өөрчлөгдөнө. Жинг огт өөрчлөхгүйгээр зөвхөн
+статистикийг дахин тооцоход 75%-д 0.41 → 0.77 болж сэргэсэн. Үлдсэнийг fine-tune нөхнө: эхнээс сургахад ч
+1 epoch-д 0.98 хүрдэг тул ажиллаж буй жингээс эхэлсэн 6 epoch хангалттай.
+</div></details>
+
+<h3>8. γ-д L1 торгууль нэмээд дахин pruning</h3>
+<p>Network Slimming: сургалтын алдагдал дээр λ·Σ|γ| нэмж, хэрэгцээгүй сувгийн γ-г 0 руу түлхэнэ. Гурван λ
+туршиж, 7-р хэсэгтэй ижил түвшнүүдээр тасалсан (fine-tune-ийн дараах validation):</p>
+<table>
+<tr><th>Параметр</th><th>L1 үгүй</th><th>λ=1e-4</th><th>λ=1e-3</th><th>λ=1e-2</th><th>Эхнээс</th></tr>
+<tr><td>6 513</td><td class="num">0.9934</td><td class="num">0.9938</td><td class="num">0.9928</td><td class="num">0.9921</td><td class="num">0.9936</td></tr>
+<tr><td>4 828</td><td class="num">0.9919</td><td class="num">0.9925</td><td class="num">0.9927</td><td class="num">0.9909</td><td class="num">0.9913</td></tr>
+<tr><td>3 395</td><td class="num">0.9907</td><td class="num">0.9915</td><td class="num">0.9919</td><td class="num">0.9884</td><td class="num">0.9913</td></tr>
+<tr><td>2 214</td><td class="num">0.9856</td><td class="num">0.9862</td><td class="num">0.9871</td><td class="num">0.9877</td><td class="num">0.9879</td></tr>
+<tr><td>1 285</td><td class="num">0.9736</td><td class="num">0.9773</td><td class="num">0.9794</td><td class="num">0.9759</td><td class="num">0.9828</td></tr>
+</table>
+<table>
+<tr><th>Загвар (тест)</th><th>Параметр</th><th>Тестийн accuracy</th><th>Алдаа</th></tr>
+<tr><td>Жижиг CNN</td><td class="num">8 450</td><td class="num">0.9944</td><td class="num">56</td></tr>
+<tr><td>Pruned, L1 үгүй</td><td class="num">3 395 (−60%)</td><td class="num">0.9928</td><td class="num">72</td></tr>
+<tr><td class="good">Pruned, L1 λ=1e-3</td><td class="num">3 395 (−60%)</td><td class="num">0.9930</td><td class="num">70</td></tr>
+<tr><td>Ижил хэмжээ, эхнээс</td><td class="num">3 395</td><td class="num">0.9912</td><td class="num">88</td></tr>
+</table>
+<details class="why"><summary>L1 тусалсан уу?</summary>
+<div class="body">
+λ=1e-2 үед ихэнх γ 0 руу шахагдаж, 87.5%-д тасласны дараа (fine-tune-гүй) 0.97 үлдсэн (L1 үгүй 0.86): хасагдсан
+сувгууд үнэхээр «үхсэн» байсан. Гэхдээ загварын өөрийнх нь нарийвчлал буурсан. λ=1e-3 fine-tune-ийн дараа жижиг
+хэмжээнд 0.1–0.6 пунктээр илүү байсан ч сонгосон хэмжээнд тестийн ялгаа ердөө 2 зураг.
 <br><br>
-Тасласны дараа шууд 0.81 болж унасан шалтгаан: |γ| тэгтэй ойр суваг алга, суваг бүр ажиллаж байгаа.
-γ-д L1 торгууль нэмж сургавал (Network Slimming) сул сувгууд тод ялгарч, таслалт зөөлөн болно.
+Таамаглал: γ-г бууруулахад дараагийн conv-ийн жин томорч нөхдөг (дараагийн BatchNorm масштабыг дахин хэвийн
+болгоно). Network Slimming бүх жинд weight decay хэрэглэдэг; энд Adam-ыг weight decay-гүй хэрэглэсэн. Мөн давхарга
+бүрээс ижил хувиар хассан тул «чухал» сувгууд ч хасагдсан; бүх давхаргад нэг босго (global threshold) тохиромжтой
+байж магадгүй.
 </div></details>
 
 
