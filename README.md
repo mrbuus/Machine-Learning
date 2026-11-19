@@ -1,10 +1,32 @@
-# Machine Learning
+# Machine Learning · F.CSM308
 
-F.CSM308 — Машин сургалтын лаборатори, бие даалт, туршилтууд.
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](requirements.txt)
+[![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
+[![Jupyter](https://img.shields.io/badge/Jupyter-F37626?logo=jupyter&logoColor=white)](https://jupyter.org/)
+[![Colab](https://img.shields.io/badge/Open%20in-Colab-F9AB00?logo=googlecolab&logoColor=white)](#лабораторийн-ажлууд)
 
-Local кодоо Mac дээр засаж, GitHub-д хадгална. GPU шаардлагатай сургалтыг Colab дээр ажиллуулна.
+**F.CSM308 Машин сургалт** хичээлийн лаборатори, бие даалт, туршилтууд: NumPy дээр эхнээс бичсэн
+загвараас эхлээд SVM, мэдрэлийн сүлжээ, knowledge distillation, transformer, Deep Knowledge Tracing хүртэл.
 
-## Notebook-ууд
+*Coursework for F.CSM308 Machine Learning — models written from scratch in NumPy, SVMs, neural networks,
+knowledge distillation, transformers and Deep Knowledge Tracing. Every notebook opens in Google Colab.*
+
+## Агуулга
+
+```text
+Machine-Learning/
+├── Lab/                 Лаборатори 1–10 (Jupyter notebook)
+├── Bie_daalt/           Бие даалт 1–2: Deep Knowledge Tracing
+├── Lecture/             Лекцийн бодлого (LaTeX)
+├── Data/                Жижиг өгөгдөл (toy_data.tsv)
+├── prompts/             Дахин ашиглах заавар
+├── CS308_*_tailbar.html Лаб, лекцийн дэлгэрэнгүй тайлбар (HTML)
+├── requirements.txt     Шаардлагатай сангууд
+└── Makefile             Git-ийн богино командууд
+```
+
+## Лабораторийн ажлууд
 
 | Лаб | Агуулга | Runtime | Хугацаа | Colab |
 |---|---|---|---|---|
@@ -41,7 +63,30 @@ Local кодоо Mac дээр засаж, GitHub-д хадгална. GPU шаа
 | **Бие даалт 1** | [Bie_daalt/Bie_daalt1/BD1_DKT_B231910012.tex](Bie_daalt/Bie_daalt1/BD1_DKT_B231910012.tex) | Өгүүллийн хэлбэртэй онолын тайлан ба өгөгдлийн аудит (2 багана, 4 хуудас). PDF: `latexmk -xelatex` |
 | **Бие даалт 2** | [Bie_daalt/Bie_daalt2/CS308_BD2_DKT_B231910012.ipynb](Bie_daalt/Bie_daalt2/CS308_BD2_DKT_B231910012.ipynb) | DKT-г PyTorch-оор хэрэгжүүлэх, Marginal/BKT/PFA-тай харьцуулах, өгөгдлийн хэмжээний туршилт · **T4 GPU** · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mrbuus/Machine-Learning/blob/main/Bie_daalt/Bie_daalt2/CS308_BD2_DKT_B231910012.ipynb) |
 
-## Өдөр тутмын ажил
+## Хурдан эхлүүлэх
+
+**Colab дээр:** дээрх хүснэгтийн **Open in Colab** товч дээр дарна. GPU хэрэгтэй лабд T4 сонгоно.
+
+**Mac дээр:** Python 3.12 дээр шалгасан.
+
+```bash
+git clone https://github.com/mrbuus/Machine-Learning.git
+cd Machine-Learning
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m ipykernel install --user --name ml-venv --display-name "Machine Learning (.venv)"
+```
+
+VS Code эсвэл Jupyter дээр notebook нээгээд kernel-ээ **Machine Learning (.venv)** болгож сонгоно.
+`requirements.txt` нь шаардлагатай сангуудын жагсаалт бөгөөд бүх платформд яг ижил хувилбар тогтоосон lock файл биш.
+
+## Ажлын урсгал
+
+Local кодоо Mac дээр засаж, GitHub-д хадгална. GPU шаардлагатай сургалтыг Colab дээр ажиллуулна.
+
+<details>
+<summary><b>Өдөр тутмын ажил: Mac ↔ GitHub ↔ Colab</b></summary>
 
 1. Mac дээр ажил эхлэхдээ GitHub Desktop → Fetch origin → Pull origin.
 2. VS Code/Jupyter дээр кодоо засаж, жижиг өгөгдлөөр шалгана.
@@ -52,7 +97,7 @@ Local кодоо Mac дээр засаж, GitHub-д хадгална. GPU шаа
 
 Colab-аас GitHub-д автоматаар синк хийхгүй. Зөвхөн ажиллуулсан бол хадгалах шаардлагагүй; хадгалах код/үр дүн байгаа үед GitHub руу хадгална.
 
-### Терминалын богино командууд
+**Терминалын богино командууд**
 
 ```bash
 make status
@@ -64,20 +109,10 @@ make check
 
 `make save` нь ignore-д ороогүй бүх өөрчлөлтийг commit хийнэ. Эхлээд `make status` болон өөрчлөлтөө шалгана. `make pull` нь merge шаардлагатай бол зогсоно.
 
-## Mac орчин
+</details>
 
-Одоо байгаа Anaconda kernel: `/opt/anaconda3/bin/python`.
-Шинэ тусдаа орчин хэрэгтэй бол:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-```
-
-`requirements.txt` нь шаардлагатай сангуудын жагсаалт; бүх платформд яг ижил хувилбар тогтоосон lock файл биш.
-
-## Colab дээр нэмэлт файлууд хэрэгтэй үед
+<details>
+<summary><b>Colab дээр repo-гийн нэмэлт файлууд хэрэгтэй үед</b></summary>
 
 Notebook-ийг GitHub-аас нээхэд repo-ийн бусад файлууд автоматаар татагдахгүй. `Data/toy_data.tsv` зэрэг файл хэрэгтэй бол эхэнд нь:
 
@@ -93,7 +128,10 @@ if not repo.exists():
 
 Энэ clone нь GitHub-д байгаа кодыг татна; Colab editor дахь хадгалаагүй өөрчлөлтийг оруулахгүй. Дахин нээсэн runtime-д clone хуучирсан бол ажлаа хадгалаад шинэ runtime эхлүүлнэ.
 
-## PyTorch төхөөрөмж
+</details>
+
+<details>
+<summary><b>PyTorch төхөөрөмж сонгох</b></summary>
 
 ```python
 import torch
@@ -105,7 +143,10 @@ model = model.to(device)
 
 sklearn-ийн энгийн SVM нь CPU ашиглана. GPU runtime сонгох нь sklearn кодыг автоматаар CUDA болгохгүй.
 
-## Урт сургалтын явцыг хадгалах, үргэлжлүүлэх
+</details>
+
+<details>
+<summary><b>Урт сургалтын явцыг хадгалах, үргэлжлүүлэх (checkpoint)</b></summary>
 
 Их хэмжээний өгөгдөл эсвэл удаан ажиллах загварыг сургахдаа Colab-ийн ашиглалтын хязгаар, runtime тасрах боломжийг тооцож, сургалтын коддоо **checkpoint тогтмол хадгалах болон түүнээс үргэлжлүүлэх** ажиллагааг оруулна. Ингэснээр сургалт тасарсан үед эхнээс нь дахин сургахгүй, хамгийн сүүлд амжилттай хадгалсан төлөвөөс үргэлжлүүлнэ.
 
@@ -117,6 +158,8 @@ sklearn-ийн энгийн SVM нь CPU ашиглана. GPU runtime сонг�
 - Урт сургалт эхлүүлэхээс өмнө богино туршилтаар checkpoint хадгалах → ачаалах → үргэлжлүүлэх ажиллагааг шалгана. Шинэ checkpoint бүрэн бичигдтэл өмнөх амжилттай файлыг үлдээнэ.
 
 Энэ ажиллагаа нь сургалтын явц дундаас үргэлжлүүлэхийг дэмждэг алгоритмд хамаарна. `sklearn.svm.SVC` болон `LinearSVC`-ийн `fit()` нь дундаас нь checkpoint-оор үргэлжлүүлэх боломжгүй тул тухайн алгоритмын дэмжлэгийг эхлээд шалгана.
+
+</details>
 
 ## Өгөгдөл, үр дүн
 
