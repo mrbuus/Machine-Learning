@@ -194,14 +194,14 @@ He et al., <em>Delving Deep into Rectifiers</em> (ICCV 2015) — He initializati
 <tr><td>PyTorch, тохируулсан</td><td>—</td><td class="num">0.9809</td></tr>
 </table>
 
-<p><strong>GPU хурдасгалт</strong> (Colab T4, 2000×2000 матрицын үржвэр): NumPy (CPU) 228.6 ms, CuPy (CUDA) 5.0 ms — <strong>45.6 дахин хурдан</strong>; PyTorch (CUDA) 4.9 ms. (Хугацааны хэмжилт гүйлт бүрт хэлбэлздэг: өмнөх гүйлтүүдэд 29–34 дахин гарсан.)</p>
+<p><strong>GPU хурдасгалт</strong> (Colab T4, 2000×2000 матрицын үржвэр): NumPy (CPU) 215.9 ms, CuPy (CUDA) 4.0 ms — <strong>53.6 дахин хурдан</strong>; PyTorch (CUDA) 4.0 ms. (Хугацааны хэмжилт гүйлт бүрт хэлбэлздэг: өмнөх гүйлтүүдэд 29–46 дахин гарсан.)</p>
 <h3>6. Жижиг загвар: 9000-аас бага параметр</h3>
 <p>Ижил төсөвтэй хоёр загварыг харьцуулсан (50k сургалт, 10k validation, тестийг нэг удаа).</p>
 <table>
 <tr><th>Загвар</th><th>Параметр</th><th>Тестийн accuracy</th><th>Алдаа (10 000-аас)</th></tr>
 <tr><td>PyTorch MLP (784→256→64→10)</td><td class="num">218 058</td><td class="num">0.9777</td><td class="num">223</td></tr>
 <tr><td>Жижиг MLP (784→11→10)</td><td class="num">8 755</td><td class="num">0.9403</td><td class="num">597</td></tr>
-<tr><td class="good">Жижиг CNN (3×3 conv 5 давхар + BatchNorm)</td><td class="num">8 450</td><td class="num good">0.9943</td><td class="num">57</td></tr>
+<tr><td class="good">Жижиг CNN (3×3 conv 5 давхар + BatchNorm)</td><td class="num">8 450</td><td class="num good">0.9955</td><td class="num">45</td></tr>
 </table>
 <details class="why"><summary>Яагаад CNN 25 дахин бага параметрээр илүү гарсан бэ?</summary>
 <div class="body">
@@ -210,6 +210,35 @@ Conv давхаргын параметр зургийн хэмжээнээс х�
 Нэг шүүлтүүр зургийн бүх байрлалд дахин ашиглагддаг (жин хуваалцах), цифрийн зураас, булан хаана ч ижил
 харагддаг тул энэ нь MNIST-д тохирно. BatchNorm сургалтыг тогтворжуулж, төгсгөлийн дундаж pooling нь
 том Linear давхаргыг 16 → 10 болгож багасгасан.
+</div></details>
+
+<h3>7. Pruning: сувгийг хасаж параметрийг цааш багасгах</h3>
+<p>Structured pruning: давхарга бүрээс BatchNorm-ын |γ| хамгийн бага сувгуудыг хасаж, жинхэнэ жижиг загвар үүсгээд
+6 epoch fine-tune хийсэн. Харьцуулалт болгож ижил хэмжээтэй загварыг эхнээс 15 epoch сургасан. Түвшинг validation
+дээр сонгосон (анхныхаас ≤ 0.2 пункт алдах), тестийг нэг удаа.</p>
+<table>
+<tr><th>Үлдээсэн суваг</th><th>Параметр</th><th>Тасласны дараа</th><th>Fine-tune</th><th>Эхнээс</th></tr>
+<tr><td>87.5%</td><td class="num">6 513</td><td class="num">0.8096</td><td class="num">0.9931</td><td class="num">0.9922</td></tr>
+<tr><td class="good">75% (сонгосон)</td><td class="num">4 828</td><td class="num">0.6216</td><td class="num good">0.9916</td><td class="num">0.9928</td></tr>
+<tr><td>62.5%</td><td class="num">3 395</td><td class="num">0.1127</td><td class="num">0.9907</td><td class="num">0.9909</td></tr>
+<tr><td>50%</td><td class="num">2 214</td><td class="num">0.1513</td><td class="num">0.9854</td><td class="num">0.9873</td></tr>
+<tr><td>37.5%</td><td class="num">1 285</td><td class="num">0.0991</td><td class="num">0.9762</td><td class="num">0.9821</td></tr>
+</table>
+<p>(validation нарийвчлал; анхны загвар 0.9933)</p>
+<table>
+<tr><th>Загвар</th><th>Параметр</th><th>Тестийн accuracy</th><th>Алдаа</th></tr>
+<tr><td>Жижиг CNN</td><td class="num">8 450</td><td class="num">0.9955</td><td class="num">45</td></tr>
+<tr><td class="good">Pruned + fine-tune</td><td class="num">4 828 (−43%)</td><td class="num good">0.9942</td><td class="num">58</td></tr>
+<tr><td>Ижил хэмжээ, эхнээс</td><td class="num">4 828</td><td class="num">0.9927</td><td class="num">73</td></tr>
+</table>
+<details class="why"><summary>Pruning ашигтай байсан уу?</summary>
+<div class="body">
+Параметр 43%-иар буурч, нарийвчлал 0.13 пунктээр л буурсан. Гэхдээ validation дээр эхнээс сургасан загвар ихэнх
+түвшинд тэнцүү эсвэл арай илүү гарсан; 0.1 пункт нь 10 орчим зураг тул нэг seed-ээр ялгах боломжгүй. Тиймээс
+энд pruning-ийн гол ашиг нь «хэдэн суваг хангалттай вэ» гэдгийг олох явдал байв (Liu нар, 2019).
+<br><br>
+Тасласны дараа шууд 0.81 болж унасан шалтгаан: |γ| тэгтэй ойр суваг алга, суваг бүр ажиллаж байгаа.
+γ-д L1 торгууль нэмж сургавал (Network Slimming) сул сувгууд тод ялгарч, таслалт зөөлөн болно.
 </div></details>
 
 
